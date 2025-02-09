@@ -1,4 +1,9 @@
-import LoginForm from "@/components/loginForm";
+import LoginForm from "@/components/forms/loginForm";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "JellyHub - Login",
+};
 
 export default function LoginPage() {
   return (

@@ -6,7 +6,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Roboto } from "next/font/google";
 
 export const metadata: Metadata = {
-  title: "JellyHub",
+  title: "JellyHub - Home",
   description: "Hub for your Jellyfin Servers",
 };
 

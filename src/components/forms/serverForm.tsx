@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
+import Logo from "../logo";
 
 const loginSchema = z.object({
   username: z
@@ -27,7 +28,7 @@ const loginSchema = z.object({
     .max(50, { message: "Pasword cant exceed 50 characters" }),
 });
 
-export default function LoginForm() {
+export default function ServerForm() {
   const { toast } = useToast();
 
   const loginForm = useForm<z.infer<typeof loginSchema>>({
@@ -79,7 +80,10 @@ export default function LoginForm() {
 
   return (
     <div className="w-full max-w-md mx-auto sm:w-[400px] p-5 bg-black/50 backdrop-blur-lg rounded-md">
-      <h1 className="text-3xl font-bold mb-10 underline text-center">Login</h1>
+      {/* <h1 className="text-3xl font-bold mb-10 underline text-center">Login</h1> */}
+      <div className="py-4 text-center">
+        <Logo />
+      </div>
       <Form {...loginForm}>
         <form onSubmit={loginForm.handleSubmit(onSubmit)} className="space-y-4">
           <FormField

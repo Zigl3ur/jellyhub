@@ -8,7 +8,6 @@ export async function middleware(
   const isPublic =
     currentLocation === "/login" ||
     currentLocation === "/register" ||
-    currentLocation === "/api/auth/register" ||
     currentLocation === "/api/auth/login";
 
   // get token
@@ -43,5 +42,5 @@ export async function middleware(
 }
 
 export const config = {
-  matcher: ["/", "/profile", "/api/:path*"], // routes affected by middleware
+  matcher: ["/", "/api/:path*"], // routes affected by middleware
 };
