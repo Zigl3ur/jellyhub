@@ -11,9 +11,12 @@
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
     "@prisma/client": "^6.3.1",
+    "@radix-ui/react-dialog": "^1.1.6",
     "@radix-ui/react-label": "^2.1.2",
+    "@radix-ui/react-separator": "^1.1.2",
     "@radix-ui/react-slot": "^1.1.2",
     "@radix-ui/react-toast": "^1.2.6",
+    "@radix-ui/react-tooltip": "^1.1.8",
     "@types/bcrypt": "^5.0.2",
     "bcrypt": "^5.1.1",
     "class-variance-authority": "^0.7.1",

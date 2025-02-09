@@ -1,7 +1,7 @@
 import LoginForm from "@/components/forms/loginForm";
 import { Metadata } from "next";
 
-export const metadata: Metadata = {
+export const metadat: Metadata = {
   title: "JellyHub - Login",
 };
 
