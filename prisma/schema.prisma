@@ -1,0 +1,23 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model accounts {
+  id        Int         @id @default(autoincrement())
+  username  String      @unique @db.VarChar(255)
+  password  String      @db.VarChar(255)
+  jellydata jellydata[]
+}
+
+model jellydata {
+  id        Int      @id @default(autoincrement())
+  accountid Int
+  server    String   @db.VarChar(255)
+  token     String   @db.VarChar(255)
+  account   accounts @relation(fields: [accountid], references: [id])
+}
