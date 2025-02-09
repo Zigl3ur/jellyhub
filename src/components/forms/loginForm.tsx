@@ -49,8 +49,6 @@ export default function LoginForm() {
         }),
       });
 
-      console.log(values.username, values.password);
-
       if (data.status === 200) window.location.href = "/";
       else
         toast({

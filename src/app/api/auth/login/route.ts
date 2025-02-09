@@ -46,7 +46,6 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     // JWT payload
     const payload = {
       username: userData.username,
-      password: userData.password,
     };
 
     // ensure oken to sign is defined
