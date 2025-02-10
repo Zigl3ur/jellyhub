@@ -11,7 +11,6 @@ export async function GET(): Promise<NextResponse> {
       "/login",
       process.env.PUBLIC_APP_URL || "http://localhost:3000"
     );
-    console.log("a");
 
     return NextResponse.redirect(url);
   } catch (err) {

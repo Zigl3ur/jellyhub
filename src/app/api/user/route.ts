@@ -1,19 +1,23 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { decodeJwt } from "jose";
+import prisma from "@/lib/prisma";
+import { cookies } from "next/headers";
 
-export async function GET(req: NextRequest): Promise<NextResponse> {
-  const token = req.cookies.get("token");
+export async function GET(): Promise<NextResponse> {
+  const cookieStore = await cookies();
 
-  if (!token) {
-    return NextResponse.json(
-      { error: "Unauthorized" },
-      {
-        status: 401,
-      }
-    );
-  }
+  const token = cookieStore.get("token")?.value as string;
 
-  const decoded = decodeJwt(token.value);
+  const decoded = decodeJwt(token);
 
-  return NextResponse.json(decoded, { status: 200 });
+  const userData = await prisma.accounts.findFirst({
+    select: {
+      username: true,
+      admin: true,
+      jellydata: true,
+    },
+    where: { username: { equals: decoded.username as string } },
+  });
+
+  return NextResponse.json({ ...userData }, { status: 200 });
 }

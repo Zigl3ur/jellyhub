@@ -1,10 +1,4 @@
-import {
-  Home,
-  Search,
-  LayoutDashboard,
-  Settings,
-  LogOutIcon,
-} from "lucide-react";
+import { Home, LayoutDashboard, Settings, LogOutIcon } from "lucide-react";
 
 import {
   Sidebar,
@@ -19,17 +13,15 @@ import {
 } from "@/components/ui/sidebar";
 import Image from "next/image";
 import Link from "next/link";
+import { cookies } from "next/headers";
+import prisma from "@/lib/prisma";
+import { decodeJwt } from "jose";
 
 const items = [
   {
     title: "Home",
     url: "/",
     icon: Home,
-  },
-  {
-    title: "Search",
-    url: "/search",
-    icon: Search,
   },
   {
     title: "Dashboard",
@@ -43,7 +35,22 @@ const items = [
   },
 ];
 
-export function AppSidebar() {
+export async function AppSidebar() {
+  const cookieStore = await cookies();
+
+  const token = cookieStore.get("token")?.value as string;
+
+  const decoded = decodeJwt(token);
+
+  const userData = await prisma.accounts.findFirst({
+    select: {
+      username: true,
+      admin: true,
+      jellydata: true,
+    },
+    where: { username: { equals: decoded.username as string } },
+  });
+
   return (
     <Sidebar collapsible="icon">
       <SidebarHeader>
@@ -64,16 +71,19 @@ export function AppSidebar() {
         <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu>
-              {items.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
-                    <Link href={item.url}>
-                      <item.icon />
-                      <span>{item.title}</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
+              {items.map((item) => {
+                if (item.title === "Dashboard" && !userData?.admin) return null;
+                return (
+                  <SidebarMenuItem key={item.title}>
+                    <SidebarMenuButton asChild>
+                      <Link href={item.url}>
+                        <item.icon />
+                        <span>{item.title}</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                );
+              })}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>

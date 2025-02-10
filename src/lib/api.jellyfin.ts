@@ -9,18 +9,21 @@ export async function getToken(
   username: string,
   password: string
 ): Promise<tokenJellyfin | errorJellyfin> {
-  const response = await fetch(`${server_url}/Users/AuthenticateByName`, {
-    method: "POST",
-    body: JSON.stringify({
-      Username: username,
-      Pw: password,
-    }),
-    headers: {
-      "Content-type": "application/json",
-      "X-Emby-Authorization":
-        'MediaBrowser Client="jellyhub", Device="client", DeviceId="id87990ughfi", Version="1.0.0"',
-    },
-  });
+  const response: Response = await fetch(
+    `${server_url}/Users/AuthenticateByName`,
+    {
+      method: "POST",
+      body: JSON.stringify({
+        Username: username,
+        Pw: password,
+      }),
+      headers: {
+        "Content-type": "application/json",
+        "X-Emby-Authorization":
+          'MediaBrowser Client="jellyhub", Device="client", DeviceId="id87990ughfi", Version="1.0.0"',
+      },
+    }
+  );
 
   if (response.status === 200) {
     const data = await response.json();
@@ -46,7 +49,7 @@ export async function getLibraryItems(
   token: string,
   itemsType: string
 ): Promise<itemJellyfin[] | errorJellyfin> {
-  const response = await fetch(
+  const response: Response = await fetch(
     `${server_url}/Items?IncludeItemTypes=${itemsType}&Recursive=true`, // item types => { Movie, Series, MusicAlbum}
     {
       method: "GET",

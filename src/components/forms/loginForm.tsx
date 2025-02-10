@@ -41,7 +41,7 @@ export default function LoginForm() {
 
   async function onSubmit(values: z.infer<typeof loginSchema>) {
     try {
-      const data = await fetch("/api/auth/login", {
+      const data: Response = await fetch("/api/auth/login", {
         method: "POST",
         body: JSON.stringify({
           username: values.username,

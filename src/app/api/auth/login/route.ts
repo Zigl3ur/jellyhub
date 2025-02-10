@@ -49,6 +49,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     // JWT payload
     const payload = {
       username: userData.username,
+      admin: userData.admin,
     };
 
     // ensure oken to sign is defined
@@ -61,7 +62,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     // create the JWT
     const token = await new SignJWT(payload)
       .setProtectedHeader({ alg: "HS256" })
-      .setExpirationTime("1d")
+      .setExpirationTime("15secs")
       .sign(new TextEncoder().encode(process.env.JWT));
 
     const response = NextResponse.json(
