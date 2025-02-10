@@ -1,4 +1,10 @@
-import { Home, Search, LayoutDashboard, Settings } from "lucide-react";
+import {
+  Home,
+  Search,
+  LayoutDashboard,
+  Settings,
+  LogOutIcon,
+} from "lucide-react";
 
 import {
   Sidebar,
@@ -13,7 +19,6 @@ import {
 } from "@/components/ui/sidebar";
 import Image from "next/image";
 import Link from "next/link";
-import LogoutButton from "./buttons/logoutButton";
 
 const items = [
   {
@@ -74,7 +79,12 @@ export function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter>
-        <LogoutButton />
+        <SidebarMenuButton asChild>
+          <Link href={"/api/auth/logout"}>
+            <LogOutIcon />
+            <span>Logout</span>
+          </Link>
+        </SidebarMenuButton>
       </SidebarFooter>
     </Sidebar>
   );

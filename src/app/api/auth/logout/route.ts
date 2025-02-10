@@ -7,10 +7,13 @@ export async function GET(): Promise<NextResponse> {
   try {
     cookieStore.delete("token");
 
-    return NextResponse.json(
-      { message: "Successfully disconnected" },
-      { status: 200, headers: { "Content-Type": "application/json" } }
+    const url = new URL(
+      "/login",
+      process.env.PUBLIC_APP_URL || "http://localhost:3000"
     );
+    console.log("a");
+
+    return NextResponse.redirect(url);
   } catch (err) {
     if (err instanceof Error) {
       return NextResponse.json(
