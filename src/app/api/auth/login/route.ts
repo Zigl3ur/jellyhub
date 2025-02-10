@@ -3,9 +3,12 @@ import bcrypt from "bcrypt";
 import { SignJWT } from "jose";
 import { z } from "zod";
 import prisma from "@/lib/prisma";
+import { cookies } from "next/headers";
 
 export async function POST(req: NextRequest): Promise<NextResponse> {
   try {
+    const cookieStore = await cookies();
+
     const { username, password } = await req.json();
 
     const schema = z.object({
@@ -67,7 +70,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     );
 
     // set the JWT in the cookies
-    response.cookies.set("token", token, { httpOnly: true });
+    cookieStore.set("token", token);
     return response;
   } catch (err) {
     if (err instanceof Error)

@@ -1,5 +1,6 @@
 import { NextResponse, NextRequest } from "next/server";
 import { jwtVerify } from "jose";
+import { cookies } from "next/headers";
 
 export async function middleware(
   req: NextRequest
@@ -11,7 +12,8 @@ export async function middleware(
     currentLocation === "/api/auth/login";
 
   // get token
-  const token = req.cookies.get("token")?.value;
+  const cookieStore = await cookies();
+  const token = cookieStore.get("token")?.value;
 
   let isValidToken = false;
 
@@ -42,5 +44,5 @@ export async function middleware(
 }
 
 export const config = {
-  matcher: ["/", "/api/:path*"], // routes affected by middleware
+  matcher: ["/", "/dashboard", "/api/:path*"], // routes affected by middleware
 };

@@ -50,13 +50,21 @@ export default function LoginForm() {
       });
 
       if (data.status === 200) window.location.href = "/";
-      else
+      else if (data.status === 405)
         toast({
           variant: "destructive",
           title: "Error",
           description: "Bad Credentials",
           duration: 2500,
         });
+      else {
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "Error while contacting Server",
+          duration: 2500,
+        });
+      }
     } catch (err) {
       if (err instanceof Error) {
         toast({
