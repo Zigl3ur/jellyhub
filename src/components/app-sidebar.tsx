@@ -1,10 +1,4 @@
-import {
-  Home,
-  Search,
-  LayoutDashboard,
-  Settings,
-  LogOutIcon,
-} from "lucide-react";
+import { Home, Search, LayoutDashboard, Settings } from "lucide-react";
 
 import {
   Sidebar,
@@ -19,6 +13,7 @@ import {
 } from "@/components/ui/sidebar";
 import Image from "next/image";
 import Link from "next/link";
+import LogoutButton from "./buttons/logoutButton";
 
 const items = [
   {
@@ -52,7 +47,7 @@ export function AppSidebar() {
             <SidebarMenuButton size="lg" asChild>
               <Link href="/">
                 <div className="flex aspect-square size-8 items-center justify-center rounded-lg">
-                  <Image src={"/icon.svg"} alt="icon" width={20} height={20} />
+                  <Image src={"/icon.svg"} alt="icon" width={25} height={25} />
                 </div>
                 <span className="font-semibold text-xl">JellyHub</span>
               </Link>
@@ -67,10 +62,10 @@ export function AppSidebar() {
               {items.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
-                    <a href={item.url}>
+                    <Link href={item.url}>
                       <item.icon />
                       <span>{item.title}</span>
-                    </a>
+                    </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
@@ -79,12 +74,7 @@ export function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter>
-        <SidebarMenuButton asChild>
-          <a href="#">
-            <LogOutIcon />
-            <span>Logout</span>
-          </a>
-        </SidebarMenuButton>
+        <LogoutButton />
       </SidebarFooter>
     </Sidebar>
   );
