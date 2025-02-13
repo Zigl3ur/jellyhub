@@ -2,7 +2,7 @@ import {
   errorJellyfin,
   tokenJellyfin,
   itemJellyfin,
-} from "@/types/api.jellyfin";
+} from "@/types/jellyfin.types";
 
 export async function getToken(
   server_url: string,

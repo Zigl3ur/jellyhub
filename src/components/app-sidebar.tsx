@@ -13,9 +13,6 @@ import {
 } from "@/components/ui/sidebar";
 import Image from "next/image";
 import Link from "next/link";
-import { cookies } from "next/headers";
-import prisma from "@/lib/prisma";
-import { decodeJwt } from "jose";
 
 const items = [
   {
@@ -36,21 +33,6 @@ const items = [
 ];
 
 export async function AppSidebar() {
-  const cookieStore = await cookies();
-
-  const token = cookieStore.get("token")?.value as string;
-
-  const decoded = decodeJwt(token);
-
-  const userData = await prisma.accounts.findFirst({
-    select: {
-      username: true,
-      admin: true,
-      jellydata: true,
-    },
-    where: { username: { equals: decoded.username as string } },
-  });
-
   return (
     <Sidebar collapsible="icon">
       <SidebarHeader>
@@ -71,19 +53,16 @@ export async function AppSidebar() {
         <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu>
-              {items.map((item) => {
-                if (item.title === "Dashboard" && !userData?.admin) return null;
-                return (
-                  <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton asChild>
-                      <Link href={item.url}>
-                        <item.icon />
-                        <span>{item.title}</span>
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                );
-              })}
+              {items.map((item) => (
+                <SidebarMenuItem key={item.title}>
+                  <SidebarMenuButton asChild>
+                    <Link href={item.url}>
+                      <item.icon />
+                      <span>{item.title}</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>

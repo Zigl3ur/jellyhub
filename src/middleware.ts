@@ -1,50 +1,29 @@
 import { NextResponse, NextRequest } from "next/server";
-import { jwtVerify } from "jose";
-import { cookies } from "next/headers";
+import { getSession } from "./lib/auth";
 
-export async function middleware(
-  req: NextRequest
-): Promise<NextResponse | void> {
-  const currentLocation = req.nextUrl.pathname;
-  const isPublic =
-    currentLocation === "/login" || currentLocation === "/api/auth/login";
-  const isAdmin =
-    currentLocation === "/dashboard" || currentLocation === "/api/admin/:path*";
+const protectedRoutes = ["/dashboard", "/"];
+const adminRoutes = ["/dashboard", "/api/auth/register"];
+const publicRoutes = ["/login"];
 
-  // get token
-  const cookieStore = await cookies();
-  const token = cookieStore.get("token")?.value;
+export async function middleware(req: NextRequest): Promise<NextResponse> {
+  const path = req.nextUrl.pathname;
+  const isProtectedRoute = protectedRoutes.includes(path);
+  const isAdmin = adminRoutes.includes(path);
+  const isPublicRoute = publicRoutes.includes(path);
 
-  let isValidToken;
-  let admin;
-  // verify token
-  if (token) {
-    try {
-      const { payload } = await jwtVerify(
-        token,
-        new TextEncoder().encode(process.env.JWT)
-      );
-      const currentTime = Math.floor(Date.now() / 1000);
+  const session = await getSession();
 
-      if (payload.exp && payload.exp > currentTime) {
-        isValidToken = true;
-        admin = payload.admin;
-      }
-    } catch {
-      isValidToken = false;
-      admin = false;
-    }
+  // protected route and invalid session ?
+  if (isProtectedRoute && !session) {
+    return NextResponse.redirect(new URL("/login", req.nextUrl));
   }
 
-  // logged in and public route ? or not admin and admin route ? redirect to /
-  if ((isPublic && isValidToken) || (isAdmin && !admin)) {
+  // public route and valid session ? or admin route and not admin
+  if ((isPublicRoute && session) || (isAdmin && !session?.admin)) {
     return NextResponse.redirect(new URL("/", req.nextUrl));
   }
 
-  if (!isPublic && !isValidToken) {
-    // not logged in ? redirect to /login
-    return NextResponse.redirect(new URL("/login", req.nextUrl));
-  }
+  return NextResponse.next();
 }
 
 export const config = {
