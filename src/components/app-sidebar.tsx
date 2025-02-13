@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/sidebar";
 import Image from "next/image";
 import Link from "next/link";
+import { logout } from "@/lib/auth";
 
 const items = [
   {
@@ -31,6 +32,11 @@ const items = [
     icon: Settings,
   },
 ];
+
+async function logoutAction() {
+  "use server";
+  await logout();
+}
 
 export async function AppSidebar() {
   return (
@@ -53,27 +59,33 @@ export async function AppSidebar() {
         <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu>
-              {items.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
-                    <Link href={item.url}>
-                      <item.icon />
-                      <span>{item.title}</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
+              {items.map(
+                (
+                  item //display dashboard if admin else not
+                ) => (
+                  <SidebarMenuItem key={item.title}>
+                    <SidebarMenuButton asChild>
+                      <Link href={item.url}>
+                        <item.icon />
+                        <span>{item.title}</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                )
+              )}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter>
-        <SidebarMenuButton asChild>
-          <Link href={"/api/auth/logout"}>
-            <LogOutIcon />
-            <span>Logout</span>
-          </Link>
-        </SidebarMenuButton>
+        <SidebarMenuItem>
+          <SidebarMenuButton asChild>
+            <Link href="/login" onClick={logoutAction}>
+              <LogOutIcon />
+              <span>Logout</span>
+            </Link>
+          </SidebarMenuButton>
+        </SidebarMenuItem>
       </SidebarFooter>
     </Sidebar>
   );

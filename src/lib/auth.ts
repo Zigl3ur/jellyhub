@@ -49,4 +49,4 @@ export async function getSession(): Promise<null | JWTPayload> {
   return await decrypt(session);
 }
 
-// funct to refresh token ?
+// funct to refresh token data in middleware ?
