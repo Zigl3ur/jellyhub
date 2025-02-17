@@ -31,6 +31,7 @@ import {
 import { useState } from "react";
 import { Input } from "./ui/input";
 import { ServerDialog } from "./serverDialog";
+import { DeleteAlertDialog } from "./deleteAlert";
 
 export const columns: ColumnDef<jellyfinServer>[] = [
   {
@@ -65,51 +66,44 @@ export const columns: ColumnDef<jellyfinServer>[] = [
   },
   {
     accessorKey: "status",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Status
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      );
-    },
+    header: "Status",
   },
 ];
 
-interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[];
-  data: TData[];
+interface DataTableProps {
+  columns: ColumnDef<jellyfinServer>[];
+  data: jellyfinServer[];
   addAction: (
     data: jellyfinServerCredentials
   ) => Promise<errorJellyfin | boolean>;
-  deleteAction: () => Promise<boolean>;
+  deleteAction: (
+    data: Pick<jellyfinServer, "address" | "username">[]
+  ) => Promise<errorJellyfin | boolean>;
 }
 
-export function ServerTable<TData, TValue>({
+export function ServerTable({
   columns,
   data,
   addAction,
   deleteAction,
-}: DataTableProps<TData, TValue>) {
-  const [sorting, setSorting] = useState<SortingState>([]);
+}: DataTableProps) {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
 
   const table = useReactTable({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
-    onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     getFilteredRowModel: getFilteredRowModel(),
     getSortedRowModel: getSortedRowModel(),
     state: {
-      sorting,
       columnFilters,
     },
   });
+
+  const checkedRows = table
+    .getFilteredSelectedRowModel()
+    .rows.map((row) => row.original);
 
   return (
     <div>
@@ -174,14 +168,11 @@ export function ServerTable<TData, TValue>({
       <div className="flex items-center justify-between py-4">
         <div className="space-x-2">
           <ServerDialog addAction={addAction} />
-          <Button
-            variant="destructive"
-            size="sm"
-            onClick={async () => await deleteAction()}
-            disabled={table.getFilteredSelectedRowModel().rows.length === 0}
-          >
-            Delete
-          </Button>
+          <DeleteAlertDialog
+            disable={table.getFilteredSelectedRowModel().rows.length === 0}
+            onClick={deleteAction}
+            checkedRows={checkedRows}
+          />
         </div>
         <div className="text-sm text-muted-foreground">
           {table.getFilteredSelectedRowModel().rows.length} of{" "}

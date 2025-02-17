@@ -72,6 +72,7 @@ export function ServerDialog(dialogProps: {
       toast({
         title: "Success",
         description: "Successfully added server",
+        variant: "success",
         duration: 2500,
       });
       setOpen(false);

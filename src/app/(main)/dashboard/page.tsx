@@ -1,4 +1,3 @@
-import ServerForm from "@/components/forms/serverForm";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -6,9 +5,5 @@ export const metadata: Metadata = {
 };
 
 export default function Dashboard() {
-  return (
-    <div className="">
-      <ServerForm />
-    </div>
-  );
+  return <div className=""></div>;
 }

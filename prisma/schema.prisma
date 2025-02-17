@@ -23,5 +23,5 @@ model jellydata {
   token     String   @db.VarChar(255)
   account   accounts @relation(fields: [accountid], references: [id])
 
-  // @@unique([accountid, server])
+  @@unique([accountid, server])
 }

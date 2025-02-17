@@ -7,6 +7,7 @@ import {
   jellyfinServer,
   jellyfinServerCredentials,
 } from "@/types/jellyfin.types";
+import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -78,7 +79,12 @@ async function jellyfinServerAddAction(
     });
     return true;
   } catch (err) {
-    if (err instanceof Error)
+    if (err instanceof PrismaClientKnownRequestError)
+      return {
+        server_url: data.address,
+        error: err.code === "P2002" ? "Server already registered" : err.message,
+      };
+    else if (err instanceof Error)
       return {
         server_url: data.address,
         error: err.message,
@@ -94,11 +100,47 @@ async function jellyfinServerAddAction(
  *  Server action to delete one or more jellyfin servers of the logged user.
  * @returns jellyfin server list of the account or nothing if not authenticated
  */
-async function jellyfinServerDeleteAction(): Promise<boolean> {
+async function jellyfinServerDeleteAction(
+  data: {
+    address: string;
+    username: string;
+  }[]
+): Promise<errorJellyfin | boolean> {
   "use server";
   const auth = await getSession();
 
   if (!auth) return false;
+
+  try {
+    await prisma.accounts.update({
+      where: {
+        username: auth.username as string,
+      },
+      data: {
+        jellydata: {
+          deleteMany: {
+            OR: data.map((server) => ({
+              AND: {
+                server: server.address,
+                username: server.username,
+              },
+            })),
+          },
+        },
+      },
+    });
+    return true;
+  } catch (err) {
+    if (err instanceof Error)
+      return {
+        server_url: "none",
+        error: err.message,
+      };
+    return {
+      server_url: "none",
+      error: "An Unknow Error Occured",
+    };
+  }
 }
 
 export default async function SettingsPage() {

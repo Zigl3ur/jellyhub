@@ -65,7 +65,7 @@ export async function getLibraryItems(
 
     const listItems: itemJellyfin[] = [];
 
-    data.Items.forEach((item: any) => {
+    data.Items.forEach((item) => {
       listItems.push({
         server_url: server_url,
         item_id: item.Id,
