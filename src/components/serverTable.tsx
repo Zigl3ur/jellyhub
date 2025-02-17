@@ -24,6 +24,7 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ArrowUpDown } from "lucide-react";
 import {
+  errorJellyfin,
   jellyfinServer,
   jellyfinServerCredentials,
 } from "@/types/jellyfin.types";
@@ -81,7 +82,9 @@ export const columns: ColumnDef<jellyfinServer>[] = [
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
-  addAction: (data: jellyfinServerCredentials) => Promise<boolean>;
+  addAction: (
+    data: jellyfinServerCredentials
+  ) => Promise<errorJellyfin | boolean>;
   deleteAction: () => Promise<boolean>;
 }
 
@@ -170,7 +173,7 @@ export function ServerTable<TData, TValue>({
       </div>
       <div className="flex items-center justify-between py-4">
         <div className="space-x-2">
-          <ServerDialog />
+          <ServerDialog addAction={addAction} />
           <Button
             variant="destructive"
             size="sm"

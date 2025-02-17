@@ -19,7 +19,9 @@ model jellydata {
   id        Int      @id @default(autoincrement())
   accountid Int
   username  String   @db.VarChar(255)
-  server    String   @unique @db.VarChar(255)
+  server    String   @db.VarChar(255)
   token     String   @db.VarChar(255)
   account   accounts @relation(fields: [accountid], references: [id])
+
+  // @@unique([accountid, server])
 }

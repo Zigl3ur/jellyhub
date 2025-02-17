@@ -19,13 +19,17 @@ import { Button } from "./ui/button";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from "./ui/form";
 import { useState } from "react";
+import {
+  errorJellyfin,
+  jellyfinServerCredentials,
+} from "@/types/jellyfin.types";
+import { useToast } from "@/hooks/use-toast";
 
 const serverSchema = z.object({
   address: z.string().url({ message: "Please enter a valid URL" }),
@@ -33,8 +37,13 @@ const serverSchema = z.object({
   password: z.string().min(1, { message: "Password is required" }),
 });
 
-export function ServerDialog() {
+export function ServerDialog(dialogProps: {
+  addAction: (
+    data: jellyfinServerCredentials
+  ) => Promise<errorJellyfin | boolean>;
+}) {
   const [open, setOpen] = useState<boolean>(false);
+  const { toast } = useToast();
 
   const serverform = useForm<z.infer<typeof serverSchema>>({
     resolver: zodResolver(serverSchema),
@@ -45,9 +54,28 @@ export function ServerDialog() {
     },
   });
 
-  function onSubmit(values: z.infer<typeof serverSchema>) {
-    console.log(values);
-    setOpen(false);
+  async function onSubmit(values: z.infer<typeof serverSchema>) {
+    const result = await dialogProps.addAction({
+      address: values.address,
+      username: values.username,
+      password: values.password,
+    });
+
+    if (typeof result === "object" && "error" in result) {
+      toast({
+        title: "Error",
+        description: result.error,
+        variant: "destructive",
+        duration: 2500,
+      });
+    } else {
+      toast({
+        title: "Success",
+        description: "Successfully added server",
+        duration: 2500,
+      });
+      setOpen(false);
+    }
   }
 
   return (
@@ -57,7 +85,7 @@ export function ServerDialog() {
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Add Jellyfin Server</DialogTitle>
+          <DialogTitle>Add a Jellyfin Server</DialogTitle>
           <DialogDescription>
             Add a Jellyfin server to index media from it
           </DialogDescription>
@@ -79,9 +107,6 @@ export function ServerDialog() {
                       {...field}
                     />
                   </FormControl>
-                  <FormDescription>
-                    Enter the URL of your Jellyfin server
-                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}

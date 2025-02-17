@@ -3,6 +3,7 @@ import { getToken } from "@/lib/api.jellyfin";
 import { getSession } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import {
+  errorJellyfin,
   jellyfinServer,
   jellyfinServerCredentials,
 } from "@/types/jellyfin.types";
@@ -35,7 +36,7 @@ async function jellyfinServerListAction(): Promise<void | jellyfinServer[]> {
     returnList.push({
       address: server.server,
       username: server.username,
-      status: Math.random() ? true : false,
+      status: true, //TODO: check con to server
     });
   });
 
@@ -43,12 +44,12 @@ async function jellyfinServerListAction(): Promise<void | jellyfinServer[]> {
 }
 
 /**
- *  Server action to add a jellyfin servers of the logged user.
+ *  Server action to add a jellyfin server of the logged user.
  * @returns jellyfin server list of the account or nothing if not authenticated
  */
 async function jellyfinServerAddAction(
   data: jellyfinServerCredentials
-): Promise<boolean> {
+): Promise<errorJellyfin | boolean> {
   "use server";
   const auth = await getSession();
 
@@ -56,24 +57,37 @@ async function jellyfinServerAddAction(
 
   const creds = await getToken(data.address, data.username, data.password);
 
-  if ("error" in creds) return false;
+  if ("error" in creds) {
+    return creds;
+  }
 
-  await prisma.accounts.update({
-    where: {
-      username: auth.username as string,
-    },
-    data: {
-      jellydata: {
-        create: {
-          username: data.username,
-          server: data.address,
-          token: creds.token,
+  try {
+    await prisma.accounts.update({
+      where: {
+        username: auth.username as string,
+      },
+      data: {
+        jellydata: {
+          create: {
+            username: data.username,
+            server: creds.server_url,
+            token: creds.token,
+          },
         },
       },
-    },
-  });
-
-  return true;
+    });
+    return true;
+  } catch (err) {
+    if (err instanceof Error)
+      return {
+        server_url: data.address,
+        error: err.message,
+      };
+    return {
+      server_url: data.address,
+      error: "An Unknow Error Occured",
+    };
+  }
 }
 
 /**

@@ -9,9 +9,8 @@ export async function getToken(
   username: string,
   password: string
 ): Promise<tokenJellyfin | errorJellyfin> {
-  const response: Response = await fetch(
-    `${server_url}/Users/AuthenticateByName`,
-    {
+  try {
+    const response = await fetch(`${server_url}/Users/AuthenticateByName`, {
       method: "POST",
       body: JSON.stringify({
         Username: username,
@@ -22,27 +21,27 @@ export async function getToken(
         "X-Emby-Authorization":
           'MediaBrowser Client="jellyhub", Device="client", DeviceId="id87990ughfi", Version="1.0.0"',
       },
+    });
+    if (response.status === 200) {
+      const data = await response.json();
+      return {
+        server_url: server_url,
+        serverId: data.ServerId,
+        accountId: data.Id,
+        token: data.AccessToken,
+      };
+    } else if (response.status === 401) {
+      return {
+        server_url: server_url,
+        error: "Authentication failed, check your credentials",
+      };
     }
-  );
-
-  if (response.status === 200) {
-    const data = await response.json();
+  } catch {
     return {
       server_url: server_url,
-      serverId: data.ServerId,
-      accountId: data.Id,
-      token: data.AccessToken,
-    };
-  } else if (response.status === 401) {
-    return {
-      server_url: server_url,
-      error: "Authentication failed",
+      error: "An Error Occured, check your URL / credentials",
     };
   }
-  return {
-    server_url: server_url,
-    error: "An Error Occured",
-  };
 }
 
 export async function getLibraryItems(
