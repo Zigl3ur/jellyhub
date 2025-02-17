@@ -1,6 +1,10 @@
 import { cookies } from "next/headers";
 
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import {
+  SidebarInset,
+  SidebarProvider,
+  SidebarTrigger,
+} from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
 
 export default async function MainLayout({
@@ -15,10 +19,12 @@ export default async function MainLayout({
     <div>
       <SidebarProvider defaultOpen={defaultOpen}>
         <AppSidebar />
-        <main>
-          <SidebarTrigger className="m-2" />
-          {children}
-        </main>
+        <SidebarInset className="bg-gradient">
+          <main>
+            <SidebarTrigger className="m-2" />
+            {children}
+          </main>
+        </SidebarInset>
       </SidebarProvider>
     </div>
   );

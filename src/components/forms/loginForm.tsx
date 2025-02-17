@@ -18,14 +18,17 @@ import { useToast } from "@/hooks/use-toast";
 import Logo from "../logo";
 import { loginSchema } from "@/schemas/auth.schema";
 import { useRouter } from "next/navigation";
+import { loginActionType } from "@/types/auth.types";
+import { Eye, EyeClosed } from "lucide-react";
+import { useState } from "react";
 
 export default function LoginForm(loginProps: {
-  onSubmit: (
-    values: z.infer<typeof loginSchema>
-  ) => Promise<{ state: boolean; desc: string; href: string }>;
+  onSubmit: (values: z.infer<typeof loginSchema>) => Promise<loginActionType>;
 }) {
   const { toast } = useToast();
   const router = useRouter();
+
+  const [showPassword, setShowPassword] = useState<boolean>(false);
 
   const loginForm = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
@@ -78,11 +81,21 @@ export default function LoginForm(loginProps: {
               <FormItem>
                 <FormLabel>Password</FormLabel>
                 <FormControl>
-                  <Input
-                    type="password"
-                    placeholder="Your secret pasword"
-                    {...field}
-                  />
+                  <div className="relative">
+                    <Input
+                      type={showPassword ? "text" : "password"}
+                      placeholder="Your secret password"
+                      {...field}
+                    />
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      className="absolute right-0 top-0 h-full px-3 hover:bg-transparent"
+                      onClick={() => setShowPassword(!showPassword)}
+                    >
+                      {!showPassword ? <EyeClosed /> : <Eye />}
+                    </Button>
+                  </div>
                 </FormControl>
                 <FormMessage />
               </FormItem>

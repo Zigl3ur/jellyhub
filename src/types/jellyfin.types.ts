@@ -16,3 +16,9 @@ export type itemJellyfin = {
   item_type: string;
   item_image: string;
 };
+
+export type jellyfinServer = {
+  address: string;
+  username: string;
+  status: boolean;
+};

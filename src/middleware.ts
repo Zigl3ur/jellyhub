@@ -27,5 +27,5 @@ export async function middleware(req: NextRequest): Promise<NextResponse> {
 }
 
 export const config = {
-  matcher: ["/", "/dashboard", "/api/:path*"], // routes affected by middleware
+  matcher: ["/", "/login", "/dashboard", "/api/:path*"], // routes affected by middleware
 };

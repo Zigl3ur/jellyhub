@@ -3,3 +3,5 @@ export type payloadType = {
   admin: boolean;
   expires: Date;
 };
+
+export type loginActionType = { state: boolean; desc: string; href: string };

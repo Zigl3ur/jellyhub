@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/sidebar";
 import Image from "next/image";
 import Link from "next/link";
-import { logout } from "@/lib/auth";
+import { getSession, logout } from "@/lib/auth";
 
 const items = [
   {
@@ -33,9 +33,18 @@ const items = [
   },
 ];
 
-async function logoutAction() {
+async function logoutAction(): Promise<void> {
   "use server";
   await logout();
+}
+
+async function getAdminStatus(): Promise<boolean | void> {
+  "use server";
+  const session = await getSession();
+
+  if (!session) return;
+
+  return session.admin as boolean;
 }
 
 export async function AppSidebar() {
@@ -59,10 +68,11 @@ export async function AppSidebar() {
         <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu>
-              {items.map(
-                (
-                  item //display dashboard if admin else not
-                ) => (
+              {items.map(async (item) => {
+                if (item.title === "Dashboard" && !(await getAdminStatus())) {
+                  return null;
+                }
+                return (
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton asChild>
                       <Link href={item.url}>
@@ -71,8 +81,8 @@ export async function AppSidebar() {
                       </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
-                )
-              )}
+                );
+              })}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>

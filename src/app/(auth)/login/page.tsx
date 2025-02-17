@@ -5,7 +5,7 @@ import { loginSchema } from "@/schemas/auth.schema";
 import { Metadata } from "next";
 import { z } from "zod";
 import bcrypt from "bcrypt";
-import { payloadType } from "@/types/auth.types";
+import { loginActionType, payloadType } from "@/types/auth.types";
 import { cookies } from "next/headers";
 
 export const metadata: Metadata = {
@@ -14,7 +14,7 @@ export const metadata: Metadata = {
 
 async function loginAction(
   values: z.infer<typeof loginSchema>
-): Promise<{ state: boolean; desc: string; href: string }> {
+): Promise<loginActionType> {
   "use server";
 
   try {
