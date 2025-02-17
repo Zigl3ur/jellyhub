@@ -74,7 +74,7 @@ interface DataTableProps {
     data: jellyfinServerCredentials
   ) => Promise<errorJellyfin | boolean>;
   deleteAction: (
-    data: Pick<jellyfinServer, "address" | "username">[]
+    data: Omit<jellyfinServer, "status">[]
   ) => Promise<errorJellyfin | boolean>;
 }
 
@@ -98,6 +98,7 @@ export function ServerTable({
     },
   });
 
+  // when going back after logout, throw an error here
   const checkedRows = table
     .getFilteredSelectedRowModel()
     .rows.map((row) => row.original);

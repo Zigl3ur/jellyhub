@@ -9,10 +9,16 @@ import {
 } from "@/types/jellyfin.types";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 import { Metadata } from "next";
+import { revalidatePath } from "next/cache";
 
 export const metadata: Metadata = {
   title: "JellyHub - Settings",
 };
+
+async function refreshData() {
+  "use server";
+  revalidatePath("/settings");
+}
 
 /**
  *  Server action to get the list of the jellyfin servers of the logged user.
@@ -77,6 +83,8 @@ async function jellyfinServerAddAction(
         },
       },
     });
+
+    await refreshData();
     return true;
   } catch (err) {
     if (err instanceof PrismaClientKnownRequestError)
@@ -129,6 +137,7 @@ async function jellyfinServerDeleteAction(
         },
       },
     });
+    await refreshData();
     return true;
   } catch (err) {
     if (err instanceof Error)

@@ -151,7 +151,7 @@ export function ServerDialog(dialogProps: {
                   Cancel
                 </Button>
               </DialogClose>
-              <Button type="submit">
+              <Button type="submit" variant={"create"}>
                 {loading && <LoaderCircle className="animate-spin" />}Add Server
               </Button>
             </DialogFooter>

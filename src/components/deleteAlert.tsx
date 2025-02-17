@@ -66,7 +66,7 @@ export function DeleteAlertDialog(deleteProps: {
                   toast({
                     title: "Success",
                     description: `Successfully deleted ${deleteProps.checkedRows.length} server(s)`,
-                    variant: "destructive",
+                    variant: "success",
                     duration: 2500,
                   });
                 }

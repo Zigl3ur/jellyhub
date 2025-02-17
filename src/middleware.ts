@@ -1,7 +1,7 @@
 import { NextResponse, NextRequest } from "next/server";
 import { getSession } from "./lib/auth";
 
-const protectedRoutes = ["/dashboard", "/"];
+const protectedRoutes = ["/dashboard", "/", "/settings"];
 const adminRoutes = ["/dashboard", "/api/auth/register"];
 const publicRoutes = ["/login"];
 
@@ -27,5 +27,5 @@ export async function middleware(req: NextRequest): Promise<NextResponse> {
 }
 
 export const config = {
-  matcher: ["/", "/login", "/dashboard", "/api/:path*"], // routes affected by middleware
+  matcher: ["/", "/login", "/dashboard", "/settings", "/api/:path*"], // routes affected by middleware
 };
