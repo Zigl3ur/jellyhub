@@ -30,6 +30,7 @@ import {
   jellyfinServerCredentials,
 } from "@/types/jellyfin.types";
 import { useToast } from "@/hooks/use-toast";
+import { LoaderCircle } from "lucide-react";
 
 const serverSchema = z.object({
   address: z.string().url({ message: "Please enter a valid URL" }),
@@ -43,6 +44,7 @@ export function ServerDialog(dialogProps: {
   ) => Promise<errorJellyfin | boolean>;
 }) {
   const [open, setOpen] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
   const { toast } = useToast();
 
   const serverform = useForm<z.infer<typeof serverSchema>>({
@@ -55,28 +57,33 @@ export function ServerDialog(dialogProps: {
   });
 
   async function onSubmit(values: z.infer<typeof serverSchema>) {
-    const result = await dialogProps.addAction({
-      address: values.address,
-      username: values.username,
-      password: values.password,
-    });
-
-    if (typeof result === "object" && "error" in result) {
-      toast({
-        title: "Error",
-        description: result.error,
-        variant: "destructive",
-        duration: 2500,
+    setLoading(true);
+    await dialogProps
+      .addAction({
+        address: values.address,
+        username: values.username,
+        password: values.password,
+      })
+      .then((result) => {
+        if (typeof result === "object" && "error" in result) {
+          setLoading(false);
+          toast({
+            title: "Error",
+            description: result.error,
+            variant: "destructive",
+            duration: 2500,
+          });
+        } else {
+          setLoading(false);
+          toast({
+            title: "Success",
+            description: "Successfully added server",
+            variant: "success",
+            duration: 2500,
+          });
+          setOpen(false);
+        }
       });
-    } else {
-      toast({
-        title: "Success",
-        description: "Successfully added server",
-        variant: "success",
-        duration: 2500,
-      });
-      setOpen(false);
-    }
   }
 
   return (
@@ -144,7 +151,9 @@ export function ServerDialog(dialogProps: {
                   Cancel
                 </Button>
               </DialogClose>
-              <Button type="submit">Add Server</Button>
+              <Button type="submit">
+                {loading && <LoaderCircle className="animate-spin" />}Add Server
+              </Button>
             </DialogFooter>
           </form>
         </Form>

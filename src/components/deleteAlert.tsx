@@ -9,7 +9,9 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
 import { errorJellyfin } from "@/types/jellyfin.types";
+import { LoaderCircle } from "lucide-react";
 import { useState } from "react";
 
 export function DeleteAlertDialog(deleteProps: {
@@ -26,6 +28,8 @@ export function DeleteAlertDialog(deleteProps: {
   ) => Promise<errorJellyfin | boolean>;
 }) {
   const [open, setOpen] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
+  const { toast } = useToast();
 
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
@@ -46,10 +50,30 @@ export function DeleteAlertDialog(deleteProps: {
           <Button
             variant={"destructive"}
             onClick={() => {
-              deleteProps.onClick(deleteProps.checkedRows);
-              setOpen(false);
+              setLoading(true);
+              deleteProps.onClick(deleteProps.checkedRows).then((result) => {
+                if (typeof result === "object" && "error" in result) {
+                  setLoading(false);
+                  toast({
+                    title: "Error",
+                    description: result.error,
+                    variant: "destructive",
+                    duration: 2500,
+                  });
+                } else {
+                  setLoading(false);
+                  setOpen(false);
+                  toast({
+                    title: "Success",
+                    description: `Successfully deleted ${deleteProps.checkedRows.length} server(s)`,
+                    variant: "destructive",
+                    duration: 2500,
+                  });
+                }
+              });
             }}
           >
+            {loading && <LoaderCircle className="animate-spin" />}
             Remove
           </Button>
         </AlertDialogFooter>
