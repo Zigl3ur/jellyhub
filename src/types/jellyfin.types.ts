@@ -1,6 +1,7 @@
 export type tokenJellyfin = {
   server_url: string;
   serverId: string;
+  accountId: string;
   token: string;
 };
 
@@ -21,4 +22,10 @@ export type jellyfinServer = {
   address: string;
   username: string;
   status: boolean;
+};
+
+export type jellyfinServerCredentials = {
+  address: string;
+  username: string;
+  password: string;
 };

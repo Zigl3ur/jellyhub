@@ -30,6 +30,7 @@ export async function getToken(
     return {
       server_url: server_url,
       serverId: data.ServerId,
+      accountId: data.Id,
       token: data.AccessToken,
     };
   } else if (response.status === 401) {
