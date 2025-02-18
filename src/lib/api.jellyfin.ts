@@ -9,38 +9,55 @@ export async function getToken(
   username: string,
   password: string
 ): Promise<tokenJellyfin | errorJellyfin> {
-  try {
-    const response = await fetch(`${server_url}/Users/AuthenticateByName`, {
-      method: "POST",
-      body: JSON.stringify({
-        Username: username,
-        Pw: password,
-      }),
-      headers: {
-        "Content-type": "application/json",
-        "X-Emby-Authorization":
-          'MediaBrowser Client="jellyhub", Device="client", DeviceId="id87990ughfi", Version="1.0.0"',
-      },
-    });
-    if (response.status === 200) {
-      const data = await response.json();
-      return {
-        server_url: server_url,
-        serverId: data.ServerId,
-        accountId: data.Id,
-        token: data.AccessToken,
-      };
-    } else if (response.status === 401) {
-      return {
-        server_url: server_url,
-        error: "Authentication failed, check your credentials",
-      };
-    }
-  } catch {
+  const response = await fetch(`${server_url}/Users/AuthenticateByName`, {
+    // set timeout / race to wait less when server not reachable
+    method: "POST",
+    body: JSON.stringify({
+      Username: username,
+      Pw: password,
+    }),
+    headers: {
+      "Content-type": "application/json",
+      "X-Emby-Authorization":
+        'MediaBrowser Client="jellyhub", Device="client", DeviceId="id87990ughfi", Version="1.0.0"',
+    },
+  });
+  if (response.status === 200) {
+    const data = await response.json();
+    return {
+      server_url: server_url,
+      serverId: data.ServerId,
+      accountId: data.Id,
+      token: data.AccessToken,
+    };
+  } else if (response.status === 401) {
+    return {
+      server_url: server_url,
+      error: "Authentication failed, check your credentials",
+    };
+  } else {
     return {
       server_url: server_url,
       error: "An Error Occured, check your URL / credentials",
     };
+  }
+}
+
+export async function checkConn(
+  server_url: string,
+  token: string
+): Promise<"Up" | "Down"> {
+  try {
+    const response = await fetch(`${server_url}/Users/Me`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Emby-Authorization": `MediaBrowser Token=${token}`,
+      },
+    });
+    return response.status === 200 ? "Up" : "Down";
+  } catch {
+    return "Down";
   }
 }
 
@@ -55,7 +72,7 @@ export async function getLibraryItems(
       method: "GET",
       headers: {
         "Content-type": "application/json",
-        Authorization: `MediaBrowser Token=${token}`,
+        "X-Emby-Authorization": `MediaBrowser Token=${token}`,
       },
     }
   );

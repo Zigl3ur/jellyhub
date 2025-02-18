@@ -21,7 +21,8 @@ export type itemJellyfin = {
 export type jellyfinServer = {
   address: string;
   username: string;
-  status: boolean;
+  token: string;
+  status: "Checking" | "Up" | "Down";
 };
 
 export type jellyfinServerCredentials = {

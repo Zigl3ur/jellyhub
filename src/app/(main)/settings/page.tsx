@@ -43,7 +43,8 @@ async function jellyfinServerListAction(): Promise<void | jellyfinServer[]> {
     returnList.push({
       address: server.server,
       username: server.username,
-      status: true, //TODO: check con to server
+      token: server.token,
+      status: "Checking",
     });
   });
 
@@ -159,7 +160,7 @@ export default async function SettingsPage() {
     <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
       <ServerTable
         columns={columns}
-        data={data as jellyfinServer[]}
+        baseData={data as jellyfinServer[]}
         addAction={jellyfinServerAddAction}
         deleteAction={jellyfinServerDeleteAction}
       />

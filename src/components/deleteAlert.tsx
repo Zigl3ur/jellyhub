@@ -42,7 +42,7 @@ export function DeleteAlertDialog(deleteProps: {
         <AlertDialogHeader>
           <AlertDialogTitle>Are you sure?</AlertDialogTitle>
           <AlertDialogDescription>
-            This will remove the selected servers from the list
+            This will remove the selected server(s) from the list
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>

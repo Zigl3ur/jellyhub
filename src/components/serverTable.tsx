@@ -25,10 +25,12 @@ import {
   jellyfinServer,
   jellyfinServerCredentials,
 } from "@/types/jellyfin.types";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Input } from "./ui/input";
 import { ServerDialog } from "./serverDialog";
 import { DeleteAlertDialog } from "./deleteAlert";
+import { LoaderCircle, Wifi, WifiOff } from "lucide-react";
+import { checkConn } from "@/lib/api.jellyfin";
 
 export const columns: ColumnDef<jellyfinServer>[] = [
   {
@@ -64,30 +66,72 @@ export const columns: ColumnDef<jellyfinServer>[] = [
   {
     accessorKey: "status",
     header: "Status",
+    cell: ({ row }) => {
+      const status = row.getValue("status") as "Up" | "Down" | "Checking";
+      return (
+        <div className="flex items-center">
+          {status === "Up" && <Wifi className="w-4 h-4 text-green-500 mr-2" />}
+          {status === "Down" && (
+            <WifiOff className="w-4 h-4 text-red-500 mr-2" />
+          )}
+          {status === "Checking" && (
+            <LoaderCircle className="w-4 h-4 text-yellow-500 mr-2 animate-spin" />
+          )}
+          {status}
+        </div>
+      );
+    },
   },
 ];
 
 interface DataTableProps {
   columns: ColumnDef<jellyfinServer>[];
-  data: jellyfinServer[];
+  baseData: jellyfinServer[];
   addAction: (
     data: jellyfinServerCredentials
   ) => Promise<errorJellyfin | boolean>;
   deleteAction: (
-    data: Omit<jellyfinServer, "status">[]
+    data: Omit<Omit<jellyfinServer, "status">, "token">[]
   ) => Promise<errorJellyfin | boolean>;
 }
 
 export function ServerTable({
   columns,
-  data,
+  baseData,
   addAction,
   deleteAction,
 }: DataTableProps) {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [data, setData] = useState<jellyfinServer[]>(baseData);
+
+  // check status every 30s and when data updates
+  useEffect(() => {
+    async function checkServerStatus() {
+      const updatedData = [...data];
+      for (const server of updatedData) {
+        const serverStatus = await checkConn(server.address, server.token); // token is send to client maybe not the best idea
+
+        if (server.status !== serverStatus) {
+          server.status = serverStatus;
+          setData([...updatedData]);
+        }
+      }
+    }
+
+    checkServerStatus();
+    const interval = setInterval(() => {
+      checkServerStatus();
+    }, 30000);
+    return () => clearInterval(interval);
+  }, [data]);
+
+  // update table data
+  useEffect(() => {
+    setData(baseData);
+  }, [baseData]);
 
   const table = useReactTable({
-    data,
+    data: data,
     columns,
     getCoreRowModel: getCoreRowModel(),
     onColumnFiltersChange: setColumnFilters,
@@ -98,7 +142,6 @@ export function ServerTable({
     },
   });
 
-  // when going back after logout, throw an error here
   const checkedRows = table
     .getFilteredSelectedRowModel()
     .rows.map((row) => row.original);
