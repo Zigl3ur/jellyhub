@@ -30,3 +30,14 @@ export type jellyfinServerCredentials = {
   username: string;
   password: string;
 };
+
+type Stats = {
+  title: string;
+  count: number;
+  icon: React.ReactNode;
+};
+
+export type jellyfinStats = {
+  isLoading: boolean;
+  globalStats: Stats[];
+};

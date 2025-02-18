@@ -58,10 +58,32 @@ export const columns: ColumnDef<jellyfinServer>[] = [
   {
     accessorKey: "address",
     header: "Address",
+    cell: ({ row }) => {
+      const address = row.getValue("address") as string;
+      return (
+        <div
+          className="w-[80px] sm:w-[150px] md:w-[200px] truncate"
+          title={address}
+        >
+          {address}
+        </div>
+      );
+    },
   },
   {
     accessorKey: "username",
     header: "Username",
+    cell: ({ row }) => {
+      const username = row.getValue("username") as string;
+      return (
+        <div
+          className="w-[80px] sm:w-[150px] md:w-[200px] truncate"
+          title={username}
+        >
+          {username}
+        </div>
+      );
+    },
   },
   {
     accessorKey: "status",
