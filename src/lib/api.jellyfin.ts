@@ -2,7 +2,10 @@ import {
   errorJellyfin,
   tokenJellyfin,
   itemJellyfin,
+  jellyfinServer,
 } from "@/types/jellyfin.types";
+import { jellydata } from "@prisma/client";
+import { object } from "zod";
 
 export async function getToken(
   server_url: string,
@@ -90,7 +93,7 @@ export async function getLibraryItems(
         item_type: item.Type,
         item_image:
           item.ImageTags.Primary === undefined
-            ? "/icon.png"
+            ? "/default.png"
             : `${server_url}/Items/${item.Id}/Images/Primary?tag=${item.ImageTags.Primary}`,
       });
     });
@@ -106,4 +109,45 @@ export async function getLibraryItems(
     server_url: server_url,
     error: "An Error Occured",
   };
+}
+
+async function getAllItems(
+  server_url: string,
+  token: string
+): Promise<{
+  movies: errorJellyfin | itemJellyfin[];
+  shows: errorJellyfin | itemJellyfin[];
+  musicAlbum: errorJellyfin | itemJellyfin[];
+}> {
+  const [movies, shows, musicAlbums] = await Promise.all([
+    getLibraryItems(server_url, token, "Movie"),
+    getLibraryItems(server_url, token, "Series"),
+    getLibraryItems(server_url, token, "MusicAlbum"),
+  ]);
+
+  const list = {
+    movies: movies,
+    shows: shows,
+    musicAlbum: musicAlbums,
+  };
+
+  return list;
+}
+
+async function getAllServerItems(
+  serverList: Omit<Omit<jellyfinServer, "status">, "username">[]
+) {
+  const listAll = await Promise.all(
+    serverList.map(async (server) => {
+      return await getAllItems(server.address, server.token);
+    })
+  );
+
+  const returnList = {
+    movies: listAll.map((server) => server.movies),
+    shows: listAll.map((server) => server.shows),
+    musicAlbum: listAll.map((server) => server.musicAlbum),
+  };
+
+  return returnList;
 }

@@ -1,5 +1,7 @@
 import ItemCard from "@/components/itemCard";
 import ServerStats from "@/components/serversStats";
+import { getSession } from "@/lib/auth";
+import prisma from "@/lib/prisma";
 import { jellyfinStats } from "@/types/jellyfin.types";
 import { Film, Music, Server, Tv } from "lucide-react";
 import { Metadata } from "next";
@@ -7,6 +9,22 @@ import { Metadata } from "next";
 export const metadata: Metadata = {
   title: "JellyHub - Home",
 };
+
+async function getAllItemsAction() {
+  "use server";
+  const session = await getSession();
+
+  if (!session) return;
+
+  const itemsList = await prisma.accounts.findFirst({
+    where: {
+      username: session.username as string,
+    },
+    select: {
+      jellydata: true,
+    },
+  });
+}
 
 export default function Home() {
   const data: jellyfinStats = {

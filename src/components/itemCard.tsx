@@ -32,7 +32,7 @@ export default function ItemCard(cardProps: {
       <CardContent className="p-4">
         <Link href={cardProps.href}>
           <Image
-            className="rounded-sm hover:scale-105 transition-transform"
+            className="items-center rounded-sm hover:scale-105 transition-transform"
             src={
               "https://jellyfin.zakarum.xyz/Items/74fbfb2ef85e2af796a84f951af08b88/Images/Primary?tag=cb0912fc5e6dc3a27cc2c591c9efcb79"
             }

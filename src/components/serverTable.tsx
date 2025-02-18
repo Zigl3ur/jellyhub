@@ -65,7 +65,7 @@ export const columns: ColumnDef<jellyfinServer>[] = [
           className="w-[80px] sm:w-[150px] md:w-[200px] truncate"
           title={address}
         >
-          {address}
+          {address.split("//")[1]}
         </div>
       );
     },
@@ -228,8 +228,8 @@ export function ServerTable({
           </TableBody>
         </Table>
       </div>
-      <div className="flex items-center justify-between py-4">
-        <div className="space-x-2">
+      <div className="flex items-center justify-between">
+        <div className="space-y-2">
           <ServerDialog addAction={addAction} />
           <DeleteAlertDialog
             disable={table.getFilteredSelectedRowModel().rows.length === 0}
@@ -237,7 +237,7 @@ export function ServerTable({
             checkedRows={checkedRows}
           />
         </div>
-        <div className="text-sm text-muted-foreground">
+        <div className="text-sm text-muted-foreground py-2">
           {table.getFilteredSelectedRowModel().rows.length} of{" "}
           {table.getFilteredRowModel().rows.length} server(s) selected.
         </div>

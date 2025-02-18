@@ -89,7 +89,9 @@ export function ServerDialog(dialogProps: {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline">Add Server</Button>
+        <Button variant="outline" className="mt-2 mr-2">
+          Add Server
+        </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
