@@ -4,8 +4,6 @@ import {
   itemJellyfin,
   jellyfinServer,
 } from "@/types/jellyfin.types";
-import { jellydata } from "@prisma/client";
-import { object } from "zod";
 
 export async function getToken(
   server_url: string,
@@ -87,7 +85,7 @@ export async function getLibraryItems(
 
     data.Items.forEach((item) => {
       listItems.push({
-        server_url: server_url,
+        server_url: [server_url],
         item_id: item.Id,
         item_name: item.Name,
         item_type: item.Type,
@@ -134,7 +132,7 @@ async function getAllItems(
   return list;
 }
 
-async function getAllServerItems(
+export async function getAllServerItems(
   serverList: Omit<Omit<jellyfinServer, "status">, "username">[]
 ) {
   const listAll = await Promise.all(
@@ -144,9 +142,44 @@ async function getAllServerItems(
   );
 
   const returnList = {
-    movies: listAll.map((server) => server.movies),
-    shows: listAll.map((server) => server.shows),
-    musicAlbum: listAll.map((server) => server.musicAlbum),
+    movies: listAll.reduce((acc, server) => {
+      if (!Array.isArray(server.movies)) return acc;
+      server.movies.forEach((movie) => {
+        const existing = acc.find((item) => item.item_id === movie.item_id);
+        if (existing) {
+          existing.server_url.push(movie.server_url[0]);
+        } else {
+          acc.push(movie);
+        }
+      });
+      return acc;
+    }, [] as itemJellyfin[]),
+
+    shows: listAll.reduce((acc, server) => {
+      if (!Array.isArray(server.shows)) return acc;
+      server.shows.forEach((show) => {
+        const existing = acc.find((item) => item.item_id === show.item_id);
+        if (existing) {
+          existing.server_url.push(show.server_url[0]);
+        } else {
+          acc.push(show);
+        }
+      });
+      return acc;
+    }, [] as itemJellyfin[]),
+
+    musicAlbum: listAll.reduce((acc, server) => {
+      if (!Array.isArray(server.musicAlbum)) return acc;
+      server.musicAlbum.forEach((album) => {
+        const existing = acc.find((item) => item.item_id === album.item_id);
+        if (existing) {
+          existing.server_url.push(album.server_url[0]);
+        } else {
+          acc.push(album);
+        }
+      });
+      return acc;
+    }, [] as itemJellyfin[]),
   };
 
   return returnList;

@@ -11,7 +11,7 @@ export type errorJellyfin = {
 };
 
 export type itemJellyfin = {
-  server_url: string;
+  server_url: string[];
   item_id: string;
   item_name: string;
   item_type: string;
