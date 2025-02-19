@@ -3,8 +3,16 @@ import {
   tokenJellyfin,
   itemJellyfin,
   jellyfinServer,
+  AllItemsType,
 } from "@/types/jellyfin.types";
 
+/**
+ * Function to get the auth token from a jellyfin server
+ * @param server_url the server to query
+ * @param username the account username to login
+ * @param password the account password to login
+ * @returns an error or the object with associated data
+ */
 export async function getToken(
   server_url: string,
   username: string,
@@ -44,6 +52,12 @@ export async function getToken(
   }
 }
 
+/**
+ * Function to check if the given token is still valid
+ * @param server_url the server to query
+ * @param token token to check
+ * @returns "Up" if token is still valid or "Down" if response is not 200
+ */
 export async function checkConn(
   server_url: string,
   token: string
@@ -62,13 +76,20 @@ export async function checkConn(
   }
 }
 
+/**
+ * Function to get specific items types (Movie, Series, MusicAlbum) from a server
+ * @param server_url the server to query
+ * @param token the auth token
+ * @param itemsType the type of items to retrive (Movie, Series, MusicAlbum)
+ * @returns an error or an array of the items
+ */
 export async function getLibraryItems(
   server_url: string,
   token: string,
   itemsType: string
 ): Promise<itemJellyfin[] | errorJellyfin> {
   const response: Response = await fetch(
-    `${server_url}/Items?IncludeItemTypes=${itemsType}&Recursive=true`, // item types => { Movie, Series, MusicAlbum}
+    `${server_url}/Items?IncludeItemTypes=${itemsType}&Recursive=true`,
     {
       method: "GET",
       headers: {
@@ -83,18 +104,24 @@ export async function getLibraryItems(
 
     const listItems: itemJellyfin[] = [];
 
-    data.Items.forEach((item) => {
-      listItems.push({
-        server_url: [server_url],
-        item_id: item.Id,
-        item_name: item.Name,
-        item_type: item.Type,
-        item_image:
-          item.ImageTags.Primary === undefined
-            ? "/default.png"
-            : `${server_url}/Items/${item.Id}/Images/Primary?tag=${item.ImageTags.Primary}`,
-      });
-    });
+    data.Items.forEach(
+      (item: {
+        Name: string;
+        Type: string;
+        Id: string;
+        ImageTags: { Primary?: string };
+      }) => {
+        listItems.push({
+          server_url: [server_url],
+          item_name: item.Name,
+          item_type: item.Type,
+          item_image:
+            item.ImageTags.Primary === undefined
+              ? "/default.svg"
+              : `${server_url}/Items/${item.Id}/Images/Primary?tag=${item.ImageTags.Primary}`,
+        });
+      }
+    );
 
     return listItems;
   } else if (response.status === 401) {
@@ -109,14 +136,16 @@ export async function getLibraryItems(
   };
 }
 
+/**
+ * Function to get all items of a server (Movie, Series and MusicAlbum)
+ * @param server_url the server to query
+ * @param token the auth token
+ * @returns an error or an object with an array for each types
+ */
 async function getAllItems(
   server_url: string,
   token: string
-): Promise<{
-  movies: errorJellyfin | itemJellyfin[];
-  shows: errorJellyfin | itemJellyfin[];
-  musicAlbum: errorJellyfin | itemJellyfin[];
-}> {
+): Promise<AllItemsType> {
   const [movies, shows, musicAlbums] = await Promise.all([
     getLibraryItems(server_url, token, "Movie"),
     getLibraryItems(server_url, token, "Series"),
@@ -132,6 +161,57 @@ async function getAllItems(
   return list;
 }
 
+/**
+ * Function to remove duplicate item on the given list and add server url of the deleted one to the original one
+ * @param list list of item to remove duplicate and add server url to original one item
+ * @returns the list with no more duplicate
+ */
+function reduceArray(list: itemJellyfin[]): itemJellyfin[] {
+  const uniqueList = list.reduce(
+    (acc: itemJellyfin[], current: itemJellyfin) => {
+      const existingItem = acc.find(
+        (item) => item.item_name === current.item_name
+      );
+      if (existingItem) {
+        existingItem.server_url = [
+          ...existingItem.server_url,
+          ...current.server_url,
+        ];
+        return acc;
+      }
+      return [...acc, current];
+    },
+    []
+  );
+  return uniqueList;
+}
+
+/**
+ * Function to remove duplicate items throught different items from servers
+ * @param list list of items from different server
+ * @returns all items ordered by category with no duplicate
+ */
+function filterDuplicateItems(list: AllItemsType[]): AllItemsType {
+  const allMovies = list.flatMap((server) => server.movies as itemJellyfin[]);
+  const allShows = list.flatMap((server) => server.shows as itemJellyfin[]);
+  const allMusic = list.flatMap(
+    (server) => server.musicAlbum as itemJellyfin[]
+  );
+
+  const filteredList: AllItemsType = {
+    movies: reduceArray(allMovies),
+    shows: reduceArray(allShows),
+    musicAlbum: reduceArray(allMusic),
+  };
+
+  return filteredList;
+}
+
+/**
+ *  Function to get all items from given servers
+ * @param serverList the list of the servers to get items from
+ * @returns an object with 3 arrays of all type (Movie, Series, MusicAlbum)
+ */
 export async function getAllServerItems(
   serverList: Omit<Omit<jellyfinServer, "status">, "username">[]
 ) {
@@ -141,46 +221,5 @@ export async function getAllServerItems(
     })
   );
 
-  const returnList = {
-    movies: listAll.reduce((acc, server) => {
-      if (!Array.isArray(server.movies)) return acc;
-      server.movies.forEach((movie) => {
-        const existing = acc.find((item) => item.item_id === movie.item_id);
-        if (existing) {
-          existing.server_url.push(movie.server_url[0]);
-        } else {
-          acc.push(movie);
-        }
-      });
-      return acc;
-    }, [] as itemJellyfin[]),
-
-    shows: listAll.reduce((acc, server) => {
-      if (!Array.isArray(server.shows)) return acc;
-      server.shows.forEach((show) => {
-        const existing = acc.find((item) => item.item_id === show.item_id);
-        if (existing) {
-          existing.server_url.push(show.server_url[0]);
-        } else {
-          acc.push(show);
-        }
-      });
-      return acc;
-    }, [] as itemJellyfin[]),
-
-    musicAlbum: listAll.reduce((acc, server) => {
-      if (!Array.isArray(server.musicAlbum)) return acc;
-      server.musicAlbum.forEach((album) => {
-        const existing = acc.find((item) => item.item_id === album.item_id);
-        if (existing) {
-          existing.server_url.push(album.server_url[0]);
-        } else {
-          acc.push(album);
-        }
-      });
-      return acc;
-    }, [] as itemJellyfin[]),
-  };
-
-  return returnList;
+  return filterDuplicateItems(listAll);
 }

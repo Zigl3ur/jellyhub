@@ -12,7 +12,6 @@ export type errorJellyfin = {
 
 export type itemJellyfin = {
   server_url: string[];
-  item_id: string;
   item_name: string;
   item_type: string;
   item_image: string;
@@ -40,4 +39,10 @@ type Stats = {
 export type jellyfinStats = {
   isLoading: boolean;
   globalStats: Stats[];
+};
+
+export type AllItemsType = {
+  movies: errorJellyfin | itemJellyfin[];
+  shows: errorJellyfin | itemJellyfin[];
+  musicAlbum: errorJellyfin | itemJellyfin[];
 };

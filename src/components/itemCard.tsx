@@ -31,7 +31,7 @@ export default function ItemCard(cardProps: {
                 "rounded-sm hover:scale-105 transition-transform object-cover w-full h-full"
               }
               src={cardProps.image as string}
-              alt={cardProps.alt}
+              alt={cardProps.alt || cardProps.title || ""}
               fill
               onLoadingComplete={() => setLoaded(true)}
             />
