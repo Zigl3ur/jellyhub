@@ -30,7 +30,7 @@ export default function ItemCard(cardProps: {
               className={
                 "rounded-sm hover:scale-105 transition-transform object-cover w-full h-full"
               }
-              src={cardProps.image as string}
+              src={cardProps.image || "/default.svg"}
               alt={cardProps.alt || cardProps.title || ""}
               fill
               onLoadingComplete={() => setLoaded(true)}

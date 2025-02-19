@@ -6,6 +6,8 @@ import {
   AllItemsType,
 } from "@/types/jellyfin.types";
 
+//TODO: maybe change the errorJellyfin type ?
+
 /**
  * Function to get the auth token from a jellyfin server
  * @param server_url the server to query

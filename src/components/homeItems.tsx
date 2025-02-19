@@ -4,7 +4,7 @@ import { getAllItemsAction } from "@/app/(main)/fetchItems.action";
 import ItemCard from "./itemCard";
 import ServerStats from "./serversStats";
 import { useState, useEffect } from "react";
-import { LoaderCircle } from "lucide-react";
+import { LoaderCircle, X } from "lucide-react";
 import { AllItemsType } from "@/types/jellyfin.types";
 
 export default function MainItems() {
@@ -14,8 +14,8 @@ export default function MainItems() {
   useEffect(() => {
     getAllItemsAction().then((result) => {
       setData({
-        count: result?.count?.toString() as string,
-        allItems: result?.allItems as AllItemsType,
+        count: result?.count?.toString() || "0",
+        allItems: (result?.allItems as AllItemsType) || undefined,
       });
       setIsLoading(false);
     });
@@ -26,14 +26,14 @@ export default function MainItems() {
       <ServerStats
         isLoading={isLoading}
         count={[
-          data?.count || "0",
-          Array.isArray(data?.allItems.movies)
+          data?.count ?? "0",
+          Array.isArray(data?.allItems?.movies)
             ? data.allItems.movies.length.toString()
             : "0",
-          Array.isArray(data?.allItems.shows)
+          Array.isArray(data?.allItems?.shows)
             ? data.allItems.shows.length.toString()
             : "0",
-          Array.isArray(data?.allItems.musicAlbum)
+          Array.isArray(data?.allItems?.musicAlbum)
             ? data.allItems.musicAlbum.length.toString()
             : "0",
         ]}
@@ -44,7 +44,7 @@ export default function MainItems() {
             <LoaderCircle className="animate-spin" />
             <span>Fetching Data, please wait.</span>
           </div>
-        ) : data ? (
+        ) : data?.allItems ? (
           <>
             {Array.isArray(data?.allItems.movies) &&
               data.allItems.movies.map((item) => (
@@ -79,6 +79,7 @@ export default function MainItems() {
           </>
         ) : (
           <div className="flex flex-col flex-wrap justify-center items-center text-center">
+            <X />
             <span>No items found. Please add at least one server.</span>
           </div>
         )}
