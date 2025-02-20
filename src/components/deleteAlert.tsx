@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import { errorJellyfin } from "@/types/jellyfin.types";
+import { tokenJellyfin } from "@/types/jellyfin.types";
 import { LoaderCircle } from "lucide-react";
 import { useState } from "react";
 
@@ -25,7 +25,7 @@ export function DeleteAlertDialog(deleteProps: {
       address: string;
       username: string;
     }[]
-  ) => Promise<errorJellyfin | boolean>;
+  ) => Promise<tokenJellyfin | boolean>;
 }) {
   const [open, setOpen] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
@@ -52,7 +52,7 @@ export function DeleteAlertDialog(deleteProps: {
             onClick={() => {
               setLoading(true);
               deleteProps.onClick(deleteProps.checkedRows).then((result) => {
-                if (typeof result === "object" && "error" in result) {
+                if (typeof result === "object") {
                   setLoading(false);
                   toast({
                     title: "Error",

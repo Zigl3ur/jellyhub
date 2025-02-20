@@ -65,7 +65,7 @@ export function ServerDialog(dialogProps: {
         password: values.password,
       })
       .then((result) => {
-        if (typeof result === "object" && "error" in result) {
+        if (typeof result === "object") {
           setLoading(false);
           toast({
             title: "Error",
