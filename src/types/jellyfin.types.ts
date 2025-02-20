@@ -1,13 +1,9 @@
 export type tokenJellyfin = {
   server_url: string;
-  serverId: string;
-  accountId: string;
-  token: string;
-};
-
-export type errorJellyfin = {
-  server_url: string;
-  error: string;
+  serverId?: string;
+  accountId?: string;
+  token?: string;
+  error: string | null;
 };
 
 export type itemJellyfin = {
@@ -24,11 +20,12 @@ export type jellyfinServer = {
   status: "Checking" | "Up" | "Down";
 };
 
-export type jellyfinServerCredentials = {
-  address: string;
-  username: string;
-  password: string;
-};
+export type jellyfinServerCredentials = Omit<
+  Omit<jellyfinServer, "token">,
+  "status"
+> & { password: string };
+
+export type ItemList = itemJellyfin[] & { error: string | null };
 
 type Stats = {
   title: string;
@@ -42,7 +39,7 @@ export type jellyfinStats = {
 };
 
 export type AllItemsType = {
-  movies: errorJellyfin | itemJellyfin[];
-  shows: errorJellyfin | itemJellyfin[];
-  musicAlbum: errorJellyfin | itemJellyfin[];
+  movies: itemJellyfin[];
+  shows: itemJellyfin[];
+  musicAlbum: itemJellyfin[];
 };

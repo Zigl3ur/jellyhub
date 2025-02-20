@@ -6,16 +6,20 @@ import ServerStats from "./serversStats";
 import { useState, useEffect } from "react";
 import { LoaderCircle, X } from "lucide-react";
 import { AllItemsType } from "@/types/jellyfin.types";
+import Link from "next/link";
 
 export default function MainItems() {
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [data, setData] = useState<{ count: string; allItems: AllItemsType }>();
+  const [data, setData] = useState<{
+    serverCount: number;
+    allItems: AllItemsType;
+  }>({ serverCount: 0, allItems: { movies: [], shows: [], musicAlbum: [] } });
 
   useEffect(() => {
     getAllItemsAction().then((result) => {
       setData({
-        count: result?.count?.toString() || "0",
-        allItems: (result?.allItems as AllItemsType) || undefined,
+        serverCount: result?.serverCount ?? 0,
+        allItems: result?.allItems ?? { movies: [], shows: [], musicAlbum: [] },
       });
       setIsLoading(false);
     });
@@ -26,61 +30,58 @@ export default function MainItems() {
       <ServerStats
         isLoading={isLoading}
         count={[
-          data?.count ?? "0",
-          Array.isArray(data?.allItems?.movies)
-            ? data.allItems.movies.length.toString()
-            : "0",
-          Array.isArray(data?.allItems?.shows)
-            ? data.allItems.shows.length.toString()
-            : "0",
-          Array.isArray(data?.allItems?.musicAlbum)
-            ? data.allItems.musicAlbum.length.toString()
-            : "0",
+          data.serverCount,
+          data.allItems.movies.length,
+          data.allItems.shows.length,
+          data.allItems.musicAlbum.length,
         ]}
       />
       <div className="flex justify-center flex-wrap gap-4">
         {isLoading ? (
-          <div className="flex flex-col flex-wrap justify-center items-center text-center">
+          <div className="flex flex-col flex-wrap justify-center items-center text-center min-h-[50vh]">
             <LoaderCircle className="animate-spin" />
             <span>Fetching Data, please wait.</span>
           </div>
-        ) : data?.allItems ? (
+        ) : data.serverCount !== 0 ? (
           <>
-            {Array.isArray(data?.allItems.movies) &&
-              data.allItems.movies.map((item) => (
-                <ItemCard
-                  key={item.item_name}
-                  href={`/item/${item.item_name}`}
-                  title={item.item_name}
-                  serverCount={item.server_url.length}
-                  image={item.item_image}
-                />
-              ))}
-            {Array.isArray(data?.allItems.shows) &&
-              data.allItems.shows.map((item) => (
-                <ItemCard
-                  key={item.item_name}
-                  href={`/item/${item.item_name}`}
-                  title={item.item_name}
-                  serverCount={item.server_url.length}
-                  image={item.item_image}
-                />
-              ))}
-            {Array.isArray(data?.allItems.musicAlbum) &&
-              data.allItems.musicAlbum.map((item) => (
-                <ItemCard
-                  key={item.item_name}
-                  href={`/item/${item.item_name}`}
-                  title={item.item_name}
-                  serverCount={item.server_url.length}
-                  image={item.item_image}
-                />
-              ))}
+            {data.allItems.movies.map((item) => (
+              <ItemCard
+                key={item.item_name}
+                href={`/item/${item.item_name}`}
+                title={item.item_name}
+                serverCount={item.server_url.length}
+                image={item.item_image}
+              />
+            ))}
+            {data.allItems.shows.map((item) => (
+              <ItemCard
+                key={item.item_name}
+                href={`/item/${item.item_name}`}
+                title={item.item_name}
+                serverCount={item.server_url.length}
+                image={item.item_image}
+              />
+            ))}
+            {data.allItems.musicAlbum.map((item) => (
+              <ItemCard
+                key={item.item_name}
+                href={`/item/${item.item_name}`}
+                title={item.item_name}
+                serverCount={item.server_url.length}
+                image={item.item_image}
+              />
+            ))}
           </>
         ) : (
-          <div className="flex flex-col flex-wrap justify-center items-center text-center">
+          <div className="flex flex-col flex-wrap justify-center items-center text-center min-h-[50vh]">
             <X />
             <span>No items found. Please add at least one server.</span>
+            <Link
+              href={"/settings"}
+              className="hover:underline italic text-cyan-600"
+            >
+              Add a Server
+            </Link>
           </div>
         )}
       </div>

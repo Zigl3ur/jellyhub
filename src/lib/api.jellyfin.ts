@@ -1,9 +1,9 @@
 import {
-  errorJellyfin,
   tokenJellyfin,
   itemJellyfin,
   jellyfinServer,
   AllItemsType,
+  ItemList,
 } from "@/types/jellyfin.types";
 
 //TODO: maybe change the errorJellyfin type ?
@@ -19,7 +19,7 @@ export async function getToken(
   server_url: string,
   username: string,
   password: string
-): Promise<tokenJellyfin | errorJellyfin> {
+): Promise<tokenJellyfin> {
   const response = await fetch(`${server_url}/Users/AuthenticateByName`, {
     // set timeout / race to wait less when server not reachable
     method: "POST",
@@ -40,6 +40,7 @@ export async function getToken(
       serverId: data.ServerId,
       accountId: data.Id,
       token: data.AccessToken,
+      error: null,
     };
   } else if (response.status === 401) {
     return {
@@ -89,7 +90,7 @@ export async function getLibraryItems(
   server_url: string,
   token: string,
   itemsType: string
-): Promise<itemJellyfin[] | errorJellyfin> {
+): Promise<ItemList> {
   const response: Response = await fetch(
     `${server_url}/Items?IncludeItemTypes=${itemsType}&Recursive=true`,
     {
@@ -104,7 +105,9 @@ export async function getLibraryItems(
   if (response.status === 200) {
     const data = await response.json();
 
-    const listItems: itemJellyfin[] = [];
+    const listItems: ItemList = Object.assign([], {
+      error: null,
+    });
 
     data.Items.forEach(
       (item: {
@@ -127,15 +130,13 @@ export async function getLibraryItems(
 
     return listItems;
   } else if (response.status === 401) {
-    return {
-      server_url: server_url,
-      error: "Token is invalid",
-    };
+    return Object.assign([], {
+      error: "Token is Invalid",
+    });
   }
-  return {
-    server_url: server_url,
-    error: "An Error Occured",
-  };
+  return Object.assign([], {
+    error: "Ann Error Occured",
+  });
 }
 
 /**

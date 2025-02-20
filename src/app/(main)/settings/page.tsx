@@ -3,9 +3,9 @@ import { getToken } from "@/lib/api.jellyfin";
 import { getSession } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import {
-  errorJellyfin,
   jellyfinServer,
   jellyfinServerCredentials,
+  tokenJellyfin,
 } from "@/types/jellyfin.types";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 import { Metadata } from "next";
@@ -57,7 +57,7 @@ async function jellyfinServerListAction(): Promise<void | jellyfinServer[]> {
  */
 async function jellyfinServerAddAction(
   data: jellyfinServerCredentials
-): Promise<errorJellyfin | boolean> {
+): Promise<tokenJellyfin | boolean> {
   "use server";
   const auth = await getSession();
 
@@ -65,7 +65,7 @@ async function jellyfinServerAddAction(
 
   const creds = await getToken(data.address, data.username, data.password);
 
-  if ("error" in creds) {
+  if (creds.error || !creds.token) {
     return creds;
   }
 
@@ -114,7 +114,7 @@ async function jellyfinServerDeleteAction(
     address: string;
     username: string;
   }[]
-): Promise<errorJellyfin | boolean> {
+): Promise<tokenJellyfin | boolean> {
   "use server";
   const auth = await getSession();
 

@@ -26,8 +26,8 @@ import {
 } from "./ui/form";
 import { useState } from "react";
 import {
-  errorJellyfin,
   jellyfinServerCredentials,
+  tokenJellyfin,
 } from "@/types/jellyfin.types";
 import { useToast } from "@/hooks/use-toast";
 import { LoaderCircle } from "lucide-react";
@@ -41,7 +41,7 @@ const serverSchema = z.object({
 export function ServerDialog(dialogProps: {
   addAction: (
     data: jellyfinServerCredentials
-  ) => Promise<errorJellyfin | boolean>;
+  ) => Promise<tokenJellyfin | boolean>;
 }) {
   const [open, setOpen] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);

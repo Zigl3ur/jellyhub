@@ -3,8 +3,12 @@
 import { getAllServerItems } from "@/lib/api.jellyfin";
 import { getSession } from "@/lib/auth";
 import prisma from "@/lib/prisma";
+import { AllItemsType } from "@/types/jellyfin.types";
 
-export async function getAllItemsAction() {
+export async function getAllItemsAction(): Promise<void | {
+  serverCount: number;
+  allItems: AllItemsType;
+}> {
   const session = await getSession();
 
   if (!session) return;
@@ -18,9 +22,9 @@ export async function getAllItemsAction() {
     },
   });
 
-  if (itemsList?.jellydata.length === 0) return;
+  if (!itemsList) return;
 
-  const serverList = itemsList?.jellydata.map((server) => {
+  const serverList = itemsList.jellydata.map((server) => {
     return { address: server.server, token: server.token };
   });
 
@@ -28,5 +32,5 @@ export async function getAllItemsAction() {
 
   const allItems = await getAllServerItems(serverList);
 
-  return { count: itemsList?.jellydata.length, allItems };
+  return { serverCount: itemsList.jellydata.length, allItems };
 }

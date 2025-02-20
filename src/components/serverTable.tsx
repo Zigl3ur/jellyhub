@@ -21,9 +21,9 @@ import {
 
 import { Checkbox } from "@/components/ui/checkbox";
 import {
-  errorJellyfin,
   jellyfinServer,
   jellyfinServerCredentials,
+  tokenJellyfin,
 } from "@/types/jellyfin.types";
 import { useEffect, useState } from "react";
 import { Input } from "./ui/input";
@@ -111,10 +111,10 @@ interface DataTableProps {
   baseData: jellyfinServer[];
   addAction: (
     data: jellyfinServerCredentials
-  ) => Promise<errorJellyfin | boolean>;
+  ) => Promise<tokenJellyfin | boolean>;
   deleteAction: (
-    data: Omit<Omit<jellyfinServer, "status">, "token">[]
-  ) => Promise<errorJellyfin | boolean>;
+    data: Omit<jellyfinServerCredentials, "password">[]
+  ) => Promise<tokenJellyfin | boolean>;
 }
 
 export function ServerTable({
