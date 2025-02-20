@@ -1,6 +1,6 @@
 "use server";
 
-import { getAllServerItems } from "@/lib/api.jellyfin";
+import { checkConn, getAllServerItems } from "@/lib/api.jellyfin";
 import { getSession } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { AllItemsType } from "@/types/jellyfin.types";
@@ -13,6 +13,8 @@ export async function getAllItemsAction(): Promise<void | {
 
   if (!session) return;
 
+  //TODO: check status, so if one down, dont query it
+
   const itemsList = await prisma.accounts.findFirst({
     where: {
       username: session.username as string,
@@ -24,13 +26,17 @@ export async function getAllItemsAction(): Promise<void | {
 
   if (!itemsList) return;
 
-  const serverList = itemsList.jellydata.map((server) => {
-    return { address: server.server, token: server.token };
-  });
+  const serverList = await Promise.all(
+    itemsList.jellydata.map(async (server) => {
+      const status = await checkConn(server.server, server.token);
+      if (status === "Up")
+        return { address: server.server, token: server.token };
+    })
+  );
 
-  if (!serverList) return;
+  const filteredServers = serverList.filter((server) => server !== undefined);
 
-  const allItems = await getAllServerItems(serverList);
+  const allItems = await getAllServerItems(filteredServers);
 
-  return { serverCount: itemsList.jellydata.length, allItems };
+  return { serverCount: filteredServers.length, allItems };
 }

@@ -21,7 +21,7 @@ const cardBaseData = [
   },
 ];
 
-export default function ServerStats(statsProps: {
+export default function   ServerStats(statsProps: {
   isLoading: boolean;
   count: number[];
 }) {

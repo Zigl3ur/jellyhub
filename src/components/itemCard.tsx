@@ -33,7 +33,7 @@ export default function ItemCard(cardProps: {
               src={cardProps.image || "/default.svg"}
               alt={cardProps.alt || cardProps.title || ""}
               fill
-              onLoadingComplete={() => setLoaded(true)}
+              onLoad={() => setLoaded(true)}
             />
             {!loaded && (
               <Skeleton className="w-full h-full rounded-sm absolute inset-0" />

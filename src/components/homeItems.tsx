@@ -25,6 +25,8 @@ export default function MainItems() {
     });
   }, []);
 
+  console.log(data);
+
   return (
     <div className="p-4">
       <ServerStats
@@ -47,7 +49,7 @@ export default function MainItems() {
             {data.allItems.movies.map((item) => (
               <ItemCard
                 key={item.item_name}
-                href={`/item/${item.item_name}`}
+                href={`/item/${item.item_name.replace(/\s/g, "-")}`}
                 title={item.item_name}
                 serverCount={item.server_url.length}
                 image={item.item_image}
@@ -56,7 +58,7 @@ export default function MainItems() {
             {data.allItems.shows.map((item) => (
               <ItemCard
                 key={item.item_name}
-                href={`/item/${item.item_name}`}
+                href={`/item/${item.item_name.replace(/\s/g, "-")}`}
                 title={item.item_name}
                 serverCount={item.server_url.length}
                 image={item.item_image}
@@ -65,7 +67,7 @@ export default function MainItems() {
             {data.allItems.musicAlbum.map((item) => (
               <ItemCard
                 key={item.item_name}
-                href={`/item/${item.item_name}`}
+                href={`/item/${item.item_name.replace(/\s/g, "-")}`}
                 title={item.item_name}
                 serverCount={item.server_url.length}
                 image={item.item_image}
@@ -75,7 +77,8 @@ export default function MainItems() {
         ) : (
           <div className="flex flex-col flex-wrap justify-center items-center text-center min-h-[50vh]">
             <X />
-            <span>No items found. Please add at least one server.</span>
+            <span>No items found.</span>
+            <span>Please add at least one server / Check servers status </span>
             <Link
               href={"/settings"}
               className="hover:underline italic text-cyan-600"
