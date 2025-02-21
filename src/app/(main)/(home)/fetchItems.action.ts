@@ -13,8 +13,6 @@ export async function getAllItemsAction(): Promise<void | {
 
   if (!session) return;
 
-  //TODO: check status, so if one down, dont query it
-
   const itemsList = await prisma.accounts.findFirst({
     where: {
       username: session.username as string,

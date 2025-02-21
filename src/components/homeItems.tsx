@@ -1,12 +1,12 @@
 "use client";
 
-import { getAllItemsAction } from "@/app/(main)/fetchItems.action";
-import ItemCard from "./itemCard";
+import { getAllItemsAction } from "@/app/(main)/(home)/fetchItems.action";
 import ServerStats from "./serversStats";
 import { useState, useEffect } from "react";
 import { LoaderCircle, X } from "lucide-react";
 import { AllItemsType } from "@/types/jellyfin.types";
 import Link from "next/link";
+import ItemCard from "./itemCard";
 
 export default function MainItems() {
   const [isLoading, setIsLoading] = useState<boolean>(true);

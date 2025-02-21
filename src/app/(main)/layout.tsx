@@ -22,7 +22,7 @@ export default async function MainLayout({
         <SidebarInset className="bg-gradient">
           <main>
             <SidebarTrigger className="m-2" />
-            {children}
+            <div className="p-4">{children}</div>
           </main>
         </SidebarInset>
       </SidebarProvider>

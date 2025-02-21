@@ -1,4 +1,12 @@
-import { Home, LayoutDashboard, Settings, LogOutIcon } from "lucide-react";
+import {
+  Home,
+  LayoutDashboard,
+  Settings,
+  LogOutIcon,
+  Film,
+  Tv,
+  Music,
+} from "lucide-react";
 
 import {
   Sidebar,
@@ -20,6 +28,21 @@ const items = [
     title: "Home",
     url: "/",
     icon: Home,
+  },
+  {
+    title: "Movies",
+    url: "/movies",
+    icon: Film,
+  },
+  {
+    title: "Shows",
+    url: "/show",
+    icon: Tv,
+  },
+  {
+    title: "Music Albums",
+    url: "/music-albums",
+    icon: Music,
   },
   {
     title: "Dashboard",
