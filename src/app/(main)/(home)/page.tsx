@@ -5,8 +5,6 @@ import { getSession } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { AllItemsType } from "@/types/jellyfin.types";
 import ServerStats from "@/components/serversStats";
-import { Suspense } from "react";
-import ServerStatsLoading from "./loading";
 import CardsCaroussel from "@/components/cardsCarroussel";
 import Link from "next/link";
 
@@ -57,17 +55,15 @@ export default async function Home() {
 
   return (
     <div className="flex-col">
-      <Suspense fallback={<ServerStatsLoading />}>
-        <ServerStats
-          isLoading={false}
-          count={[
-            data.serverCount,
-            data.allItems.movies.length,
-            data.allItems.shows.length,
-            data.allItems.musicAlbum.length,
-          ]}
-        />
-      </Suspense>
+      <ServerStats
+        isLoading={false}
+        count={[
+          data.serverCount,
+          data.allItems.movies.length,
+          data.allItems.shows.length,
+          data.allItems.musicAlbum.length,
+        ]}
+      />
       <div className="grid gap-8 mt-8">
         <section>
           <h2 className="text-2xl font-semibold mb-4">
@@ -75,7 +71,11 @@ export default async function Home() {
               Movies
             </Link>
           </h2>
-          <CardsCaroussel isLoading={false} items={data.allItems.movies} />
+          <CardsCaroussel
+            isLoading={false}
+            items={data.allItems.movies}
+            isReduced={false}
+          />
         </section>
         <section>
           <h2 className="text-2xl font-semibold mb-4">
@@ -83,7 +83,11 @@ export default async function Home() {
               Shows
             </Link>
           </h2>
-          <CardsCaroussel isLoading={false} items={data.allItems.shows} />
+          <CardsCaroussel
+            isLoading={false}
+            items={data.allItems.shows}
+            isReduced={false}
+          />
         </section>
         <section>
           <h2 className="text-2xl font-semibold mb-4">
@@ -91,7 +95,11 @@ export default async function Home() {
               Music
             </Link>
           </h2>
-          <CardsCaroussel isLoading={false} items={data.allItems.musicAlbum} />
+          <CardsCaroussel
+            isLoading={false}
+            items={data.allItems.musicAlbum}
+            isReduced={true}
+          />
         </section>
       </div>
     </div>
