@@ -112,12 +112,18 @@ export async function getLibraryItems(
         Name: string;
         Type: string;
         Id: string;
+        ProductionYear: number;
+        OfficialRating?: string;
+        AlbumArtist?: string;
         ImageTags: { Primary?: string };
       }) => {
         listItems.push({
           server_url: [server_url],
           item_name: item.Name,
           item_type: item.Type,
+          item_premier_date: item.ProductionYear,
+          item_rating: item.OfficialRating ?? "None",
+          item_artist: item.AlbumArtist ?? "None",
           item_image:
             item.ImageTags.Primary === undefined
               ? "/default.svg"
@@ -209,13 +215,23 @@ function filterDuplicateItems(list: AllItemsType[]): AllItemsType {
 }
 
 /**
- *  Function to get all items from given servers
+ *  Function to get all items (or specified type) from given servers
  * @param serverList the list of the servers to get items from
  * @returns an object with 3 arrays of all type (Movie, Series, MusicAlbum)
  */
 export async function getAllServerItems(
-  serverList: Omit<Omit<jellyfinServer, "status">, "username">[]
+  serverList: Array<Omit<Omit<jellyfinServer, "status">, "username">>,
+  type?: "Movie" | "Series" | "MusicAlbum"
 ) {
+  if (type) {
+    const listAll = await Promise.all(
+      serverList.map(async (server) => {
+        return await getLibraryItems(server.address, server.token, type);
+      })
+    );
+
+    return reduceArray(listAll.flatMap((item) => item as itemJellyfin[]));
+  }
   const listAll = await Promise.all(
     serverList.map(async (server) => {
       return await getAllItems(server.address, server.token);

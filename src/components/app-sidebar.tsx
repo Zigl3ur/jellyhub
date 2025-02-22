@@ -1,12 +1,4 @@
-import {
-  Home,
-  LayoutDashboard,
-  Settings,
-  LogOutIcon,
-  Film,
-  Tv,
-  Music,
-} from "lucide-react";
+import { Home, Settings, LogOutIcon, Film, Tv, Music } from "lucide-react";
 
 import {
   Sidebar,
@@ -21,9 +13,9 @@ import {
 } from "@/components/ui/sidebar";
 import Image from "next/image";
 import Link from "next/link";
-import { getSession, logout } from "@/lib/auth";
+import { logout } from "@/lib/auth";
 
-const items = [
+const baseItems = [
   {
     title: "Home",
     url: "/",
@@ -44,30 +36,24 @@ const items = [
     url: "/music-albums",
     icon: Music,
   },
-  {
-    title: "Dashboard",
-    url: "/dashboard",
-    icon: LayoutDashboard,
-  },
+];
+
+const footerItems = [
   {
     title: "Settings",
     url: "/settings",
     icon: Settings,
+  },
+  {
+    title: "Logout",
+    url: "/login",
+    icon: LogOutIcon,
   },
 ];
 
 async function logoutAction(): Promise<void> {
   "use server";
   await logout();
-}
-
-async function getAdminStatus(): Promise<boolean | void> {
-  "use server";
-  const session = await getSession();
-
-  if (!session) return;
-
-  return session.admin as boolean;
 }
 
 export async function AppSidebar() {
@@ -91,10 +77,7 @@ export async function AppSidebar() {
         <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu>
-              {items.map(async (item) => {
-                if (item.title === "Dashboard" && !(await getAdminStatus())) {
-                  return null;
-                }
+              {baseItems.map(async (item) => {
                 return (
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton asChild>
@@ -111,14 +94,25 @@ export async function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter>
-        <SidebarMenuItem>
-          <SidebarMenuButton asChild>
-            <Link href="/login" onClick={logoutAction}>
-              <LogOutIcon />
-              <span>Logout</span>
-            </Link>
-          </SidebarMenuButton>
-        </SidebarMenuItem>
+        {footerItems.map(async (item) => {
+          return (
+            <SidebarMenuItem key={item.title}>
+              <SidebarMenuButton asChild>
+                {item.title === "Logout" ? (
+                  <Link href={item.url} onClick={logoutAction}>
+                    <item.icon />
+                    <span>{item.title}</span>
+                  </Link>
+                ) : (
+                  <Link href={item.url}>
+                    <item.icon />
+                    <span>{item.title}</span>
+                  </Link>
+                )}
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          );
+        })}
       </SidebarFooter>
     </Sidebar>
   );

@@ -42,7 +42,7 @@ async function getAllItemsAction(): Promise<void | {
 
   const filteredServers = serverList.filter((server) => server !== undefined);
 
-  const allItems = await getAllServerItems(filteredServers);
+  const allItems = (await getAllServerItems(filteredServers)) as AllItemsType;
 
   return { serverCount: filteredServers.length, allItems };
 }
