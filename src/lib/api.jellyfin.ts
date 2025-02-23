@@ -112,6 +112,7 @@ export async function getLibraryItems(
         Name: string;
         Type: string;
         Id: string;
+        RunTimeTicks: number;
         ProductionYear: number;
         OfficialRating?: string;
         AlbumArtist?: string;
@@ -121,6 +122,7 @@ export async function getLibraryItems(
           server_url: [server_url],
           item_name: item.Name,
           item_type: item.Type,
+          item_duration: TicksToDuration(item.RunTimeTicks),
           item_premier_date: item.ProductionYear,
           item_rating: item.OfficialRating ?? "None",
           item_artist: item.AlbumArtist ?? "None",
@@ -239,4 +241,22 @@ export async function getAllServerItems(
   );
 
   return filterDuplicateItems(listAll);
+}
+
+/**
+ * Function to get ticks to readable duration
+ * @param ticks ticks to convert
+ * @returns date from the given ticks
+ */
+export function TicksToDuration(ticks: number): string {
+  const ticksPerSecond = 10000000;
+  const seconds = ticks / ticksPerSecond;
+
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+  const remainingSeconds = Math.floor(seconds % 60);
+
+  return `${hours.toString().padStart(2, "0")}:${minutes
+    .toString()
+    .padStart(2, "0")}:${remainingSeconds.toString().padStart(2, "0")}`;
 }

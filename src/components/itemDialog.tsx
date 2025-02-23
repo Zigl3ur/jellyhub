@@ -11,13 +11,16 @@ import Link from "next/link";
 
 export default function ItemDialog(DialogProps: {
   item: itemJellyfin;
-  reduced: boolean;
   className?: string;
 }) {
   const specs = [
     {
       title: "type",
       value: DialogProps.item.item_type,
+    },
+    {
+      title: "duration",
+      value: DialogProps.item.item_duration,
     },
     {
       title: "artist",
@@ -46,11 +49,11 @@ export default function ItemDialog(DialogProps: {
       <DialogContent className="max-w-fit sm:max-w-[500px]">
         <div className="flex flex-col sm:flex-row gap-4">
           <Image
-            className="rounded-md"
+            className="rounded-md object-cover"
             src={DialogProps.item.item_image || "/placeholder.svg"}
             alt={DialogProps.item.item_name}
-            width={175}
-            height={DialogProps.reduced ? 150 : 225}
+            width={200}
+            height={300}
           />
           <div className="flex flex-col">
             <DialogTitle className="text-2xl mb-4">

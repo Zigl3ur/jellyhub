@@ -41,16 +41,16 @@ export default function ItemCard(cardProps: {
           )}
         </div>
       </CardContent>
-      <CardFooter className="flex flex-col items-start w-full">
-        <CardTitle className="w-full">
+      <CardFooter className="flex flex-col items-start w-full text-center">
+        <CardTitle className="w-full overflow-hidden">
           <ItemDialog
             item={cardProps.item}
-            reduced={cardProps.reduced}
-            className="hover:underline truncate w-full"
+            className="hover:underline truncate"
           />
         </CardTitle>
-        <CardDescription className="truncate w-full">
-          Found on {cardProps.serverCount} server(s)
+        <CardDescription className="truncate w-full text-center">
+          {cardProps.serverCount ?? 0} server
+          {cardProps.serverCount && cardProps.serverCount > 1 ? "s" : ""}
         </CardDescription>
       </CardFooter>
     </Card>
