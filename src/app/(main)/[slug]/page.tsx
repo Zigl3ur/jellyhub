@@ -1,9 +1,20 @@
 import ItemCard from "@/components/itemCard";
+import SearchBar from "@/components/searchBar";
 import { checkConn, getAllServerItems } from "@/lib/api.jellyfin";
 import { getSession } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { itemJellyfin } from "@/types/jellyfin.types";
 import { notFound } from "next/navigation";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  return {
+    title: `JellyHub - ${(await params).slug}`,
+  };
+}
 
 async function getItemsListAction(
   type: "Movie" | "Series" | "MusicAlbum"
@@ -62,19 +73,28 @@ export default async function CategoryPage({
   );
 
   return (
-    <div className="flex justify-center flex-wrap gap-4">
-      {data ? (
-        data.allItems.map((item) => (
-          <ItemCard
-            reduced={slug === "MusicAlbum" && true}
-            item={item}
-            serverCount={item.server_url.length}
-            key={item.item_name}
-          />
-        ))
-      ) : (
-        <p>aaa</p>
-      )}
-    </div>
+    <>
+      <div className="flex mb-4">
+        <SearchBar
+          serverCount={data?.serverCount || 0}
+          type={slug as "Movie" | "Series" | "MusicAlbum"}
+          items={data?.allItems || []}
+        />
+      </div>
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-7 gap-4">
+        {data ? (
+          data.allItems.map((item) => (
+            <ItemCard
+              reduced={slug === "MusicAlbum"}
+              item={item}
+              serverCount={item.server_url.length}
+              key={item.item_name}
+            />
+          ))
+        ) : (
+          <p>aaa</p>
+        )}
+      </div>
+    </>
   );
 }

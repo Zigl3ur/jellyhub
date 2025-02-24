@@ -25,13 +25,7 @@ export default function CardsCaroussel(Props: CarouselProps) {
         </div>
       ) : (
         <div className="relative px-2">
-          <Carousel
-            className="grid relative"
-            opts={{
-              align: "center",
-              loop: true,
-            }}
-          >
+          <Carousel className="grid relative">
             <CarouselContent className="flex items-center">
               {Props.items.map((item, key) => (
                 <CarouselItem
