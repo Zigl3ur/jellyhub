@@ -14,7 +14,7 @@ import { tokenJellyfin } from "@/types/jellyfin.types";
 import { LoaderCircle } from "lucide-react";
 import { useState } from "react";
 
-export function DeleteAlertDialog(deleteProps: {
+interface DeleteAlertDialogProps {
   disable: boolean;
   checkedRows: {
     address: string;
@@ -26,7 +26,9 @@ export function DeleteAlertDialog(deleteProps: {
       username: string;
     }[]
   ) => Promise<tokenJellyfin | boolean>;
-}) {
+}
+
+export function DeleteAlertDialog(Props: DeleteAlertDialogProps) {
   const [open, setOpen] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const { toast } = useToast();
@@ -34,7 +36,7 @@ export function DeleteAlertDialog(deleteProps: {
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
       <AlertDialogTrigger asChild>
-        <Button variant="destructive" disabled={deleteProps.disable}>
+        <Button variant="destructive" disabled={Props.disable}>
           Delete
         </Button>
       </AlertDialogTrigger>
@@ -51,7 +53,7 @@ export function DeleteAlertDialog(deleteProps: {
             variant={"destructive"}
             onClick={() => {
               setLoading(true);
-              deleteProps.onClick(deleteProps.checkedRows).then((result) => {
+              Props.onClick(Props.checkedRows).then((result) => {
                 if (typeof result === "object") {
                   setLoading(false);
                   toast({
@@ -65,7 +67,7 @@ export function DeleteAlertDialog(deleteProps: {
                   setOpen(false);
                   toast({
                     title: "Success",
-                    description: `Successfully deleted ${deleteProps.checkedRows.length} server(s)`,
+                    description: `Successfully deleted ${Props.checkedRows.length} server(s)`,
                     variant: "success",
                     duration: 2500,
                   });

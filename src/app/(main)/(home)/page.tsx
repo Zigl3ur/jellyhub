@@ -79,8 +79,8 @@ export default async function Home() {
         </section>
         <section>
           <h2 className="text-2xl font-semibold mb-4">
-            <Link href={"/shows"} className="hover:underline">
-              Shows
+            <Link href={"/Series"} className="hover:underline">
+              Series
             </Link>
           </h2>
           <CardsCaroussel
@@ -91,8 +91,8 @@ export default async function Home() {
         </section>
         <section>
           <h2 className="text-2xl font-semibold mb-4">
-            <Link href={"/music-albums"} className="hover:underline">
-              Music
+            <Link href={"/MusicAlbum"} className="hover:underline">
+              Music Album
             </Link>
           </h2>
           <CardsCaroussel

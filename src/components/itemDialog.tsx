@@ -9,30 +9,32 @@ import { ArrowUpRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
-export default function ItemDialog(DialogProps: {
+interface DialogProps {
   item: itemJellyfin;
   className?: string;
-}) {
+}
+
+export default function ItemDialog(Props: DialogProps) {
   const specs = [
     {
       title: "type",
-      value: DialogProps.item.item_type,
+      value: Props.item.item_type,
     },
     {
       title: "duration",
-      value: DialogProps.item.item_duration,
+      value: Props.item.item_duration,
     },
     {
       title: "artist",
-      value: DialogProps.item.item_artist,
+      value: Props.item.item_artist,
     },
     {
       title: "year",
-      value: DialogProps.item.item_premier_date,
+      value: Props.item.item_premier_date,
     },
     {
       title: "rating",
-      value: DialogProps.item.item_rating,
+      value: Props.item.item_rating,
     },
   ];
 
@@ -40,27 +42,27 @@ export default function ItemDialog(DialogProps: {
     <Dialog>
       <div>
         <DialogTrigger asChild>
-          {/* make image as trigger too */}
-          <button className={DialogProps.className}>
-            {DialogProps.item.item_name}
-          </button>
+          {/*TODO: make image as trigger too */}
+          <button className={Props.className}>{Props.item.item_name}</button>
         </DialogTrigger>
       </div>
       <DialogContent className="max-w-fit sm:max-w-[500px]">
         <div className="flex flex-col sm:flex-row gap-4">
           <Image
             className="rounded-md object-cover"
-            src={DialogProps.item.item_image || "/placeholder.svg"}
-            alt={DialogProps.item.item_name}
+            src={Props.item.item_image || "/placeholder.svg"}
+            alt={Props.item.item_name}
             width={200}
             height={300}
           />
           <div className="flex flex-col">
             <DialogTitle className="text-2xl mb-4">
-              {DialogProps.item.item_name}
+              {Props.item.item_name}
             </DialogTitle>
             {specs.map((spec) =>
-              spec.value === "None" ? null : (
+              spec.value === "None" ||
+              (spec.title === "duration" &&
+                spec.value === "00:00:00") ? null : (
                 <div className="inline-flex mb-2 w-full" key={spec.title}>
                   <p className="mr-2">{spec.title}</p>
                   <p className="rounded-sm bg-slate-700 p-0.5 text-sm max-w-fit">
@@ -72,7 +74,7 @@ export default function ItemDialog(DialogProps: {
             <div className="mt-auto">
               <h3 className="font-semibold mb-2">Available on</h3>
               <div className="flex flex-col">
-                {DialogProps.item.server_url.map((url) => {
+                {Props.item.server_url.map((url) => {
                   return (
                     <Link
                       href={url}

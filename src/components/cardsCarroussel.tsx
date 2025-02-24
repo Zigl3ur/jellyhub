@@ -9,14 +9,16 @@ import ItemCard from "./itemCard";
 import { itemJellyfin } from "@/types/jellyfin.types";
 import { X } from "lucide-react";
 
-export default function CardsCaroussel(carousselProps: {
+interface CarouselProps {
   isLoading: boolean;
   isReduced: boolean;
   items: itemJellyfin[];
-}) {
+}
+
+export default function CardsCaroussel(Props: CarouselProps) {
   return (
     <div className="relative px-10">
-      {carousselProps.items.length === 0 ? (
+      {Props.items.length === 0 ? (
         <div className="flex flex-col items-center justify-center">
           <X />
           <span>No items found.</span>
@@ -31,7 +33,7 @@ export default function CardsCaroussel(carousselProps: {
             }}
           >
             <CarouselContent className="flex items-center">
-              {carousselProps.items.map((item, key) => (
+              {Props.items.map((item, key) => (
                 <CarouselItem
                   key={key}
                   className="basis-auto flex justify-center"
@@ -40,7 +42,7 @@ export default function CardsCaroussel(carousselProps: {
                     key={item.item_name}
                     item={item}
                     serverCount={item.server_url.length}
-                    reduced={carousselProps.isReduced}
+                    reduced={Props.isReduced}
                   />
                 </CarouselItem>
               ))}

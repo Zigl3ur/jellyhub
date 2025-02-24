@@ -38,11 +38,13 @@ const serverSchema = z.object({
   password: z.string().min(1, { message: "Password is required" }),
 });
 
-export function ServerDialog(dialogProps: {
+interface DialogProps {
   addAction: (
     data: jellyfinServerCredentials
   ) => Promise<tokenJellyfin | boolean>;
-}) {
+}
+
+export function ServerDialog(Props: DialogProps) {
   const [open, setOpen] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const { toast } = useToast();
@@ -58,32 +60,30 @@ export function ServerDialog(dialogProps: {
 
   async function onSubmit(values: z.infer<typeof serverSchema>) {
     setLoading(true);
-    await dialogProps
-      .addAction({
-        address: values.address,
-        username: values.username,
-        password: values.password,
-      })
-      .then((result) => {
-        if (typeof result === "object") {
-          setLoading(false);
-          toast({
-            title: "Error",
-            description: result.error,
-            variant: "destructive",
-            duration: 2500,
-          });
-        } else {
-          setLoading(false);
-          toast({
-            title: "Success",
-            description: "Successfully added server",
-            variant: "success",
-            duration: 2500,
-          });
-          setOpen(false);
-        }
-      });
+    await Props.addAction({
+      address: values.address,
+      username: values.username,
+      password: values.password,
+    }).then((result) => {
+      if (typeof result === "object") {
+        setLoading(false);
+        toast({
+          title: "Error",
+          description: result.error,
+          variant: "destructive",
+          duration: 2500,
+        });
+      } else {
+        setLoading(false);
+        toast({
+          title: "Success",
+          description: "Successfully added server",
+          variant: "success",
+          duration: 2500,
+        });
+        setOpen(false);
+      }
+    });
   }
 
   return (

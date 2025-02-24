@@ -21,10 +21,12 @@ const cardBaseData = [
   },
 ];
 
-export default function ServerStats(statsProps: {
+interface StatsProps {
   isLoading: boolean;
   count: number[];
-}) {
+}
+
+export default function ServerStats(Props: StatsProps) {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
       {cardBaseData.map((stats, key) => {
@@ -42,12 +44,10 @@ export default function ServerStats(statsProps: {
               </div>
             </CardHeader>
             <CardContent className="p-0 pt-6">
-              {statsProps.isLoading ? (
+              {Props.isLoading ? (
                 <Skeleton className="h-10 w-20" />
               ) : (
-                <p className="text-4xl font-extrabold">
-                  {statsProps.count[key]}
-                </p>
+                <p className="text-4xl font-extrabold">{Props.count[key]}</p>
               )}
             </CardContent>
           </Card>

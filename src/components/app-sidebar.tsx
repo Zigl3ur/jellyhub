@@ -23,17 +23,17 @@ const baseItems = [
   },
   {
     title: "Movies",
-    url: "/movies",
+    url: "/Movie",
     icon: Film,
   },
   {
     title: "Shows",
-    url: "/show",
+    url: "/Series",
     icon: Tv,
   },
   {
     title: "Music Albums",
-    url: "/music-albums",
+    url: "/MusicAlbum",
     icon: Music,
   },
 ];
