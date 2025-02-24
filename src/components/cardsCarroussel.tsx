@@ -5,9 +5,9 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
-import ItemCard from "./itemCard";
 import { itemJellyfin } from "@/types/jellyfin.types";
 import { X } from "lucide-react";
+import ItemDialog from "./itemDialog";
 
 interface CarouselProps {
   isLoading: boolean;
@@ -32,10 +32,10 @@ export default function CardsCaroussel(Props: CarouselProps) {
                   key={key}
                   className="basis-auto flex justify-center"
                 >
-                  <ItemCard
+                  <ItemDialog
                     key={item.item_name}
+                    type="card"
                     item={item}
-                    serverCount={item.server_url.length}
                     reduced={Props.isReduced}
                   />
                 </CarouselItem>

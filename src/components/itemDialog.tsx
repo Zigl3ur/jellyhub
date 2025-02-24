@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Dialog,
   DialogContent,
@@ -8,8 +10,20 @@ import type { itemJellyfin } from "@/types/jellyfin.types";
 import { ArrowUpRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { useState } from "react";
+import { Skeleton } from "./ui/skeleton";
+
+import {
+  Card,
+  CardDescription,
+  CardContent,
+  CardFooter,
+  CardTitle,
+} from "./ui/card";
 
 interface DialogProps {
+  type: "card" | "title";
+  reduced?: boolean;
   item: itemJellyfin;
   className?: string;
 }
@@ -38,13 +52,52 @@ export default function ItemDialog(Props: DialogProps) {
     },
   ];
 
+  const [loaded, setLoaded] = useState<boolean>(false);
+
   return (
     <Dialog>
       <div>
-        <DialogTrigger asChild>
-          {/*TODO: make image as trigger too */}
-          <button className={Props.className}>{Props.item.item_name}</button>
-        </DialogTrigger>
+        {Props.type === "card" ? (
+          <DialogTrigger asChild className="cursor-pointer">
+            <Card className="bg-black/30 backdrop-blur-lg w-[175px] h-full flex flex-col">
+              <CardContent className="p-4 flex-grow flex items-center justify-center">
+                <div
+                  className={`relative w-[175px] ${
+                    Props.reduced ? "h-[150px]" : "h-[225px]"
+                  }`}
+                >
+                  <Image
+                    className="rounded-sm object-cover w-full h-full"
+                    src={Props.item.item_image || "/default.svg"}
+                    alt={Props.item.item_name || ""}
+                    fill
+                    sizes="175px"
+                    onLoad={() => setLoaded(true)}
+                  />
+                  {!loaded && (
+                    <Skeleton className="w-full h-full rounded-sm absolute inset-0" />
+                  )}
+                </div>
+              </CardContent>
+              <CardFooter className="flex flex-col items-start w-full text-center">
+                <CardTitle className="w-full overflow-hidden truncate">
+                  {Props.item.item_name}
+                </CardTitle>
+                <CardDescription className="truncate w-full text-center">
+                  {Props.item.server_url.length ?? 0} server
+                  {Props.item.server_url.length &&
+                  Props.item.server_url.length > 1
+                    ? "s"
+                    : ""}
+                </CardDescription>
+              </CardFooter>
+            </Card>
+          </DialogTrigger>
+        ) : (
+          <DialogTrigger asChild>
+            <button className={Props.className}>{Props.item.item_name}</button>
+          </DialogTrigger>
+        )}
       </div>
       <DialogContent className="max-w-fit sm:max-w-[500px]">
         <div className="flex flex-col sm:flex-row gap-4">

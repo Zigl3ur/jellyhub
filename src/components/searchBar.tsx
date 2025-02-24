@@ -23,21 +23,21 @@ export default function SearchBar(Props: SearchBarProps) {
       />
       <div className="flex flex-col w-full mt-2">
         {search.length > 0 && (
-          <div className="relative w-full bg-background backdrop-blur-lg z-10 max-h-[25rem] overflow-y-auto space-y-1 rounded-md">
+          <div
+            className="absolute
+           w-full bg-background/85 backdrop-blur-lg z-10 max-h-[25rem] overflow-y-auto space-y-1 rounded-md" /* rigth spacing issue */
+          >
             {Props.items
               .filter((item) =>
                 item.item_name.toLowerCase().includes(search.toLowerCase())
               )
               .map((item) => (
-                <div
+                <ItemDialog
                   key={item.item_name}
-                  className="rounded-md hover:bg-blue-800/20"
-                >
-                  <ItemDialog
-                    item={item}
-                    className="flex p-2 w-full text-wrap"
-                  />
-                </div>
+                  type="title"
+                  item={item}
+                  className="flex items-center w-full p-2 rounded-md hover:bg-blue-800/20"
+                />
               ))}
           </div>
         )}
