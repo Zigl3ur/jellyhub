@@ -6,7 +6,6 @@ import { useState } from "react";
 import ItemDialog from "./itemDialog";
 
 interface SearchBarProps {
-  serverCount: number;
   type: "Movie" | "Series" | "MusicAlbum" | "...";
   items: itemJellyfin[];
 }

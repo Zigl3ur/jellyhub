@@ -1,4 +1,5 @@
 import ItemDialog from "@/components/itemDialog";
+import NotFound from "@/components/notFound";
 import SearchBar from "@/components/searchBar";
 import { checkConn, getAllServerItems } from "@/lib/api.jellyfin";
 import { getSession } from "@/lib/auth";
@@ -76,25 +77,24 @@ export default async function CategoryPage({
     <>
       <div className="flex mb-4">
         <SearchBar
-          serverCount={data?.serverCount || 0}
           type={slug as "Movie" | "Series" | "MusicAlbum"}
           items={data?.allItems || []}
         />
       </div>
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-7 gap-4">
-        {data ? (
-          data.allItems.map((item) => (
+      {data && data.allItems.length > 0 ? (
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-7 gap-4">
+          {data.allItems.map((item) => (
             <ItemDialog
               reduced={slug === "MusicAlbum"}
               type="card"
               item={item}
               key={item.item_name}
             />
-          ))
-        ) : (
-          <p>aaa</p>
-        )}
-      </div>
+          ))}
+        </div>
+      ) : (
+        <NotFound />
+      )}
     </>
   );
 }

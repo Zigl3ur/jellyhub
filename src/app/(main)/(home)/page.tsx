@@ -7,6 +7,7 @@ import { AllItemsType } from "@/types/jellyfin.types";
 import ServerStats from "@/components/serversStats";
 import CardsCaroussel from "@/components/cardsCarroussel";
 import Link from "next/link";
+import NotFound from "@/components/notFound";
 
 export const metadata: Metadata = {
   title: "JellyHub - Home",
@@ -64,44 +65,48 @@ export default async function Home() {
           data.allItems.musicAlbum.length,
         ]}
       />
-      <div className="grid gap-8 mt-8">
-        <section>
-          <h2 className="text-2xl font-semibold mb-4">
-            <Link href={"/movies"} className="hover:underline">
-              Movies
-            </Link>
-          </h2>
-          <CardsCaroussel
-            isLoading={false}
-            items={data.allItems.movies}
-            isReduced={false}
-          />
-        </section>
-        <section>
-          <h2 className="text-2xl font-semibold mb-4">
-            <Link href={"/Series"} className="hover:underline">
-              Series
-            </Link>
-          </h2>
-          <CardsCaroussel
-            isLoading={false}
-            items={data.allItems.shows}
-            isReduced={false}
-          />
-        </section>
-        <section>
-          <h2 className="text-2xl font-semibold mb-4">
-            <Link href={"/MusicAlbum"} className="hover:underline">
-              Music Album
-            </Link>
-          </h2>
-          <CardsCaroussel
-            isLoading={false}
-            items={data.allItems.musicAlbum}
-            isReduced={true}
-          />
-        </section>
-      </div>
+      {data.serverCount !== 0 ? (
+        <div className="grid gap-8 mt-8">
+          <section>
+            <h2 className="text-2xl font-semibold mb-4">
+              <Link href={"/movies"} className="hover:underline">
+                Movies
+              </Link>
+            </h2>
+            <CardsCaroussel
+              isLoading={false}
+              items={data.allItems.movies}
+              isReduced={false}
+            />
+          </section>
+          <section>
+            <h2 className="text-2xl font-semibold mb-4">
+              <Link href={"/Series"} className="hover:underline">
+                Series
+              </Link>
+            </h2>
+            <CardsCaroussel
+              isLoading={false}
+              items={data.allItems.shows}
+              isReduced={false}
+            />
+          </section>
+          <section>
+            <h2 className="text-2xl font-semibold mb-4">
+              <Link href={"/MusicAlbum"} className="hover:underline">
+                Music Album
+              </Link>
+            </h2>
+            <CardsCaroussel
+              isLoading={false}
+              items={data.allItems.musicAlbum}
+              isReduced={true}
+            />
+          </section>
+        </div>
+      ) : (
+        <NotFound />
+      )}
     </div>
   );
 }
