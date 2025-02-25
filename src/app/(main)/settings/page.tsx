@@ -253,6 +253,7 @@ async function createUserAction(
     };
   }
 }
+
 export default async function SettingsPage() {
   const data = await jellyfinServerListAction();
   const isAdmin = (await getSession())?.admin as boolean;
@@ -266,12 +267,14 @@ export default async function SettingsPage() {
         addAction={jellyfinServerAddAction}
         deleteAction={jellyfinServerDeleteAction}
       />
-      <ResetPasswd
-        isAdmin={isAdmin}
-        onSubmit={resetPasswdAction}
-        userList={userList}
-      />
-      {isAdmin && <CreateUser onSubmit={createUserAction} />}
+      <div className="flex flex-col lg:flex-row gap-2">
+        <ResetPasswd
+          isAdmin={isAdmin}
+          onSubmit={resetPasswdAction}
+          userList={userList}
+        />
+        {isAdmin && <CreateUser onSubmit={createUserAction} />}
+      </div>
     </div>
   );
 }

@@ -56,25 +56,28 @@ export default function ResetPasswd(Props: ResetPasswdProps) {
   });
 
   function onSubmit(data: z.infer<typeof FormSchema>) {
-    Props.onSubmit(data.confirm_new_password, data.user).then((result) =>
-      result
-        ? toast({
-            title: "Success",
-            description: "Password succesfully reset",
-            variant: "success",
-            duration: 2500,
-          })
-        : toast({
-            title: "Error",
-            description: "Error while reseting password",
-            variant: "destructive",
-            duration: 2500,
-          })
-    );
+    Props.onSubmit(data.confirm_new_password, data.user).then((result) => {
+      form.reset();
+      if (result) {
+        toast({
+          title: "Success",
+          description: "Password succesfully reset",
+          variant: "success",
+          duration: 2500,
+        });
+      } else {
+        toast({
+          title: "Error",
+          description: "Error while reseting password",
+          variant: "destructive",
+          duration: 2500,
+        });
+      }
+    });
   }
 
   return (
-    <div className=" bg-black/50 backdrop-blur-lg rounded-md p-5">
+    <div className=" bg-black/50 backdrop-blur-lg rounded-md p-5 w-full">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
           {Props.isAdmin ? (

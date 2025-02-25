@@ -36,25 +36,27 @@ export default function CreateUser(Props: CreateUserProps) {
   });
 
   function onSubmit(data: z.infer<typeof FormSchema>) {
-    Props.onSubmit(data.username, data.password).then((result) =>
-      result.success
-        ? toast({
-            title: "Success",
-            description: "User Successfully created",
-            variant: "success",
-            duration: 2500,
-          })
-        : toast({
-            title: "Error",
-            description: result.error,
-            variant: "destructive",
-            duration: 2500,
-          })
-    );
+    Props.onSubmit(data.username, data.password).then((result) => {
+      form.reset();
+      if (result.success) {
+        toast({
+          title: "Success",
+          description: "User Successfully created",
+          variant: "success",
+          duration: 2500,
+        });
+        toast({
+          title: "Error",
+          description: result.error,
+          variant: "destructive",
+          duration: 2500,
+        });
+      }
+    });
   }
 
   return (
-    <div className=" bg-black/50 backdrop-blur-lg rounded-md p-5">
+    <div className=" bg-black/50 backdrop-blur-lg rounded-md p-5 w-full">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
           <FormField
