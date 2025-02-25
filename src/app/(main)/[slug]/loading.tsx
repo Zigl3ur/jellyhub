@@ -4,7 +4,7 @@ import SearchBar from "@/components/searchBar";
 export default function Loading() {
   return (
     <div>
-      <SearchBar serverCount={0} items={[]} type="..." />
+      <SearchBar items={[]} type="..." />
       <Loader />
     </div>
   );

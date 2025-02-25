@@ -1,3 +1,4 @@
+import ResetPasswd from "@/components/resetPasswd";
 import { ServerTable, columns } from "@/components/serverTable";
 import { getToken } from "@/lib/api.jellyfin";
 import { getSession } from "@/lib/auth";
@@ -10,6 +11,7 @@ import {
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 import { Metadata } from "next";
 import { revalidatePath } from "next/cache";
+import bcrypt from "bcrypt";
 
 export const metadata: Metadata = {
   title: "JellyHub - Settings",
@@ -153,8 +155,61 @@ async function jellyfinServerDeleteAction(
   }
 }
 
+/**
+ * Server action to reset the password of one user
+ * @returns true or false depending on the success of the operation
+ */
+async function resetPasswdAction(
+  password: string,
+  user?: string
+): Promise<boolean> {
+  "use server";
+  const auth = await getSession();
+
+  if (!auth) return false;
+
+  try {
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    if (auth.admin && user) {
+      await prisma.accounts.update({
+        where: { username: user },
+        data: { password: hashedPassword },
+      });
+    } else {
+      await prisma.accounts.update({
+        where: { username: auth.username as string },
+        data: { password: hashedPassword },
+      });
+    }
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Server action to get the list of user's username
+ * @returns the list of the user username
+ */
+async function getUserListAction(): Promise<void | { username: string }[]> {
+  "use server";
+  const auth = await getSession();
+
+  if (!auth) return;
+
+  if (!auth.admin) return;
+
+  const list = await prisma.accounts.findMany({
+    select: { username: true },
+  });
+
+  return list;
+}
 export default async function SettingsPage() {
   const data = await jellyfinServerListAction();
+  const isAdmin = (await getSession())?.admin as boolean;
+  const userList = (await getUserListAction()) ?? [];
 
   return (
     <div className="flex flex-1 flex-col gap-4 pt-0">
@@ -163,6 +218,11 @@ export default async function SettingsPage() {
         baseData={data as jellyfinServer[]}
         addAction={jellyfinServerAddAction}
         deleteAction={jellyfinServerDeleteAction}
+      />
+      <ResetPasswd
+        isAdmin={isAdmin}
+        onSubmit={resetPasswdAction}
+        userList={userList}
       />
     </div>
   );

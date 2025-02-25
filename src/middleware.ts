@@ -2,13 +2,11 @@ import { NextResponse, NextRequest } from "next/server";
 import { getSession } from "./lib/auth";
 
 const protectedRoutes = ["/dashboard", "/", "/settings"];
-const adminRoutes = ["/dashboard", "/api/auth/register"];
 const publicRoutes = ["/login"];
 
 export async function middleware(req: NextRequest): Promise<NextResponse> {
   const path = req.nextUrl.pathname;
   const isProtectedRoute = protectedRoutes.includes(path);
-  const isAdmin = adminRoutes.includes(path);
   const isPublicRoute = publicRoutes.includes(path);
 
   const session = await getSession();
@@ -19,7 +17,7 @@ export async function middleware(req: NextRequest): Promise<NextResponse> {
   }
 
   // public route and valid session ? or admin route and not admin
-  if ((isPublicRoute && session) || (isAdmin && !session?.admin)) {
+  if (isPublicRoute && session) {
     return NextResponse.redirect(new URL("/", req.nextUrl));
   }
 
