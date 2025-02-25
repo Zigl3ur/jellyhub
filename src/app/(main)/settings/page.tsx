@@ -12,6 +12,7 @@ import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 import { Metadata } from "next";
 import { revalidatePath } from "next/cache";
 import bcrypt from "bcrypt";
+import CreateUser from "@/components/createUser";
 
 export const metadata: Metadata = {
   title: "JellyHub - Settings",
@@ -206,6 +207,52 @@ async function getUserListAction(): Promise<void | { username: string }[]> {
 
   return list;
 }
+
+/**
+ * Server action to create an user
+ * @param username username of the user to create
+ * @param password password of the user to create
+ * @returns if the operation succeed else not with an error message
+ */
+async function createUserAction(
+  username: string,
+  password: string
+): Promise<{ success: boolean; error?: string }> {
+  "use server";
+  try {
+    const auth = await getSession();
+
+    if (!auth) return { success: false };
+
+    if (!auth.admin) return { success: false };
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    await prisma.accounts.create({
+      data: {
+        username: username,
+        password: hashedPassword,
+        admin: false,
+      },
+    });
+    return { success: true };
+  } catch (err) {
+    if (err instanceof PrismaClientKnownRequestError)
+      return {
+        success: false,
+        error: err.code === "P2002" ? "User already exist" : err.message,
+      };
+    else if (err instanceof Error)
+      return {
+        success: false,
+        error: err.message,
+      };
+    return {
+      success: false,
+      error: "An Unknow Error Occured",
+    };
+  }
+}
 export default async function SettingsPage() {
   const data = await jellyfinServerListAction();
   const isAdmin = (await getSession())?.admin as boolean;
@@ -224,6 +271,7 @@ export default async function SettingsPage() {
         onSubmit={resetPasswdAction}
         userList={userList}
       />
+      {isAdmin && <CreateUser onSubmit={createUserAction} />}
     </div>
   );
 }
