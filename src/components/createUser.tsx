@@ -45,6 +45,7 @@ export default function CreateUser(Props: CreateUserProps) {
           variant: "success",
           duration: 2500,
         });
+      } else {
         toast({
           title: "Error",
           description: result.error,
@@ -80,7 +81,7 @@ export default function CreateUser(Props: CreateUserProps) {
                 <FormLabel>Password</FormLabel>
                 <FormControl>
                   <Input
-                    placeholder="user password"
+                    placeholder="User password"
                     type="password"
                     {...field}
                   />

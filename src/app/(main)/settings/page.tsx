@@ -235,6 +235,7 @@ async function createUserAction(
         admin: false,
       },
     });
+
     return { success: true };
   } catch (err) {
     if (err instanceof PrismaClientKnownRequestError)

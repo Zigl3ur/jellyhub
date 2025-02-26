@@ -20,11 +20,11 @@ export default function SearchBar(Props: SearchBarProps) {
         placeholder={`Search for ${Props.type}`}
         onChange={(e) => setSearch(e.target.value)}
       />
-      <div className="flex flex-col w-full mt-2">
+      <div className="relative flex flex-col w-full mt-2">
         {search.length > 0 && (
           <div
-            className="absolute
-           w-full bg-background/85 backdrop-blur-lg z-10 max-h-[25rem] overflow-y-auto space-y-1 rounded-md" /* rigth spacing issue */
+            className="absolute left-0 right-0
+           bg-background/85 backdrop-blur-lg z-10 max-h-[25rem] overflow-y-auto space-y-1 rounded-md"
           >
             {Props.items
               .filter((item) =>

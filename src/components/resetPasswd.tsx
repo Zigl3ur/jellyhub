@@ -90,10 +90,11 @@ export default function ResetPasswd(Props: ResetPasswdProps) {
                   <Select
                     onValueChange={field.onChange}
                     defaultValue={field.value}
+                    required
                   >
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select a User to reset password" />
+                        <SelectValue placeholder="User to reset password" />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
@@ -117,7 +118,7 @@ export default function ResetPasswd(Props: ResetPasswdProps) {
                 <FormLabel>New Password</FormLabel>
                 <FormControl>
                   <Input
-                    placeholder="Your new Password"
+                    placeholder="New Password"
                     type="password"
                     {...field}
                   />

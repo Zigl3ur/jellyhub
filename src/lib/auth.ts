@@ -36,7 +36,6 @@ export async function decrypt(token: string): Promise<JWTPayload> {
 export async function logout(): Promise<void> {
   // delete cookie session
   (await cookies()).set("session-token", "", { expires: new Date(0) });
-  return;
 }
 
 /**

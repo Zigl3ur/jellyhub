@@ -14,6 +14,7 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import { logout } from "@/lib/auth";
+import { redirect } from "next/navigation";
 
 const baseItems = [
   {
@@ -46,7 +47,7 @@ const footerItems = [
   },
   {
     title: "Logout",
-    url: "/login",
+    url: "#",
     icon: LogOutIcon,
   },
 ];
@@ -54,6 +55,7 @@ const footerItems = [
 async function logoutAction(): Promise<void> {
   "use server";
   await logout();
+  redirect("/login"); // throw error but works ok ?
 }
 
 export async function AppSidebar() {

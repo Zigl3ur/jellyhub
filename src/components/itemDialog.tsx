@@ -102,7 +102,7 @@ export default function ItemDialog(Props: DialogProps) {
       <DialogContent className="max-w-fit sm:max-w-[500px]">
         <div className="flex flex-col sm:flex-row gap-4">
           <Image
-            className="rounded-md object-cover"
+            className="rounded-md object-cover h-fit"
             src={Props.item.item_image || "/placeholder.svg"}
             alt={Props.item.item_name}
             width={200}

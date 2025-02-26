@@ -54,6 +54,27 @@ export default async function Home() {
     allItems: { movies: [], shows: [], musicAlbum: [] },
   };
 
+  const itemsValues = [
+    {
+      href: "/Movie",
+      title: "Movies",
+      data: data.allItems.movies,
+      reduced: false,
+    },
+    {
+      href: "/Series",
+      title: "Series",
+      data: data.allItems.shows,
+      reduced: false,
+    },
+    {
+      href: "/MusicAlbum",
+      title: "Music Albums",
+      data: data.allItems.musicAlbum,
+      reduced: true,
+    },
+  ];
+
   return (
     <div className="flex-col">
       <ServerStats
@@ -67,42 +88,22 @@ export default async function Home() {
       />
       {data.serverCount !== 0 ? (
         <div className="grid gap-8 mt-8">
-          <section>
-            <h2 className="text-2xl font-semibold mb-4">
-              <Link href={"/movies"} className="hover:underline">
-                Movies
-              </Link>
-            </h2>
-            <CardsCaroussel
-              isLoading={false}
-              items={data.allItems.movies}
-              isReduced={false}
-            />
-          </section>
-          <section>
-            <h2 className="text-2xl font-semibold mb-4">
-              <Link href={"/Series"} className="hover:underline">
-                Series
-              </Link>
-            </h2>
-            <CardsCaroussel
-              isLoading={false}
-              items={data.allItems.shows}
-              isReduced={false}
-            />
-          </section>
-          <section>
-            <h2 className="text-2xl font-semibold mb-4">
-              <Link href={"/MusicAlbum"} className="hover:underline">
-                Music Album
-              </Link>
-            </h2>
-            <CardsCaroussel
-              isLoading={false}
-              items={data.allItems.musicAlbum}
-              isReduced={true}
-            />
-          </section>
+          {itemsValues.map((value) => {
+            return value.data.length > 0 ? (
+              <section key={value.href}>
+                <h2 className="text-2xl font-semibold mb-4 pl-14">
+                  <Link href={value.href} className="hover:underline">
+                    {value.title}
+                  </Link>
+                </h2>
+                <CardsCaroussel
+                  isLoading={false}
+                  items={value.data}
+                  isReduced={value.reduced}
+                />
+              </section>
+            ) : null;
+          })}
         </div>
       ) : (
         <NotFound />
