@@ -8,7 +8,7 @@ export type tokenJellyfin = {
 
 export type itemJellyfin = {
   // item and server id to redirect to correct link on server
-  server_url: string[];
+  server_data: [server_url: string[], server_id: string[], item_id: string[]];
   item_name: string;
   item_type: string;
   item_duration: string;

@@ -84,9 +84,9 @@ export default function ItemDialog(Props: DialogProps) {
                   {Props.item.item_name}
                 </CardTitle>
                 <CardDescription className="truncate w-full text-center">
-                  {Props.item.server_url.length ?? 0} server
-                  {Props.item.server_url.length &&
-                  Props.item.server_url.length > 1
+                  {Props.item.server_data[0].length ?? 0} server
+                  {Props.item.server_data[0].length &&
+                  Props.item.server_data[0].length > 1
                     ? "s"
                     : ""}
                 </CardDescription>
@@ -127,15 +127,20 @@ export default function ItemDialog(Props: DialogProps) {
             <div className="mt-auto">
               <h3 className="font-semibold mb-2">Available on</h3>
               <div className="flex flex-col">
-                {Props.item.server_url.map((url) => {
+                {Props.item.server_data[0].map((data, index) => {
                   return (
                     <Link
-                      href={url}
-                      key={url}
+                      href={`${Props.item.server_data[0][index]}/web/#/details?id=${Props.item.server_data[2][index]}&serverId=${Props.item.server_data[1][index]}`}
+                      key={Props.item.server_data[0][index]}
                       className="italic text-blue-500 text-sm inline-flex hover:underline max-w-fit"
+                      target="_blank"
+                      rel="noopener noreferrer"
                     >
-                      {url}
-                      <ArrowUpRight size={20} />
+                      {Props.item.server_data[0][index].replace(
+                        /^https?:\/\//,
+                        ""
+                      )}
+                      <ArrowUpRight size={20} className="ml-1" />
                     </Link>
                   );
                 })}

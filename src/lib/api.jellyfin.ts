@@ -109,6 +109,7 @@ export async function getLibraryItems(
 
     data.Items.forEach(
       (item: {
+        ServerId: string;
         Name: string;
         Type: string;
         Id: string;
@@ -119,7 +120,7 @@ export async function getLibraryItems(
         ImageTags: { Primary?: string };
       }) => {
         listItems.push({
-          server_url: [server_url],
+          server_data: [[server_url], [item.ServerId], [item.Id]],
           item_name: item.Name,
           item_type: item.Type,
           item_duration: TicksToDuration(item.RunTimeTicks),
@@ -182,9 +183,17 @@ function reduceArray(list: itemJellyfin[]): itemJellyfin[] {
         (item) => item.item_name === current.item_name
       );
       if (existingItem) {
-        existingItem.server_url = [
-          ...existingItem.server_url,
-          ...current.server_url,
+        existingItem.server_data[0] = [
+          ...existingItem.server_data[0],
+          ...current.server_data[0],
+        ];
+        existingItem.server_data[1] = [
+          ...existingItem.server_data[1],
+          ...current.server_data[1],
+        ];
+        existingItem.server_data[2] = [
+          ...existingItem.server_data[2],
+          ...current.server_data[2],
         ];
         return acc;
       }
