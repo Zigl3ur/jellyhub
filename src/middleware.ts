@@ -15,13 +15,11 @@ export async function middleware(req: NextRequest): Promise<NextResponse> {
 
   // protected route (including slugs) and invalid session ?
   if (isProtectedRoute && !session) {
-    console.log("->/login");
     return NextResponse.redirect(new URL("/login", req.nextUrl));
   }
 
   // public route and valid session ?
   if (isPublicRoute && session) {
-    console.log("->/");
     return NextResponse.redirect(new URL("/", req.nextUrl));
   }
 

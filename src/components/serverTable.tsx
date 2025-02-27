@@ -131,7 +131,7 @@ export function ServerTable({
     async function checkServerStatus() {
       const updatedData = [...data];
       for (const server of updatedData) {
-        const serverStatus = await checkConn(server.address, server.token); // token is send to client maybe not the best idea
+        const serverStatus = await checkConn(server.address, server.token);
 
         if (server.status !== serverStatus) {
           server.status = serverStatus;

@@ -82,15 +82,17 @@ export async function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter>
-        <SidebarMenuItem>
-          <SidebarMenuButton asChild>
-            <Link href={"/settings"}>
-              <Settings />
-              <span>Settings</span>
-            </Link>
-          </SidebarMenuButton>
-        </SidebarMenuItem>
-        <LogOutButton onClick={logoutAction} />
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton asChild>
+              <Link href={"/settings"}>
+                <Settings />
+                <span>Settings</span>
+              </Link>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+          <LogOutButton onClick={logoutAction} />
+        </SidebarMenu>
       </SidebarFooter>
     </Sidebar>
   );
