@@ -1,4 +1,4 @@
-import { Home, Settings, LogOutIcon, Film, Tv, Music } from "lucide-react";
+import { Home, Settings, Film, Tv, Music } from "lucide-react";
 
 import {
   Sidebar,
@@ -14,6 +14,7 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import { logout } from "@/lib/auth";
+import LogOutButton from "./logoutButton";
 
 const baseItems = [
   {
@@ -35,19 +36,6 @@ const baseItems = [
     title: "Music Albums",
     url: "/MusicAlbum",
     icon: Music,
-  },
-];
-
-const footerItems = [
-  {
-    title: "Settings",
-    url: "/settings",
-    icon: Settings,
-  },
-  {
-    title: "Logout",
-    url: "",
-    icon: LogOutIcon,
   },
 ];
 
@@ -94,25 +82,15 @@ export async function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter>
-        {footerItems.map(async (item) => {
-          return (
-            <SidebarMenuItem key={item.title}>
-              <SidebarMenuButton asChild>
-                {item.title === "Logout" ? (
-                  <Link href={item.url} onClick={logoutAction}>
-                    <item.icon />
-                    <span>{item.title}</span>
-                  </Link>
-                ) : (
-                  <Link href={item.url}>
-                    <item.icon />
-                    <span>{item.title}</span>
-                  </Link>
-                )}
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-          );
-        })}
+        <SidebarMenuItem>
+          <SidebarMenuButton asChild>
+            <Link href={"/settings"}>
+              <Settings />
+              <span>Settings</span>
+            </Link>
+          </SidebarMenuButton>
+        </SidebarMenuItem>
+        <LogOutButton onClick={logoutAction} />
       </SidebarFooter>
     </Sidebar>
   );

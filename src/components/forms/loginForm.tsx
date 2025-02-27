@@ -20,7 +20,7 @@ import { loginSchema } from "@/schemas/auth.schema";
 import { useRouter } from "next/navigation";
 import { loginActionType } from "@/types/auth.types";
 import { Eye, EyeClosed } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 export default function LoginForm(loginProps: {
   onSubmit: (values: z.infer<typeof loginSchema>) => Promise<loginActionType>;
@@ -37,10 +37,6 @@ export default function LoginForm(loginProps: {
       password: "",
     },
   });
-
-  useEffect(() => {
-    router.refresh(); // prevent to go to last page after logging out (cause of cache), didnt find an other way within server side
-  }, []);
 
   return (
     <div className="w-full max-w-md mx-auto sm:w-[400px] p-5 bg-black/50 backdrop-blur-lg rounded-md">
