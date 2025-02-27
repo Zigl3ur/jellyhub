@@ -1,0 +1,27 @@
+services:
+  db:
+    image: postgres:latest
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=ED021205
+      - POSTGRES_DB=jellyhub
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    ports:
+      - '5432:5432'
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: always
+    depends_on:
+      - db
+    ports:
+      - '3000:3000'
+    command: >
+      sh -c "npx prisma migrate deploy && npx prisma db seed && npm start"
+
+volumes:
+  postgres-data:

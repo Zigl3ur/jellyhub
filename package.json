@@ -2,6 +2,9 @@
   "name": "jellyhub",
   "version": "0.1.0",
   "private": true,
+  "prisma": {
+    "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed.ts"
+  },
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",
@@ -11,6 +14,7 @@
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
     "@prisma/client": "^6.4.1",
+    "@prisma/extension-accelerate": "^1.2.2",
     "@radix-ui/react-alert-dialog": "^1.1.6",
     "@radix-ui/react-checkbox": "^1.1.4",
     "@radix-ui/react-dialog": "^1.1.6",
@@ -39,13 +43,14 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
-    "@types/node": "^20",
+    "@types/node": "^22.13.5",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "15.1.6",
     "postcss": "^8",
     "tailwindcss": "^3.4.1",
-    "typescript": "^5"
+    "ts-node": "^10.9.2",
+    "typescript": "^5.7.3"
   }
 }
