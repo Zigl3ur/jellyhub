@@ -1,6 +1,7 @@
 import { payloadType } from "@/types/auth.types";
 import { JWTPayload, SignJWT, jwtVerify } from "jose";
 import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
 const secretKey = process.env.JWT_SECRET;
 const key = new TextEncoder().encode(secretKey);
@@ -35,7 +36,8 @@ export async function decrypt(token: string): Promise<JWTPayload> {
  */
 export async function logout(): Promise<void> {
   // delete cookie session
-  (await cookies()).set("session-token", "", { expires: new Date(0) });
+  (await cookies()).delete("session-token");
+  redirect("/login");
 }
 
 /**
