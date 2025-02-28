@@ -7,18 +7,24 @@ async function main() {
     where: { username: "admin" },
   });
 
-  const admin =
-    existingAdmin ||
-    (await prisma.accounts.create({
-      data: {
-        username: "admin",
-        password:
-          "$2b$10$IJDaNi5DnLfcsJh47Y9A5ucuzHh6r7n8mAak4vP30V3DBjBC8DDte", // adminadmin
-        admin: true,
-      },
-    }));
-
-  console.log({ admin });
+  if (existingAdmin) {
+    console.log("admin account already exist, skipping seeding...");
+  } else {
+    prisma.accounts
+      .create({
+        data: {
+          username: "admin",
+          password:
+            "$2b$10$IJDaNi5DnLfcsJh47Y9A5ucuzHh6r7n8mAak4vP30V3DBjBC8DDte", // adminadmin
+          admin: true,
+        },
+      })
+      .then(() =>
+        console.log(
+          "created admin account with username admin and pasword adminadmin"
+        )
+      );
+  }
 }
 
 main()

@@ -43,9 +43,14 @@ export async function logout(): Promise<void> {
  * @returns null or the jwt payload if session token valid
  */
 export async function getSession(): Promise<null | JWTPayload> {
-  const session = (await cookies()).get("session-token")?.value;
+  const cookieStore = await cookies();
+  const session = cookieStore.get("session-token")?.value;
   if (!session) return null;
-  return await decrypt(session);
-}
 
-// funct to refresh token data in middleware ?
+  try {
+    return await decrypt(session);
+  } catch {
+    cookieStore.delete("session-token");
+    return null;
+  }
+}
