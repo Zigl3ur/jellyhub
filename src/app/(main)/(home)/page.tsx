@@ -2,7 +2,7 @@ import { Metadata } from "next";
 
 import { checkConn, getAllServerItems } from "@/lib/api.jellyfin";
 import { getSession } from "@/lib/auth";
-import prisma from "@/lib/prisma";
+import { prisma } from "@/lib/prisma";
 import { AllItemsType } from "@/types/jellyfin.types";
 import ServerStats from "@/components/serversStats";
 import CardsCaroussel from "@/components/cardsCarroussel";
@@ -34,11 +34,13 @@ async function getAllItemsAction(): Promise<void | {
   if (!itemsList) return;
 
   const serverList = await Promise.all(
-    itemsList.jellydata.map(async (server) => {
-      const status = await checkConn(server.server, server.token);
-      if (status === "Up")
-        return { address: server.server, token: server.token };
-    })
+    itemsList.jellydata.map(
+      async (server: { server: string; token: string }) => {
+        const status = await checkConn(server.server, server.token);
+        if (status === "Up")
+          return { address: server.server, token: server.token };
+      }
+    )
   );
 
   const filteredServers = serverList.filter((server) => server !== undefined);

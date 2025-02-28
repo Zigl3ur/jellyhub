@@ -2,7 +2,7 @@ import ResetPasswd from "@/components/resetPasswd";
 import { ServerTable, columns } from "@/components/serverTable";
 import { getToken } from "@/lib/api.jellyfin";
 import { getSession } from "@/lib/auth";
-import prisma from "@/lib/prisma";
+import { prisma } from "@/lib/prisma";
 import {
   jellyfinServer,
   jellyfinServerCredentials,
@@ -11,7 +11,7 @@ import {
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 import { Metadata } from "next";
 import { revalidatePath } from "next/cache";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import CreateUser from "@/components/createUser";
 
 export const metadata: Metadata = {
@@ -42,14 +42,16 @@ async function jellyfinServerListAction(): Promise<void | jellyfinServer[]> {
 
   const returnList: jellyfinServer[] = [];
 
-  serverList[0].jellydata.forEach((server) => {
-    returnList.push({
-      address: server.server,
-      username: server.username,
-      token: server.token,
-      status: "Checking",
-    });
-  });
+  serverList[0].jellydata.forEach(
+    (server: { server: string; username: string; token: string }) => {
+      returnList.push({
+        address: server.server,
+        username: server.username,
+        token: server.token,
+        status: "Checking",
+      });
+    }
+  );
 
   return returnList;
 }
