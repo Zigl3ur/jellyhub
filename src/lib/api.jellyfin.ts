@@ -18,37 +18,44 @@ export async function getToken(
   username: string,
   password: string
 ): Promise<tokenJellyfin> {
-  const response = await fetch(`${server_url}/Users/AuthenticateByName`, {
-    // set timeout / race to wait less when server not reachable
-    method: "POST",
-    body: JSON.stringify({
-      Username: username,
-      Pw: password,
-    }),
-    headers: {
-      "Content-type": "application/json",
-      "X-Emby-Authorization":
-        'MediaBrowser Client="jellyhub", Device="client", DeviceId="id87990ughfi", Version="1.0.0"',
-    },
-  });
-  if (response.status === 200) {
-    const data = await response.json();
+  try {
+    const response = await fetch(`${server_url}/Users/AuthenticateByName`, {
+      method: "POST",
+      body: JSON.stringify({
+        Username: username,
+        Pw: password,
+      }),
+      headers: {
+        "Content-type": "application/json",
+        "X-Emby-Authorization":
+          'MediaBrowser Client="jellyhub", Device="client", DeviceId="id87990ughfi", Version="1.0.0"',
+      },
+    });
+
+    if (response.status === 200) {
+      const data = await response.json();
+      return {
+        server_url: server_url,
+        serverId: data.ServerId,
+        accountId: data.Id,
+        token: data.AccessToken,
+        error: null,
+      };
+    } else if (response.status === 401) {
+      return {
+        server_url: server_url,
+        error: "Authentication failed, check your credentials",
+      };
+    } else {
+      return {
+        server_url: server_url,
+        error: "An Error Occured, check the URL / credentials",
+      };
+    }
+  } catch {
     return {
       server_url: server_url,
-      serverId: data.ServerId,
-      accountId: data.Id,
-      token: data.AccessToken,
-      error: null,
-    };
-  } else if (response.status === 401) {
-    return {
-      server_url: server_url,
-      error: "Authentication failed, check your credentials",
-    };
-  } else {
-    return {
-      server_url: server_url,
-      error: "An Error Occured, check your URL / credentials",
+      error: "An Error Occured, check the URL",
     };
   }
 }
@@ -142,7 +149,7 @@ export async function getLibraryItems(
     });
   }
   return Object.assign([], {
-    error: "Ann Error Occured",
+    error: "An Error Occured",
   });
 }
 

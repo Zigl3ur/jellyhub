@@ -18,10 +18,10 @@ services:
       - db
     environment:
       - DATABASE_URL=postgresql://user:passwd@db:5432/dbname?schema=prisma # make it match with the db service
-      - JWT_SECRET=UOt04FdbvhXtmj3keGP981XUj8vJ3uPb #random string for jwt, change it
-      - PORT=8888 #optional, default is 3000
+      - JWT_SECRET=UOt04FdbvhXtmj3keGP981XUj8vJ3uPb # random string for jwt, change it
+      - PORT=8888 # optional, default is 3000
     ports:
-      - '8888:8888' #make it match with the specified port above, or 3000 to default
+      - '8888:8888' # make it match with the specified port above, or 3000 to default
 
 volumes:
   postgres-data:  

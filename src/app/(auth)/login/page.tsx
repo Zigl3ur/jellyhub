@@ -63,8 +63,7 @@ async function loginAction(
       httpOnly: true,
     });
     return { state: true, desc: "Successfully Logged In", href: "/" };
-  } catch (err) {
-    console.error("Login Action Error:", err);
+  } catch {
     return { state: false, desc: "Server Error", href: "" };
   }
 }
