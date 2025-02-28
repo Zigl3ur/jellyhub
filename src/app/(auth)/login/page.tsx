@@ -18,8 +18,6 @@ async function loginAction(
   "use server";
 
   try {
-    console.log("aaaaaa");
-
     const schema = z.object({
       username: z.string().min(3).max(15),
       password: z.string().min(6).max(50),
@@ -45,8 +43,6 @@ async function loginAction(
       values.password,
       userData.password
     );
-
-    console.log(passwordCheck);
 
     if (!passwordCheck) {
       return { state: false, desc: "Bad Credentials", href: "" };

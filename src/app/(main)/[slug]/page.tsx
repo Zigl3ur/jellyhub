@@ -40,11 +40,13 @@ async function getItemsListAction(
   if (!itemsList) return;
 
   const serverList = await Promise.all(
-    itemsList.jellydata.map(async (server) => {
-      const status = await checkConn(server.server, server.token);
-      if (status === "Up")
-        return { address: server.server, token: server.token };
-    })
+    itemsList.jellydata.map(
+      async (server: { server: string; token: string }) => {
+        const status = await checkConn(server.server, server.token);
+        if (status === "Up")
+          return { address: server.server, token: server.token };
+      }
+    )
   );
 
   const filteredServers = serverList.filter((server) => server !== undefined);

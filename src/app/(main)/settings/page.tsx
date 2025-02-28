@@ -42,14 +42,16 @@ async function jellyfinServerListAction(): Promise<void | jellyfinServer[]> {
 
   const returnList: jellyfinServer[] = [];
 
-  serverList[0].jellydata.forEach((server) => {
-    returnList.push({
-      address: server.server,
-      username: server.username,
-      token: server.token,
-      status: "Checking",
-    });
-  });
+  serverList[0].jellydata.forEach(
+    (server: { server: string; username: string; token: string }) => {
+      returnList.push({
+        address: server.server,
+        username: server.username,
+        token: server.token,
+        status: "Checking",
+      });
+    }
+  );
 
   return returnList;
 }
