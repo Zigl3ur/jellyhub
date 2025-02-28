@@ -15,13 +15,15 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    restart: always
+    restart: on-failure
     depends_on:
       - db
     ports:
       - '3000:3000'
-    command: >
-      sh -c "npx prisma migrate deploy && npx prisma db seed && npm start"
+    environment:
+      - DATABASE_URL=postgresql://postgres:ED021205@db:5432/jellyhub?schema=prisma
+      - JWT_SECRET=UOt04FdbvhXtmj3keGP981XUj8vJ3uPb
+      - NODE_ENV=production
 
 volumes:
-  postgres-data:
+  postgres-data:  

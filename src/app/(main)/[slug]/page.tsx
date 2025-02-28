@@ -3,7 +3,7 @@ import NotFound from "@/components/notFound";
 import SearchBar from "@/components/searchBar";
 import { checkConn, getAllServerItems } from "@/lib/api.jellyfin";
 import { getSession } from "@/lib/auth";
-import prisma from "@/lib/prisma";
+import { prisma } from "@/lib/prisma";
 import { itemJellyfin } from "@/types/jellyfin.types";
 import { notFound } from "next/navigation";
 

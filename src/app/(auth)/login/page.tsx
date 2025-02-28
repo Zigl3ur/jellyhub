@@ -1,10 +1,10 @@
 import LoginForm from "@/components/forms/loginForm";
 import { encrypt } from "@/lib/auth";
-import prisma from "@/lib/prisma";
+import { prisma } from "@/lib/prisma";
 import { loginSchema } from "@/schemas/auth.schema";
 import { Metadata } from "next";
 import { z } from "zod";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import { loginActionType, payloadType } from "@/types/auth.types";
 import { cookies } from "next/headers";
 
@@ -18,6 +18,8 @@ async function loginAction(
   "use server";
 
   try {
+    console.log("aaaaaa");
+
     const schema = z.object({
       username: z.string().min(3).max(15),
       password: z.string().min(6).max(50),
@@ -44,6 +46,8 @@ async function loginAction(
       userData.password
     );
 
+    console.log(passwordCheck);
+
     if (!passwordCheck) {
       return { state: false, desc: "Bad Credentials", href: "" };
     }
@@ -63,7 +67,8 @@ async function loginAction(
       httpOnly: true,
     });
     return { state: true, desc: "Successfully Logged In", href: "/" };
-  } catch {
+  } catch (err) {
+    console.error("Login Action Error:", err);
     return { state: false, desc: "Server Error", href: "" };
   }
 }

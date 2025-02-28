@@ -2,7 +2,7 @@ import { Metadata } from "next";
 
 import { checkConn, getAllServerItems } from "@/lib/api.jellyfin";
 import { getSession } from "@/lib/auth";
-import prisma from "@/lib/prisma";
+import { prisma } from "@/lib/prisma";
 import { AllItemsType } from "@/types/jellyfin.types";
 import ServerStats from "@/components/serversStats";
 import CardsCaroussel from "@/components/cardsCarroussel";

@@ -2,7 +2,7 @@ import ResetPasswd from "@/components/resetPasswd";
 import { ServerTable, columns } from "@/components/serverTable";
 import { getToken } from "@/lib/api.jellyfin";
 import { getSession } from "@/lib/auth";
-import prisma from "@/lib/prisma";
+import { prisma } from "@/lib/prisma";
 import {
   jellyfinServer,
   jellyfinServerCredentials,
@@ -11,7 +11,7 @@ import {
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 import { Metadata } from "next";
 import { revalidatePath } from "next/cache";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import CreateUser from "@/components/createUser";
 
 export const metadata: Metadata = {
