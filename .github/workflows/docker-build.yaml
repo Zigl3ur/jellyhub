@@ -14,4 +14,4 @@ jobs:
       - name: push image
         run: |
           docker login -u zigleur -p ${{ secrets.DOCKER_HUB_TOKEN }}
-          docker push zigleur/jellyhub:latest
+          docker push jellyhub:latest
