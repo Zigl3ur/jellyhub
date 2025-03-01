@@ -1,9 +1,9 @@
 <div align="center">
     <img src="./public/icon.png" alt="JellyHub Logo" width="100"/>
-        <h2>
+        <h1>
             JellyHub
-        </h2>
-        <h4>The jellyfin servers media indexer</h4>
+        </h1>
+        <h3>The jellyfin servers media indexer</h3>
 </div>
 
 <br>
