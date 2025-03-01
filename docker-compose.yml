@@ -1,5 +1,6 @@
 services:
   db:
+    container_name: jellyhub-db
     image: postgres:latest
     restart: always
     environment:
@@ -10,9 +11,7 @@ services:
       - postgres-data:/var/lib/postgresql/data
 
   app:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    container_name: jellyhub
     restart: on-failure
     depends_on:
       - db
@@ -22,6 +21,7 @@ services:
       - PORT=8888 # optional, default is 3000
     ports:
       - '8888:8888' # make it match with the specified port above, or 3000 to default
+    image: zigleur/jellyhub:latest
 
 volumes:
   postgres-data:  

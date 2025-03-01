@@ -8,7 +8,7 @@ async function main() {
   });
 
   if (existingAdmin) {
-    console.log("admin account already exist, skipping seeding...");
+    console.log("\nadmin account already exist, skipping seeding...");
   } else {
     prisma.accounts
       .create({
@@ -21,7 +21,7 @@ async function main() {
       })
       .then(() =>
         console.log(
-          "created admin account with username admin and pasword adminadmin"
+          "\ncreated admin account with username admin and pasword adminadmin"
         )
       );
   }
