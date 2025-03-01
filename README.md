@@ -29,13 +29,13 @@ services:
     environment:
       - POSTGRES_USER=user # your postgres user
       - POSTGRES_PASSWORD=passwd # your postgres password
-      - POSTGRES_DB=jellyhub # your postgres database
+      - POSTGRES_DB=dbname # your postgres database
     volumes:
       - postgres-data:/var/lib/postgresql/data
 
-  app:
+  jellyhub:
     container_name: jellyhub
-    restart: unless-stopped
+    restart: on-failure
     depends_on:
       - db
     environment:
@@ -43,7 +43,7 @@ services:
       - JWT_SECRET=UOt04FdbvhXtmj3keGP981XUj8vJ3uPb # random string for jwt, change it
       - PORT=8888 # optional, default is 3000
     ports:
-      - "8888:8888" # make it match with the specified port above, or 3000 to default
+      - 8888:8888 # make it match with the specified port above, or 3000 to default
     image: zigleur/jellyhub:latest
 
 volumes:
