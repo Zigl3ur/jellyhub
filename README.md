@@ -50,7 +50,7 @@ volumes:
   postgres-data:
 ```
 
-Change the env variables to make them fit with your needs and run it with the following command: 
+Change the env variables to make them fit with your needs and run it with the following command:
 `docker compose up -d`
 
 ### Docker CLI
@@ -73,6 +73,8 @@ docker run -d --name jellyhub \
 
 Now you can access the app at http://localhost:8888 _(adapt the host and port depending on how you configured it)_
 
+The default user is `admin` with password `adminadmin`
+
 <h2>Screenshots</h2>
 
 ![Screenshot_0](https://github.com/Zigl3ur/jellyhub/blob/main/assets/home_page.png)
@@ -86,6 +88,8 @@ Now you can access the app at http://localhost:8888 _(adapt the host and port de
 ![Screenshot_4](https://github.com/Zigl3ur/jellyhub/blob/main/assets/popup_item.png)
 
 ![Screenshot_5](https://github.com/Zigl3ur/jellyhub/blob/main/assets/settings_page.png)
+
+![Screenshot_6](https://github.com/Zigl3ur/jellyhub/blob/main/assets/login_page.png)
 
 <h2>Personal Note</h2>
 
