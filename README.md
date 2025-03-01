@@ -3,7 +3,7 @@
         <h2>
             JellyHub
         </h2>
-        <p>The jellyfin servers media indexer</p>
+        <h4>The jellyfin servers media indexer</h4>
 </div>
 
 <br>
