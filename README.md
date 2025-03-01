@@ -75,17 +75,17 @@ Now you can access the app at http://localhost:8888 _(adapt the host and port de
 <br>
 <h2>Screenshots</h2>
 
-![Screenshot_0](https://github.com/Zigl3ur/jellyhub/tree/main/assets/home_page.png)
+![Screenshot_0](https://github.com/Zigl3ur/jellyhub/blob/main/assets/home_page.png)
 
-![Screenshot_1](https://github.com/Zigl3ur/jellyhub/tree/main/assets/movie_page.png)
+![Screenshot_1](https://github.com/Zigl3ur/jellyhub/blob/main/assets/movie_page.png)
 
-![Screenshot_2](https://github.com/Zigl3ur/jellyhub/tree/main/assets/shows_page.png)
+![Screenshot_2](https://github.com/Zigl3ur/jellyhub/blob/main/assets/shows_page.png)
 
-![Screenshot_3](https://github.com/Zigl3ur/jellyhub/tree/main/assets/musicalbum_page.png)
+![Screenshot_3](https://github.com/Zigl3ur/jellyhub/blob/main/assets/musicalbum_page.png)
 
-![Screenshot_4](https://github.com/Zigl3ur/jellyhub/tree/main/assets/popup_item.png)
+![Screenshot_4](https://github.com/Zigl3ur/jellyhub/blob/main/assets/popup_item.png)
 
-![Screenshot_5](https://github.com/Zigl3ur/jellyhub/tree/main/assets/settings_page.png)
+![Screenshot_5](https://github.com/Zigl3ur/jellyhub/blob/main/assets/settings_page.png)
 
 <br>
 <h2>Personnal Note</h2>
