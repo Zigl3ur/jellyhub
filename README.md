@@ -58,7 +58,7 @@ To run it with the docker cli use the following command with your personnalized 
 
 > [!IMPORTANT]
 > With this command you don't have the postgres database so make sure you
-> have a reachable one at your DATABASE_URL
+> have a reachable one at your `DATABASE_URL`
 
 ```sh
 docker run -d --name jellyhub \
@@ -90,4 +90,6 @@ Now you can access the app at http://localhost:8888 _(adapt the host and port de
 <br>
 <h2>Personnal Note</h2>
 
-This project was made to learn NextJS and React, so for sure the code / css could be better and more optimized since im a begginer. But for now it works.
+This project was made to learn NextJS and React, so definitely the code / css could be better and more optimized since I'm a beginner. But for now it works.
+
+Thanks to my friends [@firminunderscore](https://github.com/firminunderscore) [@0x4c756e61](https://github.com/0x4c756e61) and [@Zarox28](https://github.com/Zarox28) for allowing me to test the app on their jellyfin servers.
