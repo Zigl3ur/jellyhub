@@ -50,7 +50,8 @@ volumes:
   postgres-data:
 ```
 
-Change the env variables to make them fit with your needs and run it with the followin command: `docker compose up -d`
+Change the env variables to make them fit with your needs and run it with the following command: 
+`docker compose up -d`
 
 ### Docker CLI
 
