@@ -1,4 +1,5 @@
 .git
+assets
 .gitignore
 *Dockerfile*
 docker-compose*

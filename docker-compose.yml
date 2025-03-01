@@ -6,11 +6,11 @@ services:
     environment:
       - POSTGRES_USER=user # your postgres user 
       - POSTGRES_PASSWORD=passwd # your postgres password
-      - POSTGRES_DB=jellyhub # your postgres database
+      - POSTGRES_DB=dbname # your postgres database
     volumes:
       - postgres-data:/var/lib/postgresql/data
 
-  app:
+  jellyhub:
     container_name: jellyhub
     restart: on-failure
     depends_on:
