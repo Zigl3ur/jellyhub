@@ -73,7 +73,6 @@ docker run -d --name jellyhub \
 
 Now you can access the app at http://localhost:8888 _(adapt the host and port depending on how you configured it)_
 
-<br>
 <h2>Screenshots</h2>
 
 ![Screenshot_0](https://github.com/Zigl3ur/jellyhub/blob/main/assets/home_page.png)
@@ -88,7 +87,6 @@ Now you can access the app at http://localhost:8888 _(adapt the host and port de
 
 ![Screenshot_5](https://github.com/Zigl3ur/jellyhub/blob/main/assets/settings_page.png)
 
-<br>
 <h2>Personal Note</h2>
 
 This project was made to learn NextJS and React, so definitely the code / css could be better and more optimized since I'm a beginner. But for now it works.
