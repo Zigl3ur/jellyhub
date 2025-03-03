@@ -3,6 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -44,12 +45,16 @@ interface ResetPasswdProps {
   userList: { username: string }[];
   isAdmin: boolean;
   onSubmit: (password: string, user: string | undefined) => Promise<boolean>;
+  onDelete: (username: string) => Promise<{ success: boolean; error?: string }>;
 }
 
 export default function ResetPasswd(Props: ResetPasswdProps) {
+  const [selectedUser, setSelectedUser] = useState<string>("");
+
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
+      user: "",
       new_password: "",
       confirm_new_password: "",
     },
@@ -76,6 +81,28 @@ export default function ResetPasswd(Props: ResetPasswdProps) {
     });
   }
 
+  function handleDeleteUser() {
+    Props.onDelete(selectedUser).then((result) => {
+      form.reset();
+      if (result.success) {
+        toast({
+          title: "Success",
+          description: `User ${selectedUser} has been deleted`,
+          variant: "success",
+          duration: 2500,
+        });
+        setSelectedUser("");
+      } else {
+        toast({
+          title: "Error",
+          description: result.error,
+          variant: "destructive",
+          duration: 2500,
+        });
+      }
+    });
+  }
+
   return (
     <div className=" bg-black/50 backdrop-blur-lg rounded-md p-5 w-full">
       <Form {...form}>
@@ -88,13 +115,16 @@ export default function ResetPasswd(Props: ResetPasswdProps) {
                 <FormItem>
                   <FormLabel>User</FormLabel>
                   <Select
-                    onValueChange={field.onChange}
+                    onValueChange={(value) => {
+                      field.onChange(value);
+                      setSelectedUser(value);
+                    }}
                     defaultValue={field.value}
                     required
                   >
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder="User to reset password" />
+                        <SelectValue placeholder="Select an User" />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
@@ -144,9 +174,21 @@ export default function ResetPasswd(Props: ResetPasswdProps) {
               </FormItem>
             )}
           />
-          <Button type="submit" variant={"destructive"}>
-            Reset
-          </Button>
+          <div className="flex gap-2">
+            <Button type="submit" variant={"destructive"}>
+              Reset
+            </Button>
+            {Props.isAdmin && (
+              <Button
+                type="button"
+                variant={"destructive"}
+                onClick={handleDeleteUser}
+                disabled={selectedUser == ""}
+              >
+                Delete User
+              </Button>
+            )}
+          </div>
         </form>
       </Form>
     </div>

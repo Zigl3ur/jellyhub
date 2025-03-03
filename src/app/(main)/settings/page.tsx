@@ -18,11 +18,6 @@ export const metadata: Metadata = {
   title: "JellyHub - Settings",
 };
 
-async function refreshData() {
-  "use server";
-  revalidatePath("/settings");
-}
-
 /**
  *  Server action to get the list of the jellyfin servers of the logged user.
  * @returns jellyfin server list of the account or nothing if not authenticated
@@ -90,7 +85,7 @@ async function jellyfinServerAddAction(
       },
     });
 
-    await refreshData();
+    revalidatePath("/settings");
     return true;
   } catch (err) {
     if (err instanceof PrismaClientKnownRequestError)
@@ -143,7 +138,7 @@ async function jellyfinServerDeleteAction(
         },
       },
     });
-    await refreshData();
+    revalidatePath("/settings");
     return true;
   } catch (err) {
     if (err instanceof Error)
@@ -224,9 +219,9 @@ async function createUserAction(
   try {
     const auth = await getSession();
 
-    if (!auth) return { success: false };
+    if (!auth) return { success: false, error: "Not authenticated" };
 
-    if (!auth.admin) return { success: false };
+    if (!auth.admin) return { success: false, error: "Not authorized" };
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -238,6 +233,7 @@ async function createUserAction(
       },
     });
 
+    revalidatePath("/settings");
     return { success: true };
   } catch (err) {
     if (err instanceof PrismaClientKnownRequestError)
@@ -253,6 +249,47 @@ async function createUserAction(
     return {
       success: false,
       error: "An Unknow Error Occured",
+    };
+  }
+}
+
+/**
+ * Server action to delete a user
+ * @param username username of the user to delete
+ * @returns if the operation succeeded with a success flag and optional error message
+ */
+async function deleteUserAction(
+  username: string
+): Promise<{ success: boolean; error?: string }> {
+  "use server";
+  try {
+    const auth = await getSession();
+
+    if (!auth) return { success: false, error: "Not authenticated" };
+
+    if (!auth.admin) return { success: false, error: "Not authorized" };
+
+    if (auth.username === username)
+      return { success: false, error: "Cannot delete yourself" };
+
+    await prisma.accounts.delete({
+      where: {
+        username: username,
+      },
+    });
+
+    revalidatePath("/settings");
+    return { success: true };
+  } catch (err) {
+    if (err instanceof Error) {
+      return {
+        success: false,
+        error: err.message,
+      };
+    }
+    return {
+      success: false,
+      error: "An Unknown Error Occurred",
     };
   }
 }
@@ -274,6 +311,7 @@ export default async function SettingsPage() {
         <ResetPasswd
           isAdmin={isAdmin}
           onSubmit={resetPasswdAction}
+          onDelete={deleteUserAction}
           userList={userList}
         />
         {isAdmin && <CreateUser onSubmit={createUserAction} />}
