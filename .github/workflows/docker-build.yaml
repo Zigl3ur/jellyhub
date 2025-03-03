@@ -10,8 +10,8 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: build image
-        run: docker build -t jellyhub:latest .
+        run: docker build -t zigleur/jellyhub:latest .
       - name: push image
         run: |
           docker login -u zigleur -p ${{ secrets.DOCKER_HUB_TOKEN }}
-          docker push jellyhub:latest
+          docker push zigleur/jellyhub:latest
