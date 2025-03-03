@@ -18,7 +18,7 @@ To be able to run JellyHub, first you must have **[Docker](https://www.docker.co
 
 ### Docker Compose
 
-Create a file [`docker-compose.yaml`](https://github.com/Zigl3ur/jellyhub/blob/main/docker-compose.yml) with the content below.
+Create a file [`docker-compose.yml`](https://github.com/Zigl3ur/jellyhub/blob/main/docker-compose.yml) with the content below.
 
 ```yaml
 services:
