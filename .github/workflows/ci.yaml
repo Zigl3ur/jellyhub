@@ -15,6 +15,9 @@ jobs:
       - name: Install Dependencies
         run: npm install -g pnpm && pnpm install
 
+      - name: Generate Prisma Client
+        run: pnpm prisma generate
+
       - name: Lint
         run: pnpm lint
 
