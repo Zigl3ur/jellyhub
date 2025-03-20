@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
-import Logo from "../logo";
+import Logo from "./global/logo";
 import { loginSchema } from "@/schemas/auth.schema";
 import { useRouter } from "next/navigation";
 import { loginActionType } from "@/types/auth.types";

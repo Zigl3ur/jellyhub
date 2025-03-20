@@ -7,7 +7,7 @@ import {
 } from "@/components/ui/carousel";
 import { itemJellyfin } from "@/types/jellyfin.types";
 import { X } from "lucide-react";
-import ItemDialog from "./itemDialog";
+import ItemDialog from "./global/itemDialog";
 
 interface CarouselProps {
   isLoading: boolean;

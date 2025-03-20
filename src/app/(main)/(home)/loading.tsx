@@ -1,4 +1,4 @@
-import Loader from "@/components/loader";
+import Loader from "@/components/global/loader";
 import ServerStats from "@/components/serversStats";
 
 export default function Loading() {

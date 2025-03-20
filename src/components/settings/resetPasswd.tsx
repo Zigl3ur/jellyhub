@@ -22,7 +22,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toast } from "@/hooks/use-toast";
-import { Input } from "./ui/input";
+import { Input } from "../ui/input";
+import { deleteUserAction, resetPasswdAction } from "@/lib/action";
 
 const FormSchema = z
   .object({
@@ -44,8 +45,6 @@ const FormSchema = z
 interface ResetPasswdProps {
   userList: { username: string }[];
   isAdmin: boolean;
-  onSubmit: (password: string, user: string | undefined) => Promise<boolean>;
-  onDelete: (username: string) => Promise<{ success: boolean; error?: string }>;
 }
 
 export default function ResetPasswd(Props: ResetPasswdProps) {
@@ -61,7 +60,7 @@ export default function ResetPasswd(Props: ResetPasswdProps) {
   });
 
   function onSubmit(data: z.infer<typeof FormSchema>) {
-    Props.onSubmit(data.confirm_new_password, data.user).then((result) => {
+    resetPasswdAction(data.confirm_new_password, data.user).then((result) => {
       form.reset();
       if (result) {
         toast({
@@ -82,7 +81,7 @@ export default function ResetPasswd(Props: ResetPasswdProps) {
   }
 
   function handleDeleteUser() {
-    Props.onDelete(selectedUser).then((result) => {
+    deleteUserAction(selectedUser).then((result) => {
       form.reset();
       if (result.success) {
         toast({

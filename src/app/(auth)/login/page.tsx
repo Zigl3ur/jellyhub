@@ -1,4 +1,4 @@
-import LoginForm from "@/components/forms/loginForm";
+import LoginForm from "@/components/loginForm";
 import { encrypt } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { loginSchema } from "@/schemas/auth.schema";

@@ -20,17 +20,17 @@ import {
 } from "@/components/ui/table";
 
 import { Checkbox } from "@/components/ui/checkbox";
-import {
-  jellyfinServer,
-  jellyfinServerCredentials,
-  tokenJellyfin,
-} from "@/types/jellyfin.types";
+import { jellyfinServer } from "@/types/jellyfin.types";
 import { useEffect, useState } from "react";
-import { Input } from "./ui/input";
+import { Input } from "../ui/input";
 import { ServerDialog } from "./serverDialog";
 import { DeleteAlertDialog } from "./deleteAlert";
 import { LoaderCircle, Wifi, WifiOff } from "lucide-react";
 import { checkConn } from "@/lib/api.jellyfin";
+import {
+  jellyfinServerAddAction,
+  jellyfinServerDeleteAction,
+} from "@/lib/action";
 
 export const columns: ColumnDef<jellyfinServer>[] = [
   {
@@ -109,20 +109,9 @@ export const columns: ColumnDef<jellyfinServer>[] = [
 interface DataTableProps {
   columns: ColumnDef<jellyfinServer>[];
   baseData: jellyfinServer[];
-  addAction: (
-    data: jellyfinServerCredentials
-  ) => Promise<tokenJellyfin | boolean>;
-  deleteAction: (
-    data: Omit<jellyfinServerCredentials, "password">[]
-  ) => Promise<tokenJellyfin | boolean>;
 }
 
-export function ServerTable({
-  columns,
-  baseData,
-  addAction,
-  deleteAction,
-}: DataTableProps) {
+export function ServerTable({ columns, baseData }: DataTableProps) {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [data, setData] = useState<jellyfinServer[]>(baseData);
 
@@ -230,10 +219,10 @@ export function ServerTable({
       </div>
       <div className="flex items-center justify-between">
         <div className="space-y-2">
-          <ServerDialog addAction={addAction} />
+          <ServerDialog addAction={jellyfinServerAddAction} />
           <DeleteAlertDialog
             disable={table.getFilteredSelectedRowModel().rows.length === 0}
-            onClick={deleteAction}
+            onClick={jellyfinServerDeleteAction}
             checkedRows={checkedRows}
           />
         </div>

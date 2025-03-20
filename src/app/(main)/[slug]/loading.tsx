@@ -1,4 +1,4 @@
-import Loader from "@/components/loader";
+import Loader from "@/components/global/loader";
 import SearchBar from "@/components/searchBar";
 
 export default function Loading() {

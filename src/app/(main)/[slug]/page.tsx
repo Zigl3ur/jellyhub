@@ -1,5 +1,5 @@
-import ItemDialog from "@/components/itemDialog";
-import NotFound from "@/components/notFound";
+import ItemDialog from "@/components/global/itemDialog";
+import NotFound from "@/components/global/notFound";
 import SearchBar from "@/components/searchBar";
 import { checkConn, getAllServerItems } from "@/lib/api.jellyfin";
 import { getSession } from "@/lib/auth";

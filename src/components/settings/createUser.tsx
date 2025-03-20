@@ -14,19 +14,13 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { toast } from "@/hooks/use-toast";
-import { Input } from "./ui/input";
+import { Input } from "../ui/input";
 import { loginSchema } from "@/schemas/auth.schema";
+import { createUserAction } from "@/lib/action";
 
 const FormSchema = loginSchema;
 
-interface CreateUserProps {
-  onSubmit: (
-    username: string,
-    password: string
-  ) => Promise<{ success: boolean; error?: string }>;
-}
-
-export default function CreateUser(Props: CreateUserProps) {
+export default function CreateUser() {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -36,7 +30,7 @@ export default function CreateUser(Props: CreateUserProps) {
   });
 
   function onSubmit(data: z.infer<typeof FormSchema>) {
-    Props.onSubmit(data.username, data.password).then((result) => {
+    createUserAction(data.username, data.password).then((result) => {
       form.reset();
       if (result.success) {
         toast({

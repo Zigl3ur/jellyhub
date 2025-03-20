@@ -3,7 +3,7 @@
 import { itemJellyfin } from "@/types/jellyfin.types";
 import { Input } from "./ui/input";
 import { useState } from "react";
-import ItemDialog from "./itemDialog";
+import ItemDialog from "./global/itemDialog";
 
 interface SearchBarProps {
   type: "Movie" | "Series" | "MusicAlbum" | "...";

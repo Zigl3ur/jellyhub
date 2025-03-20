@@ -11,7 +11,7 @@ import { ArrowUpRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
-import { Skeleton } from "./ui/skeleton";
+import { Skeleton } from "../ui/skeleton";
 
 import {
   Card,
@@ -19,7 +19,7 @@ import {
   CardContent,
   CardFooter,
   CardTitle,
-} from "./ui/card";
+} from "../ui/card";
 
 interface DialogProps {
   type: "card" | "title";

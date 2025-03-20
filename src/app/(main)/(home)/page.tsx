@@ -7,7 +7,7 @@ import { AllItemsType } from "@/types/jellyfin.types";
 import ServerStats from "@/components/serversStats";
 import CardsCaroussel from "@/components/cardsCarroussel";
 import Link from "next/link";
-import NotFound from "@/components/notFound";
+import NotFound from "@/components/global/notFound";
 
 export const metadata: Metadata = {
   title: "JellyHub - Home",
