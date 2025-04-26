@@ -17,7 +17,7 @@ export async function generateMetadata({
   };
 }
 
-async function getItemsListAction(
+async function getItemsList(
   type: "Movie" | "Series" | "MusicAlbum"
 ): Promise<void | {
   serverCount: number;
@@ -71,9 +71,7 @@ export default async function CategoryPage({
 
   if (!allowedSlug.includes(slug)) return notFound();
 
-  const data = await getItemsListAction(
-    slug as "Movie" | "Series" | "MusicAlbum"
-  );
+  const data = await getItemsList(slug as "Movie" | "Series" | "MusicAlbum");
 
   return (
     <div className="flex flex-col">

@@ -13,7 +13,7 @@ export const metadata: Metadata = {
   title: "JellyHub - Home",
 };
 
-async function getAllItemsAction(): Promise<void | {
+async function getAllItems(): Promise<void | {
   serverCount: number;
   allItems: AllItemsType;
 }> {
@@ -51,7 +51,7 @@ async function getAllItemsAction(): Promise<void | {
 }
 
 export default async function Home() {
-  const data = (await getAllItemsAction()) ?? {
+  const data = (await getAllItems()) ?? {
     serverCount: 0,
     allItems: { movies: [], shows: [], musicAlbum: [] },
   };

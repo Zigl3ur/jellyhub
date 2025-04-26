@@ -60,7 +60,7 @@ export default function ItemDialog(Props: DialogProps) {
         {Props.type === "card" ? (
           <DialogTrigger asChild className="cursor-pointer">
             <Card className="bg-black/30 backdrop-blur-lg w-[175px] h-full flex flex-col">
-              <CardContent className="p-4 flex-grow flex items-center justify-center">
+              <CardContent className="p-4 grow flex items-center justify-center">
                 <div
                   className={`relative w-[175px] ${
                     Props.reduced ? "h-[150px]" : "h-[225px]"

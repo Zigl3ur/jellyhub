@@ -4,7 +4,7 @@ services:
     image: postgres:latest
     restart: always
     environment:
-      - POSTGRES_USER=user # your postgres user 
+      - POSTGRES_USER=user # your postgres user
       - POSTGRES_PASSWORD=passwd # your postgres password
       - POSTGRES_DB=dbname # your postgres database
     volumes:
@@ -24,4 +24,4 @@ services:
     image: zigleur/jellyhub:latest
 
 volumes:
-  postgres-data:  
+  postgres-data:
