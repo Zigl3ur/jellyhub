@@ -1,6 +1,6 @@
 # TODOS
 
-## Overall
+## Overall
 
 - [ ] Better ui/ux and styling
 
@@ -12,3 +12,5 @@
 ## Features
 
 - [ ] Allow Register ?
+- [ ] Better search
+- [ ] More infos when seeing a media card ?
