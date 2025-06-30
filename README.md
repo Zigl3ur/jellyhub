@@ -77,19 +77,19 @@ The default user is `admin` with password `adminadmin`
 
 <h2>Screenshots</h2>
 
-![Screenshot_0](https://github.com/Zigl3ur/jellyhub/blob/main/assets/home_page.png)
+![Screenshot_0](./.github/README/home_page.png)
 
-![Screenshot_1](https://github.com/Zigl3ur/jellyhub/blob/main/assets/movie_page.png)
+![Screenshot_1](./.github/README/movie_page.png)
 
-![Screenshot_2](https://github.com/Zigl3ur/jellyhub/blob/main/assets/shows_page.png)
+![Screenshot_2](./.github/README/shows_page.png)
 
-![Screenshot_3](https://github.com/Zigl3ur/jellyhub/blob/main/assets/musicalbum_page.png)
+![Screenshot_3](./.github/README/musicalbum_page.png)
 
-![Screenshot_4](https://github.com/Zigl3ur/jellyhub/blob/main/assets/popup_item.png)
+![Screenshot_4](./.github/README/popup_item.png)
 
-![Screenshot_5](https://github.com/Zigl3ur/jellyhub/blob/main/assets/settings_page.png)
+![Screenshot_5](./.github/README/settings_page.png)
 
-![Screenshot_6](https://github.com/Zigl3ur/jellyhub/blob/main/assets/login_page.png)
+![Screenshot_6](./.github/README/login_page.png)
 
 <h2>Personal Note</h2>
 
