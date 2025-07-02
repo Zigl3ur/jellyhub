@@ -7,21 +7,78 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model accounts {
-  id        Int         @id @default(autoincrement())
-  username  String      @unique @db.VarChar(255)
-  password  String      @db.VarChar(255)
-  admin     Boolean     @default(false) @db.Boolean
-  jellydata jellydata[]
-}
-
 model jellydata {
-  id        Int      @id @default(autoincrement())
-  accountid Int
-  username  String   @db.VarChar(255)
-  server    String   @db.VarChar(255)
-  token     String   @db.VarChar(255)
-  account   accounts @relation(fields: [accountid], references: [id])
+  id        String @default(uuid())
+  accountid String @unique
+  username  String @db.VarChar(255)
+  server    String @db.VarChar(255)
+  token     String @db.VarChar(255)
+  user      User   @relation(fields: [accountid], references: [id], onDelete: Cascade)
 
   @@unique([accountid, server])
+}
+
+model User {
+  id            String     @id
+  name          String
+  email         String
+  emailVerified Boolean
+  image         String?
+  createdAt     DateTime
+  updatedAt     DateTime
+  sessions      Session[]
+  accounts      Account[]
+  jellydata     jellydata?
+
+  username        String?
+  displayUsername String?
+
+  @@unique([email])
+  @@unique([username])
+  @@map("user")
+}
+
+model Session {
+  id        String   @id
+  expiresAt DateTime
+  token     String
+  createdAt DateTime
+  updatedAt DateTime
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([token])
+  @@map("session")
+}
+
+model Account {
+  id                    String    @id
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime
+  updatedAt             DateTime
+
+  @@map("account")
+}
+
+model Verification {
+  id         String    @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime?
+  updatedAt  DateTime?
+
+  @@map("verification")
 }

@@ -2,9 +2,9 @@
 
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 import { revalidatePath } from "next/cache";
-import { prisma } from "./prisma";
-import { getToken } from "./api.jellyfin";
-import { getSession } from "./auth";
+import { prisma } from "../lib/prisma";
+import { getToken } from "../lib/api.jellyfin";
+import { getSession } from "../lib/auth";
 import {
   jellyfinServerCredentials,
   tokenJellyfin,

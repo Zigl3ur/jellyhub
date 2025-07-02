@@ -2,7 +2,7 @@ import Image from "next/image";
 
 export default function Logo() {
   return (
-    <div className="inline-flex text-center items-center">
+    <div className="flex flex-col sm:flex-row  gap-2 text-center justify-center items-center">
       <Image
         src={"/icon.png"}
         alt="jellyhub icon"

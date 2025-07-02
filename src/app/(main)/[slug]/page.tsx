@@ -2,8 +2,8 @@ import ItemDialog from "@/components/global/itemDialog";
 import NotFound from "@/components/global/notFound";
 import SearchBar from "@/components/searchBar";
 import { checkConn, getAllServerItems } from "@/lib/api.jellyfin";
-import { getSession } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { getUser } from "@/server/utils";
 import { itemJellyfin } from "@/types/jellyfin.types";
 import { notFound } from "next/navigation";
 
@@ -24,11 +24,11 @@ async function getItemsList(
   allItems: itemJellyfin[];
 }> {
   "use server";
-  const session = await getSession();
+  const session = await getUser();
 
   if (!session) return;
 
-  const itemsList = await prisma.accounts.findFirst({
+  const itemsList = await prisma.account.findFirst({
     where: {
       username: session.username as string,
     },

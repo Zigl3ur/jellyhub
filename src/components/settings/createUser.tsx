@@ -16,7 +16,7 @@ import {
 import { toast } from "@/hooks/use-toast";
 import { Input } from "../ui/input";
 import { loginSchema } from "@/schemas/auth.schema";
-import { createUserAction } from "@/lib/action";
+import { createUserAction } from "@/server/action";
 
 const FormSchema = loginSchema;
 

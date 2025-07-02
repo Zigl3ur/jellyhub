@@ -23,7 +23,7 @@ import {
 } from "@/components/ui/select";
 import { toast } from "@/hooks/use-toast";
 import { Input } from "../ui/input";
-import { deleteUserAction, resetPasswdAction } from "@/lib/action";
+import { deleteUserAction, resetPasswdAction } from "@/server/action";
 
 const FormSchema = z
   .object({

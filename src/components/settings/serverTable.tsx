@@ -30,7 +30,7 @@ import { checkConn } from "@/lib/api.jellyfin";
 import {
   jellyfinServerAddAction,
   jellyfinServerDeleteAction,
-} from "@/lib/action";
+} from "@/server/action";
 
 export const columns: ColumnDef<jellyfinServer>[] = [
   {
