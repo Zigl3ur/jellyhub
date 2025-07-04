@@ -2,7 +2,7 @@ import ResetPasswd from "@/components/settings/resetPasswd";
 import { ServerTable, columns } from "@/components/settings/serverTable";
 import { getSession } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { jellyfinServer } from "@/types/jellyfin.types";
+import { jellyfinServer } from "@/types/jellyfin-api.types";
 import { Metadata } from "next";
 import CreateUser from "@/components/settings/createUser";
 

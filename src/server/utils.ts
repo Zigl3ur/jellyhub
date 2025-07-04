@@ -15,7 +15,3 @@ export async function getUser(): Promise<typeof auth.$Infer.Session.user> {
 
   return session.user;
 }
-
-export async function serverRedirect(url: string): Promise<void> {
-  redirect(url);
-}

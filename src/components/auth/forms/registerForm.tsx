@@ -16,17 +16,18 @@ import { Input } from "@/components/ui/input";
 import { registerSchema, registerSchemaType } from "@/schemas/auth.schema";
 import { authClient } from "@/lib/auth-client";
 import { toast } from "sonner";
-import { serverRedirect } from "@/server/utils";
 import Logo from "@/components/global/logo";
 import PasswordField from "./fields/passwordField";
 import { useState } from "react";
 import { LoaderCircle } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 /**
  * RegisterForm Component
  * @returns register form component
  */
 export default function RegisterForm() {
+  const router = useRouter();
   const [loading, setLoading] = useState<boolean>(false);
 
   const registerForm = useForm<registerSchemaType>({
@@ -51,13 +52,14 @@ export default function RegisterForm() {
       .email({
         email: `${username}@jellyhub.com`,
         name: username,
+        username: username,
         password: password,
         fetchOptions: {
           onSuccess: (ctx) => {
             toast.success("Successfully registered", {
-              description: `Welcome, ${ctx.data} !`,
+              description: `Welcome, ${ctx.data["user"].name} !`,
             });
-            serverRedirect("/");
+            router.push("/");
           },
           onError: (ctx) => {
             toast.error("Register failed", {
@@ -136,7 +138,7 @@ export default function RegisterForm() {
           <div className="flex justify-center w-full">
             <Button
               type="submit"
-              disabled={loading || !registerForm.formState.isValid}
+              disabled={loading}
               className="w-full sm:w-auto"
             >
               {loading ? (

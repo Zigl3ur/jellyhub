@@ -1,6 +1,6 @@
 "use client";
 
-import { itemJellyfin } from "@/types/jellyfin.types";
+import { itemJellyfin } from "@/types/jellyfin-api.types";
 import { Input } from "./ui/input";
 import { useState } from "react";
 import ItemDialog from "./global/itemDialog";

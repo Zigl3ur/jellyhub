@@ -28,7 +28,7 @@ import { useState } from "react";
 import {
   jellyfinServerCredentials,
   tokenJellyfin,
-} from "@/types/jellyfin.types";
+} from "@/types/jellyfin-api.types";
 import { useToast } from "@/hooks/use-toast";
 import { LoaderCircle } from "lucide-react";
 

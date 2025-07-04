@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/table";
 
 import { Checkbox } from "@/components/ui/checkbox";
-import { jellyfinServer } from "@/types/jellyfin.types";
+import { jellyfinServer } from "@/types/jellyfin-api.types";
 import { useEffect, useState } from "react";
 import { Input } from "../ui/input";
 import { ServerDialog } from "./serverDialog";
@@ -30,7 +30,7 @@ import { checkConn } from "@/lib/api.jellyfin";
 import {
   jellyfinServerAddAction,
   jellyfinServerDeleteAction,
-} from "@/server/action";
+} from "@/server/jellyfin.actions";
 
 export const columns: ColumnDef<jellyfinServer>[] = [
   {

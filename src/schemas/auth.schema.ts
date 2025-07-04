@@ -37,15 +37,6 @@ export const registerSchema = z
         input: ctx.value.confirmPassword,
       });
     }
-    if (ctx.value.username && ctx.value.password.includes(ctx.value.username)) {
-      console.log(ctx.value.username, ctx.value.password);
-      ctx.issues.push({
-        code: "custom",
-        message: "Password cannot contain the username",
-        path: ["password"],
-        input: ctx.value.password,
-      });
-    }
   });
 
 export type registerSchemaType = z.output<typeof registerSchema>;

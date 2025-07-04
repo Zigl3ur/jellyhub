@@ -16,17 +16,19 @@ import { Input } from "@/components/ui/input";
 import { loginSchema, loginSchemaType } from "@/schemas/auth.schema";
 import { authClient } from "@/lib/auth-client";
 import { toast } from "sonner";
-import { serverRedirect } from "@/server/utils";
 import Logo from "@/components/global/logo";
 import PasswordField from "./fields/passwordField";
 import { useState } from "react";
 import { LoaderCircle } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 /**
  * LoginForm Component
  * @returns login form component
  */
 export default function LoginForm() {
+  const router = useRouter();
+
   const [loading, setLoading] = useState<boolean>(false);
 
   const loginForm = useForm<loginSchemaType>({
@@ -50,9 +52,9 @@ export default function LoginForm() {
         fetchOptions: {
           onSuccess: (ctx) => {
             toast.success("Successfully logged in", {
-              description: `Welcome back, ${ctx.data} !`, // TODO: display username
+              description: `Welcome back, ${ctx.data["user"].username} !`, // TODO: display username
             });
-            serverRedirect("/");
+            router.push("/");
           },
           onError: (ctx) => {
             toast.error("Login failed", {
@@ -113,7 +115,7 @@ export default function LoginForm() {
           <div className="flex justify-center w-full">
             <Button
               type="submit"
-              disabled={loading || !loginForm.formState.isValid}
+              disabled={loading}
               className="w-full sm:w-auto"
             >
               {loading ? (

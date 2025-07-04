@@ -5,7 +5,7 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
-import { itemJellyfin } from "@/types/jellyfin.types";
+import { itemJellyfin } from "@/types/jellyfin-api.types";
 import { X } from "lucide-react";
 import ItemDialog from "./global/itemDialog";
 

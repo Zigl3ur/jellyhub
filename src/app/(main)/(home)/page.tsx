@@ -1,9 +1,5 @@
 import { Metadata } from "next";
 
-import { checkConn, getAllServerItems } from "@/lib/api.jellyfin";
-import { getSession } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
-import { AllItemsType } from "@/types/jellyfin.types";
 import ServerStats from "@/components/serversStats";
 import CardsCaroussel from "@/components/cardsCarroussel";
 import Link from "next/link";
@@ -13,45 +9,46 @@ export const metadata: Metadata = {
   title: "JellyHub - Home",
 };
 
-async function getAllItems(): Promise<void | {
-  serverCount: number;
-  allItems: AllItemsType;
-}> {
-  "use server";
-  const session = await getSession();
+// async function getAllItems(): Promise<void | {
+//   serverCount: number;
+//   allItems: AllItemsType;
+// }> {
+//   await getUser();
 
-  if (!session) return;
+//   const itemsList = await prisma.account.findFirst({
+//     where: {
+//       name: session.username as string,
+//     },
+//     select: {
+//       jellydata: true,
+//     },
+//   });
 
-  const itemsList = await prisma.accounts.findFirst({
-    where: {
-      username: session.username as string,
-    },
-    select: {
-      jellydata: true,
-    },
-  });
+//   if (!itemsList) return;
 
-  if (!itemsList) return;
+//   const serverList = await Promise.all(
+//     itemsList.jellydata.map(
+//       async (server: { server: string; token: string }) => {
+//         const status = await checkConn(server.server, server.token);
+//         if (status === "Up")
+//           return { address: server.server, token: server.token };
+//       }
+//     )
+//   );
 
-  const serverList = await Promise.all(
-    itemsList.jellydata.map(
-      async (server: { server: string; token: string }) => {
-        const status = await checkConn(server.server, server.token);
-        if (status === "Up")
-          return { address: server.server, token: server.token };
-      }
-    )
-  );
+//   const filteredServers = serverList.filter((server) => server !== undefined);
 
-  const filteredServers = serverList.filter((server) => server !== undefined);
+//   const allItems = (await getAllServerItems(filteredServers)) as AllItemsType;
 
-  const allItems = (await getAllServerItems(filteredServers)) as AllItemsType;
-
-  return { serverCount: filteredServers.length, allItems };
-}
+//   return { serverCount: filteredServers.length, allItems };
+// }
 
 export default async function Home() {
-  const data = (await getAllItems()) ?? {
+  // const data = (await getAllItems()) ?? {
+  //   serverCount: 0,
+  //   allItems: { movies: [], shows: [], musicAlbum: [] },
+  // };
+  const data = {
     serverCount: 0,
     allItems: { movies: [], shows: [], musicAlbum: [] },
   };

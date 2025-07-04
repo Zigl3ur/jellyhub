@@ -6,7 +6,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import type { itemJellyfin } from "@/types/jellyfin.types";
+import type { itemJellyfin } from "@/types/jellyfin-api.types";
 import { ArrowUpRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";

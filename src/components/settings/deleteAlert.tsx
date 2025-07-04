@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import { tokenJellyfin } from "@/types/jellyfin.types";
+import { tokenJellyfin } from "@/types/jellyfin-api.types";
 import { LoaderCircle } from "lucide-react";
 import { useState } from "react";
 

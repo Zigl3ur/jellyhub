@@ -4,7 +4,7 @@ import SearchBar from "@/components/searchBar";
 import { checkConn, getAllServerItems } from "@/lib/api.jellyfin";
 import { prisma } from "@/lib/prisma";
 import { getUser } from "@/server/utils";
-import { itemJellyfin } from "@/types/jellyfin.types";
+import { itemJellyfin } from "@/types/jellyfin-api.types";
 import { notFound } from "next/navigation";
 
 export async function generateMetadata({

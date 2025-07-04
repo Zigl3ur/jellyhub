@@ -8,14 +8,15 @@ datasource db {
 }
 
 model jellydata {
-  id        String @default(uuid())
-  accountid String @unique
-  username  String @db.VarChar(255)
-  server    String @db.VarChar(255)
-  token     String @db.VarChar(255)
-  user      User   @relation(fields: [accountid], references: [id], onDelete: Cascade)
+  id          String @default(uuid())
+  userId      String @unique
+  serverId    String
+  serverUrl   String
+  serverToken String
 
-  @@unique([accountid, server])
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("jellydata")
 }
 
 model User {
@@ -30,7 +31,7 @@ model User {
   accounts      Account[]
   jellydata     jellydata?
 
-  username        String?
+  username        String
   displayUsername String?
 
   @@unique([email])
