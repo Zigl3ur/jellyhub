@@ -2,8 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -21,95 +20,84 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { toast } from "@/hooks/use-toast";
 import { Input } from "../ui/input";
-import { deleteUserAction, resetPasswdAction } from "@/server/jellyfin.actions";
-
-const FormSchema = z
-  .object({
-    user: z.string().optional(),
-    new_password: z
-      .string()
-      .min(6, { message: "Pasword must be at least 6 characters long" })
-      .max(50, { message: "Pasword cant exceed 50 characters" }),
-    confirm_new_password: z
-      .string()
-      .min(6, { message: "Pasword must be at least 6 characters long" })
-      .max(50, { message: "Pasword cant exceed 50 characters" }),
-  })
-  .refine((data) => data.new_password === data.confirm_new_password, {
-    message: "Passwords do not match",
-    path: ["confirm_new_password"],
-  });
+import {
+  deleteUserAction,
+  getUsersList,
+  resetPasswordAction,
+} from "@/server/actions/settings.actions";
+import { toast } from "sonner";
+import { auth } from "@/lib/auth";
+import { registerSchema, registerSchemaType } from "@/schemas/auth.schema";
 
 interface ResetPasswdProps {
-  userList: { username: string }[];
   isAdmin: boolean;
 }
 
-export default function ResetPasswd(Props: ResetPasswdProps) {
+export default function ResetPasswd({ isAdmin }: ResetPasswdProps) {
   const [selectedUser, setSelectedUser] = useState<string>("");
+  const [userList, setUserList] =
+    useState<Awaited<ReturnType<typeof auth.api.listUsers>>>();
 
-  const form = useForm<z.infer<typeof FormSchema>>({
-    resolver: zodResolver(FormSchema),
+  useEffect(() => {
+    if (isAdmin) {
+      const usersList = async () => {
+        const list = await getUsersList();
+
+        if (list.success) setUserList(list.data);
+      };
+
+      usersList();
+    }
+  }, [isAdmin]);
+
+  const form = useForm<registerSchemaType>({
+    resolver: zodResolver(registerSchema),
     defaultValues: {
-      user: "",
-      new_password: "",
-      confirm_new_password: "",
+      username: "",
+      password: "",
+      confirmPassword: "",
     },
   });
 
-  function onSubmit(data: z.infer<typeof FormSchema>) {
-    resetPasswdAction(data.confirm_new_password, data.user).then((result) => {
-      form.reset();
+  const onSubmit = (data: registerSchemaType) => {
+    resetPasswordAction(data.confirmPassword, data.username).then((result) => {
       if (result) {
-        toast({
-          title: "Success",
+        toast.success("Success", {
           description: "Password succesfully reset",
-          variant: "success",
-          duration: 2500,
         });
+        form.reset();
       } else {
-        toast({
-          title: "Error",
+        toast.error("Error", {
           description: "Error while reseting password",
-          variant: "destructive",
-          duration: 2500,
         });
       }
     });
-  }
+  };
 
-  function handleDeleteUser() {
+  const handleDeleteUser = () => {
     deleteUserAction(selectedUser).then((result) => {
-      form.reset();
       if (result.success) {
-        toast({
-          title: "Success",
+        toast.success("Success", {
           description: `User ${selectedUser} has been deleted`,
-          variant: "success",
-          duration: 2500,
         });
-        setSelectedUser("");
+        form.reset();
       } else {
-        toast({
-          title: "Error",
+        toast.error("Error", {
           description: result.error,
-          variant: "destructive",
-          duration: 2500,
         });
       }
     });
-  }
+  };
 
   return (
     <div className=" bg-black/50 backdrop-blur-lg rounded-md p-5 w-full">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-          {Props.isAdmin ? (
+          {isAdmin ? (
             <FormField
               control={form.control}
-              name="user"
+              name="username"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>User</FormLabel>
@@ -127,11 +115,12 @@ export default function ResetPasswd(Props: ResetPasswdProps) {
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {Props.userList.map((user) => (
-                        <SelectItem key={user.username} value={user.username}>
-                          {user.username}
-                        </SelectItem>
-                      ))}
+                      {userList &&
+                        userList.users.map((user) => (
+                          <SelectItem key={user.name} value={user.name}>
+                            {user.name}
+                          </SelectItem>
+                        ))}
                     </SelectContent>
                   </Select>
                   <FormMessage />
@@ -141,7 +130,7 @@ export default function ResetPasswd(Props: ResetPasswdProps) {
           ) : null}
           <FormField
             control={form.control}
-            name="new_password"
+            name="password"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>New Password</FormLabel>
@@ -158,7 +147,7 @@ export default function ResetPasswd(Props: ResetPasswdProps) {
           />
           <FormField
             control={form.control}
-            name="confirm_new_password"
+            name="confirmPassword"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Confirm New Password</FormLabel>
@@ -177,7 +166,7 @@ export default function ResetPasswd(Props: ResetPasswdProps) {
             <Button type="submit" variant={"destructive"}>
               Reset
             </Button>
-            {Props.isAdmin && (
+            {isAdmin && (
               <Button
                 type="button"
                 variant={"destructive"}

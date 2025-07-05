@@ -4,11 +4,12 @@
 
 - [ ] Better ui/ux and styling
 - [ ] Add more docstrings
+- [ ] Have a consistent code
 
 ## Security
 
 - [ ] Fully add Better Auth for correct auth management
-- [ ] Encrypt servers tokens in the database
+- [x] Encrypt servers tokens in the database
 
 ## Features
 

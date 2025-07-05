@@ -20,61 +20,63 @@ import {
 } from "@/components/ui/table";
 
 import { Checkbox } from "@/components/ui/checkbox";
-import { jellyfinServer } from "@/types/jellyfin-api.types";
 import { useEffect, useState } from "react";
 import { Input } from "../ui/input";
-import { ServerDialog } from "./serverDialog";
 import { DeleteAlertDialog } from "./deleteAlert";
 import { LoaderCircle, Wifi, WifiOff } from "lucide-react";
-import { checkConn } from "@/lib/api.jellyfin";
-import {
-  jellyfinServerAddAction,
-  jellyfinServerDeleteAction,
-} from "@/server/jellyfin.actions";
+import { jellydataDisplayed } from "@/types/actions.types";
+import { State } from "@/types/jellyfin-api.types";
+import { AddServerDialog } from "./AddserverDialog";
+import Link from "next/link";
 
-export const columns: ColumnDef<jellyfinServer>[] = [
+export const columns: ColumnDef<jellydataDisplayed>[] = [
   {
     id: "select",
     header: ({ table }) => (
-      <Checkbox
-        className="flex items-center justify-center"
-        checked={
-          table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && "indeterminate")
-        }
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Select all"
-      />
+      <div className="flex items-center justify-center">
+        <Checkbox
+          checked={
+            table.getIsAllPageRowsSelected() ||
+            (table.getIsSomePageRowsSelected() && "indeterminate")
+          }
+          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+          aria-label="Select all"
+        />
+      </div>
     ),
     cell: ({ row }) => (
-      <Checkbox
-        className="flex items-center justify-center"
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Select row"
-      />
+      <div className="flex items-center justify-center">
+        <Checkbox
+          className="flex items-center justify-center"
+          checked={row.getIsSelected()}
+          onCheckedChange={(value) => row.toggleSelected(!!value)}
+          aria-label="Select row"
+        />
+      </div>
     ),
   },
   {
-    accessorKey: "address",
+    accessorKey: "serverUrl",
     header: "Address",
     cell: ({ row }) => {
-      const address = row.getValue("address") as string;
+      const address = row.getValue("serverUrl") as string;
       return (
         <div
           className="w-[80px] sm:w-[150px] md:w-[200px] truncate"
           title={address}
         >
-          {address.split("//")[1]}
+          <Link href={address} className="hover:underline">
+            {address.split("//")[1]}
+          </Link>
         </div>
       );
     },
   },
   {
-    accessorKey: "username",
+    accessorKey: "serverUsername",
     header: "Username",
     cell: ({ row }) => {
-      const username = row.getValue("username") as string;
+      const username = row.getValue("serverUsername") as string;
       return (
         <div
           className="w-[80px] sm:w-[150px] md:w-[200px] truncate"
@@ -89,7 +91,7 @@ export const columns: ColumnDef<jellyfinServer>[] = [
     accessorKey: "status",
     header: "Status",
     cell: ({ row }) => {
-      const status = row.getValue("status") as "Up" | "Down" | "Checking";
+      const status = row.getValue("status") as State;
       return (
         <div className="flex items-center">
           {status === "Up" && <Wifi className="w-4 h-4 text-green-500 mr-2" />}
@@ -107,34 +109,34 @@ export const columns: ColumnDef<jellyfinServer>[] = [
 ];
 
 interface DataTableProps {
-  columns: ColumnDef<jellyfinServer>[];
-  baseData: jellyfinServer[];
+  columns: ColumnDef<jellydataDisplayed>[];
+  baseData: jellydataDisplayed[];
 }
 
 export function ServerTable({ columns, baseData }: DataTableProps) {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-  const [data, setData] = useState<jellyfinServer[]>(baseData);
+  const [data, setData] = useState<jellydataDisplayed[]>(baseData);
 
   // check status every 30s and when data updates
-  useEffect(() => {
-    async function checkServerStatus() {
-      const updatedData = [...data];
-      for (const server of updatedData) {
-        const serverStatus = await checkConn(server.address, server.token);
+  // useEffect(() => {
+  //   async function checkServerStatus() {
+  //     const updatedData = [...data];
+  //     for (const server of updatedData) {
+  //       const serverStatus = await checkConn(server.serverUrl, server.token);
 
-        if (server.status !== serverStatus) {
-          server.status = serverStatus;
-          setData([...updatedData]);
-        }
-      }
-    }
+  //       if (server.status !== serverStatus) {
+  //         server.status = serverStatus;
+  //         setData([...updatedData]);
+  //       }
+  //     }
+  //   }
 
-    checkServerStatus();
-    const interval = setInterval(() => {
-      checkServerStatus();
-    }, 30000);
-    return () => clearInterval(interval);
-  }, [data]);
+  //   checkServerStatus();
+  //   const interval = setInterval(() => {
+  //     checkServerStatus();
+  //   }, 30000);
+  //   return () => clearInterval(interval);
+  // }, [data]);
 
   // update table data
   useEffect(() => {
@@ -161,9 +163,9 @@ export function ServerTable({ columns, baseData }: DataTableProps) {
     <div>
       <Input
         placeholder="Search Servers"
-        value={(table.getColumn("address")?.getFilterValue() as string) ?? ""}
+        value={(table.getColumn("serverUrl")?.getFilterValue() as string) ?? ""}
         onChange={(event) =>
-          table.getColumn("address")?.setFilterValue(event.target.value)
+          table.getColumn("serverUrl")?.setFilterValue(event.target.value)
         }
         className="mb-4 bg-black/30 backdrop-blur-lg"
       />
@@ -219,11 +221,13 @@ export function ServerTable({ columns, baseData }: DataTableProps) {
       </div>
       <div className="flex items-center justify-between">
         <div className="space-y-2">
-          <ServerDialog addAction={jellyfinServerAddAction} />
+          <AddServerDialog />
           <DeleteAlertDialog
             disable={table.getFilteredSelectedRowModel().rows.length === 0}
-            onClick={jellyfinServerDeleteAction}
-            checkedRows={checkedRows}
+            checkedRows={checkedRows.map((row) => ({
+              address: row.serverUrl,
+              username: row.serverUsername,
+            }))}
           />
         </div>
         <div className="text-sm text-muted-foreground py-2">

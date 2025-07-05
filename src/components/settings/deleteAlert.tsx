@@ -9,10 +9,10 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import { useToast } from "@/hooks/use-toast";
-import { tokenJellyfin } from "@/types/jellyfin-api.types";
+import { deleteServerAction } from "@/server/actions/settings.actions";
 import { LoaderCircle } from "lucide-react";
 import { useState } from "react";
+import { toast } from "sonner";
 
 interface DeleteAlertDialogProps {
   disable: boolean;
@@ -20,23 +20,35 @@ interface DeleteAlertDialogProps {
     address: string;
     username: string;
   }[];
-  onClick: (
-    data: {
-      address: string;
-      username: string;
-    }[]
-  ) => Promise<tokenJellyfin | boolean>;
 }
 
-export function DeleteAlertDialog(Props: DeleteAlertDialogProps) {
+export function DeleteAlertDialog({
+  disable,
+  checkedRows,
+}: DeleteAlertDialogProps) {
   const [open, setOpen] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
-  const { toast } = useToast();
+
+  const handleDelete = async () => {
+    setLoading(true);
+
+    deleteServerAction(checkedRows)
+      .then((result) => {
+        if (result.success) {
+          toast.success("Success", { description: result.message });
+          setOpen(false);
+        } else if (result.error)
+          toast.error("Error", {
+            description: result.error,
+          });
+      })
+      .finally(() => setLoading(false));
+  };
 
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
       <AlertDialogTrigger asChild>
-        <Button variant="destructive" disabled={Props.disable}>
+        <Button variant="destructive" disabled={disable}>
           Delete
         </Button>
       </AlertDialogTrigger>
@@ -50,30 +62,9 @@ export function DeleteAlertDialog(Props: DeleteAlertDialogProps) {
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
           <Button
-            variant={"destructive"}
-            onClick={() => {
-              setLoading(true);
-              Props.onClick(Props.checkedRows).then((result) => {
-                if (typeof result === "object") {
-                  setLoading(false);
-                  toast({
-                    title: "Error",
-                    description: result.error,
-                    variant: "destructive",
-                    duration: 2500,
-                  });
-                } else {
-                  setLoading(false);
-                  setOpen(false);
-                  toast({
-                    title: "Success",
-                    description: `Successfully deleted ${Props.checkedRows.length} server(s)`,
-                    variant: "success",
-                    duration: 2500,
-                  });
-                }
-              });
-            }}
+            disabled={loading}
+            variant="destructive"
+            onClick={handleDelete}
           >
             {loading && <LoaderCircle className="animate-spin" />}
             Remove

@@ -11,7 +11,6 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { z } from "zod";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -25,32 +24,20 @@ import {
   FormMessage,
 } from "../ui/form";
 import { useState } from "react";
-import {
-  jellyfinServerCredentials,
-  tokenJellyfin,
-} from "@/types/jellyfin-api.types";
-import { useToast } from "@/hooks/use-toast";
 import { LoaderCircle } from "lucide-react";
+import {
+  addServerSchema,
+  addServerSchemaType,
+} from "@/schemas/settings.schema";
+import { addServerAction } from "@/server/actions/settings.actions";
+import { toast } from "sonner";
 
-const serverSchema = z.object({
-  address: z.string().url({ message: "Please enter a valid URL" }),
-  username: z.string().min(1, { message: "Username is required" }),
-  password: z.string().min(1, { message: "Password is required" }),
-});
-
-interface DialogProps {
-  addAction: (
-    data: jellyfinServerCredentials
-  ) => Promise<tokenJellyfin | boolean>;
-}
-
-export function ServerDialog(Props: DialogProps) {
+export function AddServerDialog() {
   const [open, setOpen] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
-  const { toast } = useToast();
 
-  const serverform = useForm<z.infer<typeof serverSchema>>({
-    resolver: zodResolver(serverSchema),
+  const serverform = useForm<addServerSchemaType>({
+    resolver: zodResolver(addServerSchema),
     defaultValues: {
       address: "",
       username: "",
@@ -58,33 +45,24 @@ export function ServerDialog(Props: DialogProps) {
     },
   });
 
-  async function onSubmit(values: z.infer<typeof serverSchema>) {
+  const onSubmit = async (values: addServerSchemaType) => {
+    const { address, username, password } = values;
+
     setLoading(true);
-    await Props.addAction({
-      address: values.address,
-      username: values.username,
-      password: values.password,
-    }).then((result) => {
-      if (typeof result === "object") {
-        setLoading(false);
-        toast({
-          title: "Error",
-          description: result.error,
-          variant: "destructive",
-          duration: 2500,
-        });
-      } else {
-        setLoading(false);
-        toast({
-          title: "Success",
-          description: "Successfully added server",
-          variant: "success",
-          duration: 2500,
-        });
-        setOpen(false);
-      }
-    });
-  }
+
+    addServerAction(address, username, password)
+      .then((result) => {
+        if (result.error)
+          toast.error("Error", {
+            description: result.error,
+          });
+        else if (result.success) {
+          toast.success("Success", { description: result.message });
+          setOpen(false);
+        }
+      })
+      .finally(() => setLoading(false));
+  };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -153,7 +131,7 @@ export function ServerDialog(Props: DialogProps) {
                   Cancel
                 </Button>
               </DialogClose>
-              <Button type="submit" variant={"create"}>
+              <Button type="submit" variant="create">
                 {loading && <LoaderCircle className="animate-spin" />}Add Server
               </Button>
             </DialogFooter>

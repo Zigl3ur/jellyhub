@@ -2,7 +2,6 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -13,40 +12,31 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { toast } from "@/hooks/use-toast";
 import { Input } from "../ui/input";
-import { loginSchema } from "@/schemas/auth.schema";
-import { createUserAction } from "@/server/jellyfin.actions";
-
-const FormSchema = loginSchema;
+import { loginSchema, loginSchemaType } from "@/schemas/auth.schema";
+import { toast } from "sonner";
+import { createUserAction } from "@/server/actions/settings.actions";
 
 export default function CreateUser() {
-  const form = useForm<z.infer<typeof FormSchema>>({
-    resolver: zodResolver(FormSchema),
+  const form = useForm<loginSchemaType>({
+    resolver: zodResolver(loginSchema),
     defaultValues: {
       username: "",
       password: "",
     },
   });
 
-  function onSubmit(data: z.infer<typeof FormSchema>) {
+  function onSubmit(data: loginSchemaType) {
     createUserAction(data.username, data.password).then((result) => {
-      form.reset();
       if (result.success) {
-        toast({
-          title: "Success",
-          description: "User Successfully created",
-          variant: "success",
-          duration: 2500,
+        toast.success("Success", {
+          description: result.message,
         });
-      } else {
-        toast({
-          title: "Error",
+        form.reset();
+      } else if (result.error)
+        toast.error("Error", {
           description: result.error,
-          variant: "destructive",
-          duration: 2500,
         });
-      }
     });
   }
 

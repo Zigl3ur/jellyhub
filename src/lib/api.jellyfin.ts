@@ -6,6 +6,7 @@ import {
   tokenData,
   rawItemJellyfin,
   itemTypes,
+  State,
 } from "@/types/jellyfin-api.types";
 import { TicksToDuration } from "./utils";
 
@@ -42,6 +43,7 @@ export async function getToken(
         data: {
           server_url: server_url,
           server_id: data.ServerId,
+          server_username: data.User.Name,
           token: data.AccessToken,
         },
       };
@@ -73,7 +75,7 @@ export async function getToken(
 export async function checkConn(
   server_url: string,
   token: string
-): Promise<callersResponse<"Up" | "Down">> {
+): Promise<callersResponse<State>> {
   try {
     const response = await fetch(`${server_url}/Users/Me`, {
       method: "GET",

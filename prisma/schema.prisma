@@ -8,11 +8,12 @@ datasource db {
 }
 
 model jellydata {
-  id          String @default(uuid())
-  userId      String @unique
-  serverId    String
-  serverUrl   String
-  serverToken String
+  id             String @default(uuid())
+  userId         String @unique
+  serverId       String
+  serverUrl      String
+  serverUsername String
+  serverToken    String
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -34,6 +35,11 @@ model User {
   username        String
   displayUsername String?
 
+  role       String?
+  banned     Boolean?
+  banReason  String?
+  banExpires DateTime?
+
   @@unique([email])
   @@unique([username])
   @@map("user")
@@ -49,6 +55,8 @@ model Session {
   userAgent String?
   userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  impersonatedBy String?
 
   @@unique([token])
   @@map("session")

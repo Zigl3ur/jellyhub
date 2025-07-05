@@ -11,14 +11,18 @@ export type callersResponse<T> = {
 /** type of an item fetched from a jellyfin server */
 export type itemTypes = "Movie" | "Series" | "MusicAlbum";
 
+/** type of the connection state to a jellyfin server */
+export type State = "Up" | "Down" | "Checking";
+
 /** type of the data returned after authenticated at the jellyfin server */
 export type tokenData = {
   server_url: string;
   server_id: string;
+  server_username: string;
   token: string;
 };
 
-/** type of jellyfin item fetch from the api (only properties i keep) */
+/** type of jellyfin item fetched from the api (only properties i keep) */
 export type rawItemJellyfin = {
   ServerId: string;
   Name: string;

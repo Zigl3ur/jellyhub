@@ -12,7 +12,9 @@ export function cn(...inputs: ClassValue[]) {
  * @returns the encrypted token
  */
 export function encryptToken(token: string): string {
-  const secretKey = process.env.secret_key as string;
+  const secretKey = process.env.SECRET_KEY as string;
+  if (!secretKey) throw new Error("SECRET_KEY env var is not defined");
+
   const iv = crypto.randomBytes(16);
   const cipher = crypto.createCipheriv(
     "aes-256-cbc",
@@ -30,7 +32,9 @@ export function encryptToken(token: string): string {
  * @returns the decrypted data
  */
 export function decryptToken(encrypted: string): string {
-  const secretKey = process.env.secret_key as string;
+  const secretKey = process.env.SECRET_KEY as string;
+  if (!secretKey) throw new Error("SECRET_KEY env var is not defined");
+
   const [ivHex, encryptedText] = encrypted.split(":");
   const iv = Buffer.from(ivHex, "hex");
   const decipher = crypto.createDecipheriv(
