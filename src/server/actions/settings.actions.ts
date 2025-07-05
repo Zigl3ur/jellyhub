@@ -7,7 +7,6 @@ import { jellydataDisplayed, ServerActionReturn } from "@/types/actions.types";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 import { getUser } from "../utils";
 import { auth } from "@/lib/auth";
-import { revalidatePath } from "next/cache";
 import { passwordSchema } from "@/schemas/settings.schema";
 import { z } from "zod/v4";
 import { authClient } from "@/lib/auth-client";
@@ -205,23 +204,16 @@ export async function addServerAction(
   }
 
   try {
-    await prisma.user.update({
-      where: {
-        id: user.id,
-      },
+    await prisma.jellydata.create({
       data: {
-        jellydata: {
-          create: {
-            serverId: data.server_id,
-            serverUrl: data.server_url,
-            serverUsername: data.server_username,
-            serverToken: encryptToken(data.token),
-          },
-        },
+        userId: user.id,
+        serverId: data.server_id,
+        serverUrl: data.server_url,
+        serverUsername: data.server_username,
+        serverToken: encryptToken(data.token),
       },
     });
 
-    revalidatePath("/settings");
     return { success: true, message: "Successfully added jellyfin server !" };
   } catch (err) {
     const errorMessage =
@@ -259,10 +251,9 @@ export async function deleteServerAction(
         },
       },
     });
-    revalidatePath("/settings");
     return {
       success: true,
-      message: `Succesfully delteted server${data.length > 1 && "s"}`,
+      message: `Successfully deleted server${data.length > 1 ? "s" : ""}`,
     };
   } catch (err) {
     if (err instanceof Error)
@@ -279,7 +270,7 @@ export async function deleteServerAction(
 
 /**
  * Server action to get the list of the jellyfin servers of the logged user.
- * @returns jellyfin server of the account or nothing if not authenticated
+ * @returns jellyfin server of the account
  */
 export async function getJellyfinServers(): Promise<
   ServerActionReturn<Array<jellydataDisplayed>>
@@ -300,11 +291,11 @@ export async function getJellyfinServers(): Promise<
   // add status property to each servers
   const serverListWithStatus = await Promise.all(
     serverList.map(async (server) => {
+      const { serverToken, ...serverReturn } = server; // remove token to not send it to client
       return {
-        ...server,
-        status: (
-          await checkConn(server.serverUrl, decryptToken(server.serverToken))
-        ).data,
+        ...serverReturn,
+        status: (await checkConn(server.serverUrl, decryptToken(serverToken)))
+          .data,
       };
     })
   );

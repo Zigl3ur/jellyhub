@@ -24,7 +24,7 @@ import {
   FormMessage,
 } from "../ui/form";
 import { useState } from "react";
-import { LoaderCircle } from "lucide-react";
+import { LoaderCircle, Plus } from "lucide-react";
 import {
   addServerSchema,
   addServerSchemaType,
@@ -32,7 +32,11 @@ import {
 import { addServerAction } from "@/server/actions/settings.actions";
 import { toast } from "sonner";
 
-export function AddServerDialog() {
+interface AddServerDialogProps {
+  onAdd: () => void;
+}
+
+export function AddServerDialog({ onAdd }: AddServerDialogProps) {
   const [open, setOpen] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -61,14 +65,17 @@ export function AddServerDialog() {
           setOpen(false);
         }
       })
-      .finally(() => setLoading(false));
+      .finally(() => {
+        setLoading(false);
+        onAdd();
+      });
   };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" className="mt-2 mr-2">
-          Add Server
+        <Button variant="outline" size={"icon"}>
+          <Plus />
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">

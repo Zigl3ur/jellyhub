@@ -7,21 +7,21 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model jellydata {
-  id             String @default(uuid())
-  userId         String @unique
+model Jellydata {
+  id             String @id @default(uuid())
+  userId         String
   serverId       String
   serverUrl      String
   serverUsername String
   serverToken    String
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id])
 
   @@map("jellydata")
 }
 
 model User {
-  id            String     @id
+  id            String      @id
   name          String
   email         String
   emailVerified Boolean
@@ -30,7 +30,7 @@ model User {
   updatedAt     DateTime
   sessions      Session[]
   accounts      Account[]
-  jellydata     jellydata?
+  jellydata     Jellydata[]
 
   username        String
   displayUsername String?

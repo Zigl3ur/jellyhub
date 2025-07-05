@@ -171,7 +171,7 @@ export default function ResetPasswd({ isAdmin }: ResetPasswdProps) {
                 type="button"
                 variant={"destructive"}
                 onClick={handleDeleteUser}
-                disabled={selectedUser == ""}
+                disabled={selectedUser === ""}
               >
                 Delete User
               </Button>

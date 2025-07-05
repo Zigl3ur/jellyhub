@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { deleteServerAction } from "@/server/actions/settings.actions";
-import { LoaderCircle } from "lucide-react";
+import { LoaderCircle, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -20,11 +20,13 @@ interface DeleteAlertDialogProps {
     address: string;
     username: string;
   }[];
+  onDelete: () => void;
 }
 
 export function DeleteAlertDialog({
   disable,
   checkedRows,
+  onDelete,
 }: DeleteAlertDialogProps) {
   const [open, setOpen] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
@@ -42,14 +44,17 @@ export function DeleteAlertDialog({
             description: result.error,
           });
       })
-      .finally(() => setLoading(false));
+      .finally(() => {
+        setLoading(false);
+        onDelete();
+      });
   };
 
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
       <AlertDialogTrigger asChild>
-        <Button variant="destructive" disabled={disable}>
-          Delete
+        <Button variant="destructive" disabled={disable} size={"icon"}>
+          <Trash2 />
         </Button>
       </AlertDialogTrigger>
       <AlertDialogContent>

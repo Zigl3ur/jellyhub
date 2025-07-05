@@ -53,6 +53,15 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-sm: calc(var(--radius) - 4px);
 
+
+  --animate-reverse-spin: reverse-spin 1s linear infinite;
+
+  @keyframes reverse-spin {
+    to {
+      transform: rotate(-360deg);
+    }
+  }
+
 }
 
 /*
@@ -122,16 +131,6 @@
   --sidebar-accent-foreground: hsl(0 0% 98%);
   --sidebar-border: hsl(240 3.7% 15.9%);
   --sidebar-ring: hsl(240 4.9% 83.9%);
-}
-
-@layer base {
-  * {
-    @apply border-border;
-  }
-
-  body {
-    @apply bg-background text-foreground;
-  }
 }
 
 @layer base {

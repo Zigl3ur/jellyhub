@@ -20,20 +20,22 @@ import {
 } from "@/components/ui/table";
 
 import { Checkbox } from "@/components/ui/checkbox";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Input } from "../ui/input";
 import { DeleteAlertDialog } from "./deleteAlert";
-import { LoaderCircle, Wifi, WifiOff } from "lucide-react";
+import { LoaderCircle, RefreshCcw, Wifi, WifiOff } from "lucide-react";
 import { jellydataDisplayed } from "@/types/actions.types";
 import { State } from "@/types/jellyfin-api.types";
 import { AddServerDialog } from "./AddserverDialog";
 import Link from "next/link";
+import { getJellyfinServers } from "@/server/actions/settings.actions";
+import { Button } from "../ui/button";
 
 export const columns: ColumnDef<jellydataDisplayed>[] = [
   {
     id: "select",
     header: ({ table }) => (
-      <div className="flex items-center justify-center">
+      <div className="flex">
         <Checkbox
           checked={
             table.getIsAllPageRowsSelected() ||
@@ -45,9 +47,8 @@ export const columns: ColumnDef<jellydataDisplayed>[] = [
       </div>
     ),
     cell: ({ row }) => (
-      <div className="flex items-center justify-center">
+      <div className="flex">
         <Checkbox
-          className="flex items-center justify-center"
           checked={row.getIsSelected()}
           onCheckedChange={(value) => row.toggleSelected(!!value)}
           aria-label="Select row"
@@ -99,7 +100,7 @@ export const columns: ColumnDef<jellydataDisplayed>[] = [
             <WifiOff className="w-4 h-4 text-red-500 mr-2" />
           )}
           {status === "Checking" && (
-            <LoaderCircle className="w-4 h-4 text-yellow-500 mr-2 animate-spin" />
+            <LoaderCircle className="w-4 h-4 mr-2 animate-reverse-spin" />
           )}
           {status}
         </div>
@@ -116,32 +117,28 @@ interface DataTableProps {
 export function ServerTable({ columns, baseData }: DataTableProps) {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [data, setData] = useState<jellydataDisplayed[]>(baseData);
+  const [isFetching, setIsFetching] = useState<boolean>(false);
 
-  // check status every 30s and when data updates
-  // useEffect(() => {
-  //   async function checkServerStatus() {
-  //     const updatedData = [...data];
-  //     for (const server of updatedData) {
-  //       const serverStatus = await checkConn(server.serverUrl, server.token);
+  const refreshTable = useCallback(async () => {
+    setIsFetching(true);
 
-  //       if (server.status !== serverStatus) {
-  //         server.status = serverStatus;
-  //         setData([...updatedData]);
-  //       }
-  //     }
-  //   }
+    setData((prevData) =>
+      prevData.map((server) => ({ ...server, status: "Checking" as State }))
+    );
+    const response = await getJellyfinServers();
 
-  //   checkServerStatus();
-  //   const interval = setInterval(() => {
-  //     checkServerStatus();
-  //   }, 30000);
-  //   return () => clearInterval(interval);
-  // }, [data]);
+    if (response.success && response.data) {
+      setData(response.data);
+    }
+    setIsFetching(false);
+  }, []);
 
-  // update table data
+  // refetch every 30s
   useEffect(() => {
-    setData(baseData);
-  }, [baseData]);
+    const refresh = setInterval(refreshTable, 30000);
+
+    return () => clearInterval(refresh);
+  }, [refreshTable]);
 
   const table = useReactTable({
     data: data,
@@ -160,15 +157,37 @@ export function ServerTable({ columns, baseData }: DataTableProps) {
     .rows.map((row) => row.original);
 
   return (
-    <div>
-      <Input
-        placeholder="Search Servers"
-        value={(table.getColumn("serverUrl")?.getFilterValue() as string) ?? ""}
-        onChange={(event) =>
-          table.getColumn("serverUrl")?.setFilterValue(event.target.value)
-        }
-        className="mb-4 bg-black/30 backdrop-blur-lg"
-      />
+    <div className="space-y-2">
+      <div className="flex gap-2">
+        <Input
+          placeholder="Search Servers"
+          disabled={data.length === 0}
+          value={
+            (table.getColumn("serverUrl")?.getFilterValue() as string) ?? ""
+          }
+          onChange={(event) =>
+            table.getColumn("serverUrl")?.setFilterValue(event.target.value)
+          }
+          className=" bg-black/30 backdrop-blur-lg"
+        />
+        <AddServerDialog onAdd={refreshTable} />
+        <DeleteAlertDialog
+          disable={table.getFilteredSelectedRowModel().rows.length === 0}
+          checkedRows={checkedRows.map((row) => ({
+            address: row.serverUrl,
+            username: row.serverUsername,
+          }))}
+          onDelete={refreshTable}
+        />
+        <Button
+          size={"icon"}
+          variant={"outline"}
+          onClick={refreshTable}
+          disabled={isFetching}
+        >
+          <RefreshCcw className={`${isFetching && "animate-reverse-spin"}`} />
+        </Button>
+      </div>
       <div className="rounded-md border bg-black/50 backdrop-blur-lg">
         <Table>
           <TableHeader>
@@ -212,28 +231,18 @@ export function ServerTable({ columns, baseData }: DataTableProps) {
                   colSpan={columns.length}
                   className="h-24 text-center"
                 >
-                  No results.
+                  No Servers.
                 </TableCell>
               </TableRow>
             )}
           </TableBody>
         </Table>
       </div>
-      <div className="flex items-center justify-between">
-        <div className="space-y-2">
-          <AddServerDialog />
-          <DeleteAlertDialog
-            disable={table.getFilteredSelectedRowModel().rows.length === 0}
-            checkedRows={checkedRows.map((row) => ({
-              address: row.serverUrl,
-              username: row.serverUsername,
-            }))}
-          />
-        </div>
-        <div className="text-sm text-muted-foreground py-2">
+      <div className="flex justify-end">
+        <span className="text-sm text-muted-foreground">
           {table.getFilteredSelectedRowModel().rows.length} of{" "}
           {table.getFilteredRowModel().rows.length} server(s) selected.
-        </div>
+        </span>
       </div>
     </div>
   );

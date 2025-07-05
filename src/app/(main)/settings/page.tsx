@@ -16,7 +16,7 @@ export default async function SettingsPage() {
   const servers = await getJellyfinServers();
 
   return (
-    <div className="flex flex-1 flex-col gap-4 pt-0">
+    <div className="flex flex-1 flex-col gap-8">
       <ServerTable columns={columns} baseData={servers.data || []} />
       <div className="flex flex-col lg:flex-row gap-2">
         <ResetPasswd isAdmin={isAdmin} />
