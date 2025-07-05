@@ -3,13 +3,16 @@
 import { checkConn, getToken } from "@/lib/api.jellyfin";
 import { prisma } from "@/lib/prisma";
 import { decryptToken, encryptToken } from "@/lib/utils";
-import { jellydataDisplayed, ServerActionReturn } from "@/types/actions.types";
+import {
+  jellydataDisplayed,
+  ServerActionReturn,
+  userDataType,
+} from "@/types/actions.types";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 import { getUser } from "../utils";
 import { auth } from "@/lib/auth";
 import { passwordSchema } from "@/schemas/settings.schema";
 import { z } from "zod/v4";
-import { authClient } from "@/lib/auth-client";
 import { loginSchema } from "@/schemas/auth.schema";
 import { headers } from "next/headers";
 
@@ -19,7 +22,7 @@ import { headers } from "next/headers";
  * @param password the new user password
  * @returns message if it succeed or an error
  */
-export async function createUserAction(
+export async function addUserAction(
   username: string,
   password: string
 ): Promise<ServerActionReturn> {
@@ -56,51 +59,44 @@ export async function createUserAction(
 }
 
 export async function deleteUserAction(
-  username?: string,
-  password?: string
+  usernames: Array<string>
 ): Promise<ServerActionReturn> {
   const user = await getUser();
-  const isAdmin = user.role === "admin";
 
-  if (password) {
-    const result = passwordSchema.safeParse(password);
-
-    if (!result.success)
-      return { success: false, error: z.prettifyError(result.error) };
-  }
+  if (user.role !== "admin")
+    return { success: false, error: "User is not an administrator" };
 
   try {
-    if (isAdmin && username) {
-      const userId = await prisma.user.findFirst({
-        where: { username: username },
-        select: { id: true },
-      });
+    const usersId = await prisma.user.findMany({
+      where: {
+        username: {
+          in: usernames,
+        },
+      },
+      select: { id: true },
+    });
 
-      if (!userId) return { success: false, error: "User not found" };
+    if (usersId.length < 1)
+      return { success: false, error: "User(s) not found" };
 
-      await authClient.admin.removeUser({
-        userId: userId.id,
-      });
-    } else {
-      const isDeleted = await authClient.deleteUser({
-        password: password,
-      });
-
-      if (!isDeleted.data?.success)
-        return {
-          success: false,
-          error: isDeleted.error?.message || "Failed to delete user",
-        };
-    }
+    await prisma.user.deleteMany({
+      where: {
+        id: {
+          in: usersId.map((data) => {
+            return data.id;
+          }),
+        },
+      },
+    });
 
     return {
       success: true,
-      message: "User successfully deleted",
+      message: "Successfully deleted user(s)",
     };
   } catch {
     return {
       success: false,
-      error: isAdmin ? "Failed to delete user" : "Failed to delete account",
+      error: "Failed to delete user(s)",
     };
   }
 }
@@ -162,7 +158,7 @@ export async function resetPasswordAction(
  * @returns the list of users
  */
 export async function getUsersList(): Promise<
-  ServerActionReturn<Awaited<ReturnType<typeof auth.api.listUsers>>>
+  ServerActionReturn<userDataType>
 > {
   const user = await getUser();
 

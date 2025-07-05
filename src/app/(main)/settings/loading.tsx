@@ -47,7 +47,7 @@ export default function SettingsLoading() {
           </TableHeader>
 
           <TableBody>
-            {[0, 1, 2, 3, 4].map((value) => (
+            {[0, 1, 2].map((value) => (
               <TableRow key={value}>
                 <TableCell>
                   <div className="flex">

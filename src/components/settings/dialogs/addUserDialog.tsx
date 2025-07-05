@@ -14,7 +14,7 @@ import { Input } from "@/components/ui/input";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { Button } from "../ui/button";
+import { Button } from "../../ui/button";
 import {
   Form,
   FormControl,
@@ -22,39 +22,38 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "../ui/form";
+} from "../../ui/form";
 import { useState } from "react";
 import { LoaderCircle, Plus } from "lucide-react";
-import {
-  addServerSchema,
-  addServerSchemaType,
-} from "@/schemas/settings.schema";
-import { addServerAction } from "@/server/actions/settings.actions";
 import { toast } from "sonner";
+import { loginSchema, loginSchemaType } from "@/schemas/auth.schema";
+import { addUserAction } from "@/server/actions/settings.actions";
+import PasswordField from "@/components/auth/forms/fields/passwordField";
 
-interface AddServerDialogProps {
+interface AddUserDialogProps {
   onAdd: () => void;
 }
 
-export function AddServerDialog({ onAdd }: AddServerDialogProps) {
+export function AddUserDialog({ onAdd }: AddUserDialogProps) {
   const [open, setOpen] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
 
-  const serverform = useForm<addServerSchemaType>({
-    resolver: zodResolver(addServerSchema),
+  const userForm = useForm<loginSchemaType>({
+    resolver: zodResolver(loginSchema),
     defaultValues: {
-      address: "",
       username: "",
       password: "",
     },
   });
 
-  const onSubmit = async (values: addServerSchemaType) => {
-    const { address, username, password } = values;
+  const { password: passwordError } = userForm.formState.errors;
+
+  const onSubmit = async (values: loginSchemaType) => {
+    const { username, password } = values;
 
     setLoading(true);
 
-    addServerAction(address, username, password)
+    addUserAction(username, password)
       .then((result) => {
         if (result.error)
           toast.error("Error", {
@@ -85,49 +84,35 @@ export function AddServerDialog({ onAdd }: AddServerDialogProps) {
             Add a Jellyfin server to index media from it
           </DialogDescription>
         </DialogHeader>
-        <Form {...serverform}>
+        <Form {...userForm}>
           <form
-            onSubmit={serverform.handleSubmit(onSubmit)}
+            onSubmit={userForm.handleSubmit(onSubmit)}
             className="space-y-4"
           >
             <FormField
-              control={serverform.control}
-              name="address"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Server Address</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="https://jellyfin.example.com"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={serverform.control}
+              control={userForm.control}
               name="username"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Server Username</FormLabel>
+                  <FormLabel>Username</FormLabel>
                   <FormControl>
-                    <Input placeholder="username" {...field} />
+                    <Input placeholder="eden" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
             <FormField
-              control={serverform.control}
+              control={userForm.control}
               name="password"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Server Password</FormLabel>
-                  <FormControl>
-                    <Input type="password" placeholder="********" {...field} />
-                  </FormControl>
+                  <PasswordField
+                    placeholder="********"
+                    error={passwordError}
+                    field={{ ...field }}
+                  />
                   <FormMessage />
                 </FormItem>
               )}
@@ -138,9 +123,22 @@ export function AddServerDialog({ onAdd }: AddServerDialogProps) {
                   Cancel
                 </Button>
               </DialogClose>
-              <Button type="submit" variant="create">
-                {loading && <LoaderCircle className="animate-spin" />}Add Server
-              </Button>
+              <div className="flex justify-center w-full">
+                <Button
+                  type="submit"
+                  disabled={loading}
+                  className="w-full sm:w-auto"
+                >
+                  {loading ? (
+                    <>
+                      <LoaderCircle className="animate-spin" />
+                      Adding user...
+                    </>
+                  ) : (
+                    "Add User"
+                  )}
+                </Button>
+              </div>
             </DialogFooter>
           </form>
         </Form>

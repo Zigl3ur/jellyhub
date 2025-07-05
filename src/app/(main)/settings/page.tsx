@@ -1,9 +1,17 @@
-import ResetPasswd from "@/components/settings/resetPasswd";
-import { ServerTable, columns } from "@/components/settings/serverTable";
+import {
+  ServerTable,
+  columns as serversTableColumns,
+} from "@/components/settings/tables/serverTable";
 import { Metadata } from "next";
-import CreateUser from "@/components/settings/createUser";
 import { getUser } from "@/server/utils";
-import { getJellyfinServers } from "@/server/actions/settings.actions";
+import {
+  getJellyfinServers,
+  getUsersList,
+} from "@/server/actions/settings.actions";
+import {
+  UserTable,
+  columns as usersTableColumns,
+} from "@/components/settings/tables/userTable";
 
 export const metadata: Metadata = {
   title: "JellyHub - Settings",
@@ -14,14 +22,17 @@ export default async function SettingsPage() {
   const isAdmin = user.role === "admin";
 
   const servers = await getJellyfinServers();
+  const users = await getUsersList();
 
   return (
-    <div className="flex flex-1 flex-col gap-8">
-      <ServerTable columns={columns} baseData={servers.data || []} />
-      <div className="flex flex-col lg:flex-row gap-2">
-        <ResetPasswd isAdmin={isAdmin} />
-        {isAdmin && <CreateUser />}
-      </div>
+    <div className="flex flex-col gap-8 max-w-5xl mx-auto">
+      <ServerTable
+        columns={serversTableColumns}
+        serversData={servers.data || []}
+      />
+      {isAdmin && (
+        <UserTable columns={usersTableColumns} usersData={users.data!} />
+      )}
     </div>
   );
 }
