@@ -12,12 +12,20 @@ import {
 } from "@/components/ui/table";
 import { Plus, RefreshCcw, Trash2 } from "lucide-react";
 
-export default function SettingsLoading() {
+interface LoadingTableProps {
+  inputPlaceholder: string;
+  tableHeads: Array<string>;
+}
+
+export default function LoadingTable({
+  inputPlaceholder,
+  tableHeads,
+}: LoadingTableProps) {
   return (
     <div className="space-y-2">
       <div className="flex gap-2">
         <Input
-          placeholder="Search Servers"
+          placeholder={inputPlaceholder}
           disabled={true}
           className=" bg-black/30 backdrop-blur-lg"
         />
@@ -40,36 +48,27 @@ export default function SettingsLoading() {
                   <Checkbox disabled={true} />
                 </div>
               </TableHead>
-              <TableHead>Address</TableHead>
-              <TableHead>Username</TableHead>
-              <TableHead>Status</TableHead>
+              {tableHeads.map((head, index) => {
+                return <TableHead key={index}>{head}</TableHead>;
+              })}
             </TableRow>
           </TableHeader>
 
           <TableBody>
-            {[0, 1, 2].map((value) => (
-              <TableRow key={value}>
+            {tableHeads.slice(0, -1).map((_, index) => (
+              <TableRow key={index}>
                 <TableCell>
                   <div className="flex">
                     <Skeleton className="h-4 w-4" />
                   </div>
                 </TableCell>
-                <TableCell>
-                  <div className="w-[80px] sm:w-[150px] md:w-[200px]">
-                    <Skeleton className="h-4 w-full" />
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <div className="w-[80px] sm:w-[150px] md:w-[200px]">
-                    <Skeleton className="h-4 w-full" />
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <div className="flex items-center">
-                    <Skeleton className="h-4 w-4 mr-2" />
-                    <Skeleton className="h-4 w-12" />
-                  </div>
-                </TableCell>
+                {tableHeads.map((_, index) => (
+                  <TableCell key={index}>
+                    <div className="w-[80px] sm:w-[150px] md:w-[200px]">
+                      <Skeleton className="h-4 w-full" />
+                    </div>
+                  </TableCell>
+                ))}
               </TableRow>
             ))}
           </TableBody>

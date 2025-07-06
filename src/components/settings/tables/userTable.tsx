@@ -187,8 +187,7 @@ export function UserTable({ columns, usersData }: DataTableProps) {
         <DeleteUserDialog
           disable={table.getFilteredSelectedRowModel().rows.length === 0}
           checkedRows={checkedRows.map((user) => {
-            // @ts-expect-error idk why ts refuse to get the property username but its here (better auth issue i guess)
-            return user.username;
+            return user.email;
           })}
           onDelete={refreshTable}
         />

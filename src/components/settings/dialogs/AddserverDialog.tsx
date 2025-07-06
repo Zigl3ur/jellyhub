@@ -50,7 +50,8 @@ export function AddServerDialog({ onAdd }: AddServerDialogProps) {
     },
   });
 
-  const { password: passwordError } = serverForm.formState.errors;
+  const { username: usernameError, password: passwordError } =
+    serverForm.formState.errors;
 
   const onSubmit = async (values: addServerSchemaType) => {
     const { username, password } = values;
@@ -83,8 +84,8 @@ export function AddServerDialog({ onAdd }: AddServerDialogProps) {
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Add a user</DialogTitle>
-          <DialogDescription>Create a user</DialogDescription>
+          <DialogTitle>Add a Server</DialogTitle>
+          <DialogDescription>Add a Jellyfin Server</DialogDescription>
         </DialogHeader>
         <Form {...serverForm}>
           <form
@@ -96,9 +97,16 @@ export function AddServerDialog({ onAdd }: AddServerDialogProps) {
               name="username"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Username</FormLabel>
+                  <FormLabel>Server Username</FormLabel>
                   <FormControl>
-                    <Input placeholder="username" {...field} />
+                    <Input
+                      placeholder="username"
+                      {...field}
+                      className={
+                        usernameError &&
+                        "border-destructive focus-visible:ring-destructive"
+                      }
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -125,7 +133,7 @@ export function AddServerDialog({ onAdd }: AddServerDialogProps) {
                   Cancel
                 </Button>
               </DialogClose>
-              <Button type="submit" variant="create">
+              <Button type="submit">
                 {loading && <LoaderCircle className="animate-spin" />}Add Server
               </Button>
             </DialogFooter>

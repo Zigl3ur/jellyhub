@@ -59,7 +59,7 @@ export async function addUserAction(
 }
 
 export async function deleteUserAction(
-  usernames: Array<string>
+  emails: Array<string>
 ): Promise<ServerActionReturn> {
   const user = await getUser();
 
@@ -69,8 +69,8 @@ export async function deleteUserAction(
   try {
     const usersId = await prisma.user.findMany({
       where: {
-        username: {
-          in: usernames,
+        email: {
+          in: emails,
         },
       },
       select: { id: true },

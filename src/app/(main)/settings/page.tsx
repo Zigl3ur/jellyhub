@@ -12,26 +12,57 @@ import {
   UserTable,
   columns as usersTableColumns,
 } from "@/components/settings/tables/userTable";
+import { Suspense } from "react";
+import LoadingTable from "@/components/settings/tables/loadingTable";
 
 export const metadata: Metadata = {
   title: "JellyHub - Settings",
 };
 
+async function ServersSection() {
+  const servers = await getJellyfinServers();
+  await new Promise((resolve) => setTimeout(resolve, 2000));
+  return (
+    <ServerTable
+      columns={serversTableColumns}
+      serversData={servers.data || []}
+    />
+  );
+}
+
+async function UsersSection() {
+  const users = await getUsersList();
+  await new Promise((resolve) => setTimeout(resolve, 5000));
+  return <UserTable columns={usersTableColumns} usersData={users.data!} />;
+}
+
 export default async function SettingsPage() {
   const user = await getUser();
   const isAdmin = user.role === "admin";
 
-  const servers = await getJellyfinServers();
-  const users = await getUsersList();
-
   return (
     <div className="flex flex-col gap-8 max-w-5xl mx-auto">
-      <ServerTable
-        columns={serversTableColumns}
-        serversData={servers.data || []}
-      />
+      <Suspense
+        fallback={
+          <LoadingTable
+            inputPlaceholder="Search Servers"
+            tableHeads={["Address", "Username", "Status"]}
+          />
+        }
+      >
+        <ServersSection />
+      </Suspense>
       {isAdmin && (
-        <UserTable columns={usersTableColumns} usersData={users.data!} />
+        <Suspense
+          fallback={
+            <LoadingTable
+              inputPlaceholder="Search Users"
+              tableHeads={["Username", "Role", "Updated At", "Created At"]}
+            />
+          }
+        >
+          <UsersSection />
+        </Suspense>
       )}
     </div>
   );

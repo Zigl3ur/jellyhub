@@ -46,7 +46,8 @@ export function AddUserDialog({ onAdd }: AddUserDialogProps) {
     },
   });
 
-  const { password: passwordError } = userForm.formState.errors;
+  const { username: usernameError, password: passwordError } =
+    userForm.formState.errors;
 
   const onSubmit = async (values: loginSchemaType) => {
     const { username, password } = values;
@@ -79,10 +80,8 @@ export function AddUserDialog({ onAdd }: AddUserDialogProps) {
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Add a Jellyfin Server</DialogTitle>
-          <DialogDescription>
-            Add a Jellyfin server to index media from it
-          </DialogDescription>
+          <DialogTitle>Add a User</DialogTitle>
+          <DialogDescription>Create a user</DialogDescription>
         </DialogHeader>
         <Form {...userForm}>
           <form
@@ -96,7 +95,14 @@ export function AddUserDialog({ onAdd }: AddUserDialogProps) {
                 <FormItem>
                   <FormLabel>Username</FormLabel>
                   <FormControl>
-                    <Input placeholder="eden" {...field} />
+                    <Input
+                      placeholder="eden"
+                      {...field}
+                      className={
+                        usernameError &&
+                        "border-destructive focus-visible:ring-destructive"
+                      }
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -107,7 +113,7 @@ export function AddUserDialog({ onAdd }: AddUserDialogProps) {
               name="password"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Server Password</FormLabel>
+                  <FormLabel>Password</FormLabel>
                   <PasswordField
                     placeholder="********"
                     error={passwordError}
@@ -123,22 +129,20 @@ export function AddUserDialog({ onAdd }: AddUserDialogProps) {
                   Cancel
                 </Button>
               </DialogClose>
-              <div className="flex justify-center w-full">
-                <Button
-                  type="submit"
-                  disabled={loading}
-                  className="w-full sm:w-auto"
-                >
-                  {loading ? (
-                    <>
-                      <LoaderCircle className="animate-spin" />
-                      Adding user...
-                    </>
-                  ) : (
-                    "Add User"
-                  )}
-                </Button>
-              </div>
+              <Button
+                type="submit"
+                disabled={loading}
+                className="w-full sm:w-auto"
+              >
+                {loading ? (
+                  <>
+                    <LoaderCircle className="animate-spin" />
+                    Adding user...
+                  </>
+                ) : (
+                  "Add User"
+                )}
+              </Button>
             </DialogFooter>
           </form>
         </Form>
