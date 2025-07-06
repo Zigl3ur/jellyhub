@@ -23,21 +23,23 @@ export default function LoadingTable({
 }: LoadingTableProps) {
   return (
     <div className="space-y-2">
-      <div className="flex gap-2">
+      <div className="flex justify-between gap-2">
         <Input
           placeholder={inputPlaceholder}
           disabled={true}
-          className=" bg-black/30 backdrop-blur-lg"
+          className=" bg-black/30 backdrop-blur-lg max-w-sm"
         />
-        <Button variant="outline" size={"icon"} disabled={true}>
-          <Plus />
-        </Button>
-        <Button variant="destructive" disabled={true} size={"icon"}>
-          <Trash2 />
-        </Button>
-        <Button size={"icon"} variant={"outline"} disabled={true}>
-          <RefreshCcw className="animate-reverse-spin" />
-        </Button>
+        <div className="flex gap-2">
+          <Button variant="outline" size={"icon"} disabled={true}>
+            <Plus />
+          </Button>
+          <Button variant="destructive" disabled={true} size={"icon"}>
+            <Trash2 />
+          </Button>
+          <Button size={"icon"} variant={"outline"} disabled={true}>
+            <RefreshCcw className="animate-reverse-spin" />
+          </Button>
+        </div>
       </div>
       <div className="rounded-md border bg-black/50 backdrop-blur-lg">
         <Table>

@@ -62,14 +62,9 @@ export const columns: ColumnDef<jellydataDisplayed>[] = [
     cell: ({ row }) => {
       const address = row.getValue("serverUrl") as string;
       return (
-        <div
-          className="w-[80px] sm:w-[150px] md:w-[200px] truncate"
-          title={address}
-        >
-          <Link href={address} className="hover:underline">
-            {address.split("//")[1]}
-          </Link>
-        </div>
+        <Link href={address} title={address} className="hover:underline">
+          {address.split("//")[1]}
+        </Link>
       );
     },
   },
@@ -78,14 +73,7 @@ export const columns: ColumnDef<jellydataDisplayed>[] = [
     header: "Username",
     cell: ({ row }) => {
       const username = row.getValue("serverUsername") as string;
-      return (
-        <div
-          className="w-[80px] sm:w-[150px] md:w-[200px] truncate"
-          title={username}
-        >
-          {username}
-        </div>
-      );
+      return <div title={username}>{username}</div>;
     },
   },
   {
@@ -158,7 +146,7 @@ export function ServerTable({ columns, serversData }: DataTableProps) {
 
   return (
     <div className="space-y-2">
-      <div className="flex gap-2">
+      <div className="flex justify-between gap-2">
         <Input
           placeholder="Search Servers"
           disabled={data.length === 0}
@@ -168,27 +156,29 @@ export function ServerTable({ columns, serversData }: DataTableProps) {
           onChange={(event) =>
             table.getColumn("serverUrl")?.setFilterValue(event.target.value)
           }
-          className=" bg-black/30 backdrop-blur-lg"
+          className=" bg-black/30 backdrop-blur-lg max-w-sm"
         />
-        <AddServerDialog onAdd={refreshTable} />
-        <DeleteAlertDialog
-          disable={table.getFilteredSelectedRowModel().rows.length === 0}
-          checkedRows={checkedRows.map((row) => ({
-            address: row.serverUrl,
-            username: row.serverUsername,
-          }))}
-          onDelete={refreshTable}
-        />
-        <Button
-          size={"icon"}
-          variant={"outline"}
-          onClick={refreshTable}
-          disabled={isFetching}
-        >
-          <RefreshCcw className={`${isFetching && "animate-reverse-spin"}`} />
-        </Button>
+        <div className="flex gap-2">
+          <AddServerDialog onAdd={refreshTable} />
+          <DeleteAlertDialog
+            disable={table.getFilteredSelectedRowModel().rows.length === 0}
+            checkedRows={checkedRows.map((row) => ({
+              address: row.serverUrl,
+              username: row.serverUsername,
+            }))}
+            onDelete={refreshTable}
+          />
+          <Button
+            size={"icon"}
+            variant={"outline"}
+            onClick={refreshTable}
+            disabled={isFetching}
+          >
+            <RefreshCcw className={`${isFetching && "animate-reverse-spin"}`} />
+          </Button>
+        </div>
       </div>
-      <div className="rounded-md border bg-black/50 backdrop-blur-lg">
+      <div className="overflow-x-auto rounded-md border bg-black/50 backdrop-blur-lg">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (

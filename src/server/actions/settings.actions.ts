@@ -36,28 +36,39 @@ export async function addUserAction(
   if (!result.success)
     return { success: false, error: z.prettifyError(result.error) };
 
-  const createdUser = await auth.api.createUser({
-    headers: await headers(),
-    body: {
-      email: `${username}@jellyhub.com`,
-      name: username,
-      password: password,
-      data: {
-        username: username,
-        displayUsername: username,
+  try {
+    const createdUser = await auth.api.createUser({
+      headers: await headers(),
+      body: {
+        email: `${username}@jellyhub.com`,
+        name: username,
+        password: password,
+        data: {
+          username: username,
+          displayUsername: username,
+        },
       },
-    },
-  });
+    });
+    if (!createdUser.user.id)
+      return { success: false, error: "Failed to create user" };
 
-  if (!createdUser.user.id)
-    return { success: false, error: "Failed to create user" };
-
-  return {
-    success: true,
-    message: "User Successfully created",
-  };
+    return {
+      success: true,
+      message: "User Successfully created",
+    };
+  } catch (err) {
+    return {
+      success: false,
+      error: err instanceof Error ? err.message : "Failed to create user",
+    };
+  }
 }
 
+/**
+ * Server action to delete a user
+ * @param emails array of users's emails to remove 
+ * @returns message if it succeed or an error
+ */
 export async function deleteUserAction(
   emails: Array<string>
 ): Promise<ServerActionReturn> {
@@ -100,6 +111,7 @@ export async function deleteUserAction(
     };
   }
 }
+
 
 export async function resetPasswordAction(
   newPassword: string,

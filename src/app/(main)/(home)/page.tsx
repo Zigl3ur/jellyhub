@@ -4,6 +4,7 @@ import ServerStats from "@/components/serversStats";
 import CardsCaroussel from "@/components/cardsCarroussel";
 import Link from "next/link";
 import NotFound from "@/components/global/notFound";
+import { getUser } from "@/server/utils";
 
 export const metadata: Metadata = {
   title: "JellyHub - Home",
@@ -44,6 +45,8 @@ export const metadata: Metadata = {
 // }
 
 export default async function Home() {
+  await getUser();
+
   // const data = (await getAllItems()) ?? {
   //   serverCount: 0,
   //   allItems: { movies: [], shows: [], musicAlbum: [] },

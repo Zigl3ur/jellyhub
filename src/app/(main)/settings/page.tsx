@@ -32,7 +32,6 @@ async function ServersSection() {
 
 async function UsersSection() {
   const users = await getUsersList();
-  await new Promise((resolve) => setTimeout(resolve, 5000));
   return <UserTable columns={usersTableColumns} usersData={users.data!} />;
 }
 

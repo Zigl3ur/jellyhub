@@ -60,14 +60,7 @@ export const columns: ColumnDef<UserWithRole>[] = [
     header: "Username",
     cell: ({ row }) => {
       const username = row.getValue("username") as string;
-      return (
-        <div
-          className="w-[80px] sm:w-[150px] md:w-[200px] truncate"
-          title={username}
-        >
-          {username}
-        </div>
-      );
+      return <div title={username}>{username}</div>;
     },
   },
   {
@@ -75,14 +68,7 @@ export const columns: ColumnDef<UserWithRole>[] = [
     header: "Role",
     cell: ({ row }) => {
       const role = row.getValue("role") as string;
-      return (
-        <div
-          className="w-[80px] sm:w-[150px] md:w-[200px] truncate"
-          title={role}
-        >
-          {role}
-        </div>
-      );
+      return <div title={role}>{role}</div>;
     },
   },
   {
@@ -91,19 +77,8 @@ export const columns: ColumnDef<UserWithRole>[] = [
     cell: ({ row }) => {
       const updatedAt = row.getValue("updatedAt") as Date;
       return (
-        <div
-          className="w-[80px] sm:w-[150px] md:w-[200px] truncate"
-          title={updatedAt.toLocaleDateString("en-GB", {
-            day: "2-digit",
-            month: "2-digit",
-            year: "numeric",
-          })}
-        >
-          {updatedAt.toLocaleDateString("en-GB", {
-            day: "2-digit",
-            month: "2-digit",
-            year: "numeric",
-          })}
+        <div title={updatedAt.toLocaleDateString()}>
+          {updatedAt.toLocaleDateString()}
         </div>
       );
     },
@@ -114,19 +89,8 @@ export const columns: ColumnDef<UserWithRole>[] = [
     cell: ({ row }) => {
       const createdAt = row.getValue("createdAt") as Date;
       return (
-        <div
-          className="w-[80px] sm:w-[150px] md:w-[200px] truncate"
-          title={createdAt.toLocaleDateString("en-GB", {
-            day: "2-digit",
-            month: "2-digit",
-            year: "numeric",
-          })}
-        >
-          {createdAt.toLocaleDateString("en-GB", {
-            day: "2-digit",
-            month: "2-digit",
-            year: "numeric",
-          })}
+        <div title={createdAt.toLocaleDateString()}>
+          {createdAt.toLocaleDateString()}
         </div>
       );
     },
@@ -170,8 +134,8 @@ export function UserTable({ columns, usersData }: DataTableProps) {
     .rows.map((row) => row.original);
 
   return (
-    <div className="space-y-2">
-      <div className="flex gap-2">
+    <div className="w-full space-y-2">
+      <div className="flex justify-between gap-2">
         <Input
           placeholder="Search Users"
           disabled={data.length === 0}
@@ -181,26 +145,29 @@ export function UserTable({ columns, usersData }: DataTableProps) {
           onChange={(event) =>
             table.getColumn("username")?.setFilterValue(event.target.value)
           }
-          className=" bg-black/30 backdrop-blur-lg"
+          className=" bg-black/30 backdrop-blur-lg max-w-sm"
         />
-        <AddUserDialog onAdd={refreshTable} />
-        <DeleteUserDialog
-          disable={table.getFilteredSelectedRowModel().rows.length === 0}
-          checkedRows={checkedRows.map((user) => {
-            return user.email;
-          })}
-          onDelete={refreshTable}
-        />
-        <Button
-          size={"icon"}
-          variant={"outline"}
-          onClick={refreshTable}
-          disabled={isFetching}
-        >
-          <RefreshCcw className={`${isFetching && "animate-reverse-spin"}`} />
-        </Button>
+        <div className="flex gap-2">
+          <AddUserDialog onAdd={refreshTable} />
+          <DeleteUserDialog
+            disable={table.getFilteredSelectedRowModel().rows.length === 0}
+            checkedRows={checkedRows.map((user) => {
+              return user.email;
+            })}
+            onDelete={refreshTable}
+          />
+          <Button
+            size={"icon"}
+            variant={"outline"}
+            onClick={refreshTable}
+            disabled={isFetching}
+          >
+            <RefreshCcw className={`${isFetching && "animate-reverse-spin"}`} />
+          </Button>
+        </div>
       </div>
-      <div className="rounded-md border bg-black/50 backdrop-blur-lg">
+      {/* TODO: fix overflow not working */}
+      <div className="rounded-md border bg-black/50 backdrop-blur-lg overflow-x-auto">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
