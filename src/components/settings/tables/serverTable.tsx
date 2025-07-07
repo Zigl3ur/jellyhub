@@ -129,6 +129,7 @@ export function ServerTable({ columns, serversData }: DataTableProps) {
     onColumnFiltersChange: setColumnFilters,
     getFilteredRowModel: getFilteredRowModel(),
     getSortedRowModel: getSortedRowModel(),
+    autoResetPageIndex: false,
     state: {
       columnFilters,
     },

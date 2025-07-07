@@ -116,6 +116,7 @@ export function UserTable({ columns, usersData }: DataTableProps) {
     onColumnFiltersChange: setColumnFilters,
     getFilteredRowModel: getFilteredRowModel(),
     getSortedRowModel: getSortedRowModel(),
+    autoResetPageIndex: false,
     state: {
       columnFilters,
     },

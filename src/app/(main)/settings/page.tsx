@@ -21,7 +21,6 @@ export const metadata: Metadata = {
 
 async function ServersSection() {
   const servers = await getJellyfinServers();
-  await new Promise((resolve) => setTimeout(resolve, 2000));
   return (
     <ServerTable
       columns={serversTableColumns}
