@@ -39,11 +39,8 @@ export default function RegisterForm() {
     },
   });
 
-  const {
-    username: usernameError,
-    password: passwordError,
-    confirmPassword: confirmPasswordError,
-  } = registerForm.formState.errors;
+  const { password: passwordError, confirmPassword: confirmPasswordError } =
+    registerForm.formState.errors;
 
   const onSubmit = async (values: registerSchemaType) => {
     const { username, password } = values;
@@ -74,7 +71,7 @@ export default function RegisterForm() {
   };
 
   return (
-    <div className="w-full max-w-md mx-auto sm:w-[400px] p-5 bg-black/50 backdrop-blur-lg rounded-md">
+    <div className="w-full max-w-md mx-auto sm:w-[400px] p-5 backdrop-blur-lg rounded-md">
       <div className="py-4 text-center">
         <Logo />
       </div>
@@ -90,14 +87,7 @@ export default function RegisterForm() {
               <FormItem>
                 <FormLabel>Username</FormLabel>
                 <FormControl>
-                  <Input
-                    placeholder="Username"
-                    className={
-                      usernameError &&
-                      "border-destructive focus-visible:ring-destructive"
-                    }
-                    {...field}
-                  />
+                  <Input placeholder="Username" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>

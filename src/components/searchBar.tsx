@@ -16,7 +16,7 @@ export default function SearchBar(Props: SearchBarProps) {
   return (
     <div className="flex flex-col items-center justify-center w-full">
       <Input
-        className="bg-black/30 backdrop-blur-lg"
+        className=" backdrop-blur-lg"
         placeholder={`Search for ${Props.type}`}
         onChange={(e) => setSearch(e.target.value)}
       />

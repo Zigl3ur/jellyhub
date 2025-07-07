@@ -16,16 +16,14 @@ export default async function MainLayout({
   const defaultOpen = cookieStore.get("sidebar_state")?.value === "true";
 
   return (
-    <div>
-      <SidebarProvider defaultOpen={defaultOpen}>
-        <AppSidebar />
-        <SidebarInset className="bg-gradient">
-          <main>
-            <SidebarTrigger className="m-2" />
-            <div className="p-2">{children}</div>
-          </main>
-        </SidebarInset>
-      </SidebarProvider>
-    </div>
+    <SidebarProvider defaultOpen={defaultOpen}>
+      <AppSidebar />
+      <SidebarInset>
+        <main className="p-2">
+          <SidebarTrigger className="my-2 mr-2" />
+          {children}
+        </main>
+      </SidebarInset>
+    </SidebarProvider>
   );
 }

@@ -46,8 +46,7 @@ export function AddUserDialog({ onAdd }: AddUserDialogProps) {
     },
   });
 
-  const { username: usernameError, password: passwordError } =
-    userForm.formState.errors;
+  const { password: passwordError } = userForm.formState.errors;
 
   const onSubmit = async (values: loginSchemaType) => {
     const { username, password } = values;
@@ -95,14 +94,7 @@ export function AddUserDialog({ onAdd }: AddUserDialogProps) {
                 <FormItem>
                   <FormLabel>Username</FormLabel>
                   <FormControl>
-                    <Input
-                      placeholder="eden"
-                      {...field}
-                      className={
-                        usernameError &&
-                        "border-destructive focus-visible:ring-destructive"
-                      }
-                    />
+                    <Input placeholder="eden" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

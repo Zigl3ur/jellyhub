@@ -145,7 +145,7 @@ export function UserTable({ columns, usersData }: DataTableProps) {
           onChange={(event) =>
             table.getColumn("username")?.setFilterValue(event.target.value)
           }
-          className=" bg-black/30 backdrop-blur-lg max-w-sm"
+          className="backdrop-blur-lg max-w-sm"
         />
         <div className="flex gap-2">
           <AddUserDialog onAdd={refreshTable} />
@@ -167,7 +167,7 @@ export function UserTable({ columns, usersData }: DataTableProps) {
         </div>
       </div>
       {/* TODO: fix overflow not working */}
-      <div className="rounded-md border bg-black/50 backdrop-blur-lg overflow-x-auto">
+      <div className="rounded-md border bg-background">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (

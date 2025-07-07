@@ -40,7 +40,7 @@ export default async function SettingsPage() {
   const isAdmin = user.role === "admin";
 
   return (
-    <div className="flex flex-col gap-8 max-w-5xl mx-auto">
+    <div className="space-y-8 max-w-5xl mx-auto">
       <Suspense
         fallback={
           <LoadingTable

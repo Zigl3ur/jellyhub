@@ -41,7 +41,8 @@ export default function PasswordField({
           onBlur={field.onBlur}
           ref={field.ref}
           className={
-            error && "border-destructive focus-visible:ring-destructive"
+            error &&
+            "border-destructive focus-visible:border-destructive focus-visible:ring-destructive/20"
           }
         />
         <Button

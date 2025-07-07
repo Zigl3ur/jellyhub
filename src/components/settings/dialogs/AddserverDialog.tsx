@@ -50,8 +50,7 @@ export function AddServerDialog({ onAdd }: AddServerDialogProps) {
     },
   });
 
-  const { username: usernameError, password: passwordError } =
-    serverForm.formState.errors;
+  const { password: passwordError } = serverForm.formState.errors;
 
   const onSubmit = async (values: addServerSchemaType) => {
     const { username, password } = values;
@@ -99,14 +98,7 @@ export function AddServerDialog({ onAdd }: AddServerDialogProps) {
                 <FormItem>
                   <FormLabel>Server Username</FormLabel>
                   <FormControl>
-                    <Input
-                      placeholder="username"
-                      {...field}
-                      className={
-                        usernameError &&
-                        "border-destructive focus-visible:ring-destructive"
-                      }
-                    />
+                    <Input placeholder="username" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

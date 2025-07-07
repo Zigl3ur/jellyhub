@@ -91,7 +91,7 @@ export default function ResetPasswd({ isAdmin }: ResetPasswdProps) {
   };
 
   return (
-    <div className=" bg-black/50 backdrop-blur-lg rounded-md p-5 w-full">
+    <div className=" backdrop-blur-lg rounded-md p-5 w-full">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
           {isAdmin ? (

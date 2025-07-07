@@ -15,7 +15,7 @@ import {
 import { Input } from "../ui/input";
 import { loginSchema, loginSchemaType } from "@/schemas/auth.schema";
 import { toast } from "sonner";
-import { createUserAction } from "@/server/actions/settings.actions";
+import { addUserAction } from "@/server/actions/settings.actions";
 
 export default function CreateUser() {
   const form = useForm<loginSchemaType>({
@@ -27,7 +27,7 @@ export default function CreateUser() {
   });
 
   function onSubmit(data: loginSchemaType) {
-    createUserAction(data.username, data.password).then((result) => {
+    addUserAction(data.username, data.password).then((result) => {
       if (result.success) {
         toast.success("Success", {
           description: result.message,
@@ -41,7 +41,7 @@ export default function CreateUser() {
   }
 
   return (
-    <div className=" bg-black/50 backdrop-blur-lg rounded-md p-5 w-full">
+    <div className=" backdrop-blur-lg rounded-md p-5 w-full">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
           <FormField

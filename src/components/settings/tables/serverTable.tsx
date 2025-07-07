@@ -62,9 +62,11 @@ export const columns: ColumnDef<jellydataDisplayed>[] = [
     cell: ({ row }) => {
       const address = row.getValue("serverUrl") as string;
       return (
-        <Link href={address} title={address} className="hover:underline">
-          {address.split("//")[1]}
-        </Link>
+        <div title={address}>
+          <Link href={address} className="hover:underline">
+            {address.split("//")[1]}
+          </Link>
+        </div>
       );
     },
   },
@@ -145,7 +147,7 @@ export function ServerTable({ columns, serversData }: DataTableProps) {
     .rows.map((row) => row.original);
 
   return (
-    <div className="space-y-2">
+    <div className="w-full space-y-2">
       <div className="flex justify-between gap-2">
         <Input
           placeholder="Search Servers"
@@ -156,7 +158,7 @@ export function ServerTable({ columns, serversData }: DataTableProps) {
           onChange={(event) =>
             table.getColumn("serverUrl")?.setFilterValue(event.target.value)
           }
-          className=" bg-black/30 backdrop-blur-lg max-w-sm"
+          className="backdrop-blur-lg max-w-sm"
         />
         <div className="flex gap-2">
           <AddServerDialog onAdd={refreshTable} />
@@ -178,7 +180,7 @@ export function ServerTable({ columns, serversData }: DataTableProps) {
           </Button>
         </div>
       </div>
-      <div className="overflow-x-auto rounded-md border bg-black/50 backdrop-blur-lg">
+      <div className="rounded-md border backdrop-blur-lg">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
