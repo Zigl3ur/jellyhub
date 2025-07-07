@@ -2,22 +2,12 @@
 
 import {
   ColumnDef,
-  flexRender,
   getCoreRowModel,
   useReactTable,
   getSortedRowModel,
   ColumnFiltersState,
   getFilteredRowModel,
 } from "@tanstack/react-table";
-
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 
 import { Checkbox } from "@/components/ui/checkbox";
 import { useCallback, useEffect, useState } from "react";
@@ -30,12 +20,14 @@ import { AddServerDialog } from "../dialogs/AddserverDialog";
 import Link from "next/link";
 import { getJellyfinServers } from "@/server/actions/settings.actions";
 import { Button } from "../../ui/button";
+import DataTable from "@/components/dataTable";
+import { TableCell } from "@/components/ui/table";
 
 export const columns: ColumnDef<jellydataDisplayed>[] = [
   {
     id: "select",
     header: ({ table }) => (
-      <div className="flex">
+      <div className="flex items-center w-fit">
         <Checkbox
           checked={
             table.getIsAllPageRowsSelected() ||
@@ -47,7 +39,7 @@ export const columns: ColumnDef<jellydataDisplayed>[] = [
       </div>
     ),
     cell: ({ row }) => (
-      <div className="flex">
+      <div className="flex items-center w-fit">
         <Checkbox
           checked={row.getIsSelected()}
           onCheckedChange={(value) => row.toggleSelected(!!value)}
@@ -84,7 +76,7 @@ export const columns: ColumnDef<jellydataDisplayed>[] = [
     cell: ({ row }) => {
       const status = row.getValue("status") as State;
       return (
-        <div className="flex items-center">
+        <div className="flex">
           {status === "Up" && <Wifi className="w-4 h-4 text-green-500 mr-2" />}
           {status === "Down" && (
             <WifiOff className="w-4 h-4 text-red-500 mr-2" />
@@ -158,7 +150,7 @@ export function ServerTable({ columns, serversData }: DataTableProps) {
           onChange={(event) =>
             table.getColumn("serverUrl")?.setFilterValue(event.target.value)
           }
-          className="backdrop-blur-lg max-w-sm"
+          className="bg-background/50 max-w-sm"
         />
         <div className="flex gap-2">
           <AddServerDialog onAdd={refreshTable} />
@@ -180,56 +172,14 @@ export function ServerTable({ columns, serversData }: DataTableProps) {
           </Button>
         </div>
       </div>
-      <div className="rounded-md border backdrop-blur-lg">
-        <Table>
-          <TableHeader>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
-                  return (
-                    <TableHead key={header.id}>
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                    </TableHead>
-                  );
-                })}
-              </TableRow>
-            ))}
-          </TableHeader>
-          <TableBody>
-            {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
-                >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center"
-                >
-                  No Servers.
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
-      </div>
+      <DataTable
+        table={table}
+        emptyPlaceholder={
+          <TableCell colSpan={columns.length} className="h-24 text-center">
+            No Servers.
+          </TableCell>
+        }
+      />
       <div className="flex justify-end">
         <span className="text-sm text-muted-foreground">
           {table.getFilteredSelectedRowModel().rows.length} of{" "}

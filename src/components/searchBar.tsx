@@ -16,7 +16,7 @@ export default function SearchBar(Props: SearchBarProps) {
   return (
     <div className="flex flex-col items-center justify-center w-full">
       <Input
-        className=" backdrop-blur-lg"
+        className="bg-background/50"
         placeholder={`Search for ${Props.type}`}
         onChange={(e) => setSearch(e.target.value)}
       />
@@ -24,7 +24,7 @@ export default function SearchBar(Props: SearchBarProps) {
         {search.length > 0 && (
           <div
             className="absolute left-0 right-0
-           bg-background/85 backdrop-blur-lg z-10 max-h-[25rem] overflow-y-auto space-y-1 rounded-md"
+           bg-background/85 z-10 max-h-[25rem] overflow-y-auto space-y-1 rounded-md"
           >
             {Props.items
               .filter((item) =>

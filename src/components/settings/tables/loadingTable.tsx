@@ -27,7 +27,7 @@ export default function LoadingTable({
         <Input
           placeholder={inputPlaceholder}
           disabled={true}
-          className="backdrop-blur-lg max-w-sm"
+          className="bg-background/50 max-w-sm"
         />
         <div className="flex gap-2">
           <Button variant="outline" size={"icon"} disabled={true}>
@@ -41,7 +41,7 @@ export default function LoadingTable({
           </Button>
         </div>
       </div>
-      <div className="rounded-md border backdrop-blur-lg">
+      <div className="rounded-md border bg-background">
         <Table>
           <TableHeader>
             <TableRow>

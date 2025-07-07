@@ -71,7 +71,7 @@ export default function RegisterForm() {
   };
 
   return (
-    <div className="w-full max-w-md mx-auto sm:w-[400px] p-5 backdrop-blur-lg rounded-md">
+    <div className="w-full max-w-md mx-auto sm:w-[400px] p-5 bg-background rounded-md">
       <div className="py-4 text-center">
         <Logo />
       </div>

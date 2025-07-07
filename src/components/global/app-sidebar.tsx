@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/sidebar";
 import Image from "next/image";
 import Link from "next/link";
+import LogOutButton from "../auth/logOutButton";
 
 const baseItems = [
   {
@@ -22,25 +23,20 @@ const baseItems = [
   },
   {
     title: "Movies",
-    url: "/Movie",
+    url: "/movie",
     icon: Film,
   },
   {
-    title: "Shows",
-    url: "/Series",
+    title: "Series",
+    url: "/series",
     icon: Tv,
   },
   {
-    title: "Music Albums",
-    url: "/MusicAlbum",
+    title: "Albums",
+    url: "/albums",
     icon: Music,
   },
 ];
-
-// async function logoutAction(): Promise<void> {
-//   "use server";
-//   await logout();
-// }
 
 export async function AppSidebar() {
   return (
@@ -89,7 +85,7 @@ export async function AppSidebar() {
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
-          {/* <LogOutButton onClick={logoutAction} /> */}
+          <LogOutButton />
         </SidebarMenu>
       </SidebarFooter>
     </Sidebar>

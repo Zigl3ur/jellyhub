@@ -29,7 +29,7 @@ import {
   addServerSchema,
   addServerSchemaType,
 } from "@/schemas/settings.schema";
-import { addUserAction } from "@/server/actions/settings.actions";
+import { addServerAction } from "@/server/actions/settings.actions";
 import { toast } from "sonner";
 import PasswordField from "@/components/auth/forms/fields/passwordField";
 
@@ -53,11 +53,11 @@ export function AddServerDialog({ onAdd }: AddServerDialogProps) {
   const { password: passwordError } = serverForm.formState.errors;
 
   const onSubmit = async (values: addServerSchemaType) => {
-    const { username, password } = values;
+    const { address, username, password } = values;
 
     setLoading(true);
 
-    addUserAction(username, password)
+    addServerAction(address, username, password)
       .then((result) => {
         if (result.error)
           toast.error("Error", {
@@ -91,6 +91,19 @@ export function AddServerDialog({ onAdd }: AddServerDialogProps) {
             onSubmit={serverForm.handleSubmit(onSubmit)}
             className="space-y-4"
           >
+            <FormField
+              control={serverForm.control}
+              name="address"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Server Address</FormLabel>
+                  <FormControl>
+                    <Input placeholder="address" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
             <FormField
               control={serverForm.control}
               name="username"

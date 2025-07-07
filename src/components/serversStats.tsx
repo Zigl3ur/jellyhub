@@ -33,7 +33,7 @@ export default function ServerStats(Props: StatsProps) {
         return (
           <Card
             key={key}
-            className="flex flex-col justify-between p-6 backdrop-blur-lg"
+            className="flex flex-col justify-between p-6 bg bg-card/50"
           >
             <CardHeader className="p-0">
               <div className="inline-flex items-center gap-3">

@@ -51,7 +51,7 @@ export default function LoginForm() {
         fetchOptions: {
           onSuccess: (ctx) => {
             toast.success("Successfully logged in", {
-              description: `Welcome back, ${ctx.data["user"].username} !`, // TODO: display username
+              description: `Welcome back, ${ctx.data["user"].username} !`,
             });
             router.push("/");
           },
@@ -68,7 +68,7 @@ export default function LoginForm() {
   };
 
   return (
-    <div className="w-full max-w-md mx-auto sm:w-[400px] p-5 bg-background/60 backdrop-blur-lg rounded-md">
+    <div className="w-full max-w-md mx-auto sm:w-[400px] p-5 bg-background rounded-md">
       <div className="py-4 text-center">
         <Logo />
       </div>

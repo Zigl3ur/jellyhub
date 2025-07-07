@@ -41,7 +41,7 @@ export default function CreateUser() {
   }
 
   return (
-    <div className=" backdrop-blur-lg rounded-md p-5 w-full">
+    <div className="rounded-md p-5 w-full">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
           <FormField
