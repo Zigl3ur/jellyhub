@@ -7,12 +7,13 @@ import {
   getSortedRowModel,
   ColumnFiltersState,
   getFilteredRowModel,
+  getPaginationRowModel,
 } from "@tanstack/react-table";
 
 import { Checkbox } from "@/components/ui/checkbox";
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { Input } from "../../ui/input";
-import { RefreshCcw } from "lucide-react";
+import { ChevronLeft, ChevronRight, RefreshCcw } from "lucide-react";
 import { userDataType } from "@/types/actions.types";
 import { getUsersList } from "@/server/actions/settings.actions";
 import { Button } from "../../ui/button";
@@ -21,8 +22,11 @@ import { AddUserDialog } from "../dialogs/addUserDialog";
 import { DeleteUserDialog } from "../alerts/deleteUserAlert";
 import DataTable from "@/components/dataTable";
 import { TableCell } from "@/components/ui/table";
+import { EditUserDialog } from "../dialogs/editUserDialog";
 
-export const columns: ColumnDef<UserWithRole>[] = [
+const createColumns = (
+  refreshTable: () => Promise<void>
+): ColumnDef<UserWithRole>[] => [
   {
     id: "select",
     header: ({ table }) => (
@@ -87,14 +91,20 @@ export const columns: ColumnDef<UserWithRole>[] = [
       );
     },
   },
+  {
+    accessorKey: "edit",
+    header: undefined,
+    cell: ({ row }) => {
+      return <EditUserDialog user={row.original} onEdit={refreshTable} />;
+    },
+  },
 ];
 
 interface DataTableProps {
-  columns: ColumnDef<UserWithRole>[];
   usersData: userDataType;
 }
 
-export function UserTable({ columns, usersData }: DataTableProps) {
+export function UserTable({ usersData }: DataTableProps) {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [data, setData] = useState<UserWithRole[]>(usersData.users);
   const [isFetching, setIsFetching] = useState<boolean>(false);
@@ -109,14 +119,22 @@ export function UserTable({ columns, usersData }: DataTableProps) {
     setIsFetching(false);
   }, []);
 
+  const columns = useMemo(() => createColumns(refreshTable), [refreshTable]);
+
   const table = useReactTable({
-    data: data,
+    data,
     columns,
     getCoreRowModel: getCoreRowModel(),
     onColumnFiltersChange: setColumnFilters,
     getFilteredRowModel: getFilteredRowModel(),
     getSortedRowModel: getSortedRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
     autoResetPageIndex: false,
+    initialState: {
+      pagination: {
+        pageSize: 5,
+      },
+    },
     state: {
       columnFilters,
     },
@@ -167,11 +185,29 @@ export function UserTable({ columns, usersData }: DataTableProps) {
           </TableCell>
         }
       />
-      <div className="flex justify-end">
+      <div className="flex justify-between items-center">
         <span className="text-sm text-muted-foreground">
           {table.getFilteredSelectedRowModel().rows.length} of{" "}
           {table.getFilteredRowModel().rows.length} user(s) selected.
         </span>
+        <div className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => table.previousPage()}
+            disabled={!table.getCanPreviousPage()}
+          >
+            <ChevronLeft />
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => table.nextPage()}
+            disabled={!table.getCanNextPage()}
+          >
+            <ChevronRight />
+          </Button>
+        </div>
       </div>
     </div>
   );

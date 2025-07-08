@@ -11,7 +11,6 @@ import {
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 import { getUser } from "../utils";
 import { auth } from "@/lib/auth";
-import { passwordSchema } from "@/schemas/settings.schema";
 import { z } from "zod/v4";
 import { loginSchema } from "@/schemas/auth.schema";
 import { headers } from "next/headers";
@@ -66,7 +65,7 @@ export async function addUserAction(
 
 /**
  * Server action to delete a user
- * @param emails array of users's emails to remove 
+ * @param emails array of users's emails to remove
  * @returns message if it succeed or an error
  */
 export async function deleteUserAction(
@@ -112,55 +111,55 @@ export async function deleteUserAction(
   }
 }
 
-
-export async function resetPasswordAction(
-  newPassword: string,
-  username?: string
+export async function editUserAction(
+  id: string,
+  baseUsername: string,
+  newUsername?: string,
+  newPassword?: string
 ): Promise<ServerActionReturn> {
   const user = await getUser();
   const isAdmin = user.role === "admin";
 
-  const result = passwordSchema.safeParse(newPassword);
+  if (!isAdmin)
+    return {
+      success: false,
+      error: "User is not an administrator",
+    };
 
-  if (!result.success)
-    return { success: false, error: z.prettifyError(result.error) };
+  // TODO: validate with zod ?
 
   const ctx = await auth.$context;
-  const hashPassword = await ctx.password.hash(newPassword);
 
   try {
-    if (isAdmin && username) {
-      // get user id
-      const targetUser = await prisma.user.findUnique({
-        where: { username: username },
-        include: { accounts: true },
-      });
+    let hashPassword;
 
-      if (!targetUser || !targetUser.accounts[0]) {
-        return {
-          success: false,
-          error: "User not found",
-        };
-      }
+    if (newPassword) hashPassword = await ctx.password.hash(newPassword);
 
-      await prisma.account.update({
-        where: { id: targetUser.accounts[0].id },
-        data: {
-          password: hashPassword,
+    await prisma.user.update({
+      where: { id: id },
+      data: {
+        username: newUsername ? newUsername : baseUsername,
+        accounts: {
+          updateMany: {
+            where: {
+              userId: id,
+            },
+            data: {
+              password: hashPassword,
+            },
+          },
         },
-      });
-    } else await ctx.internalAdapter.updatePassword("userId", hashPassword);
+      },
+    });
 
     return {
       success: true,
-      message: "Successfully updated password",
+      message: "Successfully updated user",
     };
   } catch {
     return {
       success: false,
-      error: isAdmin
-        ? "Error while updating password"
-        : "Cant update other user password",
+      error: "Error while updating user",
     };
   }
 }

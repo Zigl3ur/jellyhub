@@ -74,7 +74,7 @@ export default function CreateUser() {
               </FormItem>
             )}
           />
-          <Button type="submit" variant={"create"}>
+          <Button type="submit">
             Create
           </Button>
         </form>

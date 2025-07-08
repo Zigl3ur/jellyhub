@@ -7,13 +7,21 @@ import {
   getSortedRowModel,
   ColumnFiltersState,
   getFilteredRowModel,
+  getPaginationRowModel,
 } from "@tanstack/react-table";
 
 import { Checkbox } from "@/components/ui/checkbox";
 import { useCallback, useEffect, useState } from "react";
 import { Input } from "../../ui/input";
 import { DeleteAlertDialog } from "../alerts/deleteServerAlert";
-import { LoaderCircle, RefreshCcw, Wifi, WifiOff } from "lucide-react";
+import {
+  ChevronLeft,
+  ChevronRight,
+  LoaderCircle,
+  RefreshCcw,
+  Wifi,
+  WifiOff,
+} from "lucide-react";
 import { jellydataDisplayed } from "@/types/actions.types";
 import { State } from "@/types/jellyfin-api.types";
 import { AddServerDialog } from "../dialogs/AddserverDialog";
@@ -76,7 +84,7 @@ export const columns: ColumnDef<jellydataDisplayed>[] = [
     cell: ({ row }) => {
       const status = row.getValue("status") as State;
       return (
-        <div className="flex">
+        <div className="flex items-center">
           {status === "Up" && <Wifi className="w-4 h-4 text-green-500 mr-2" />}
           {status === "Down" && (
             <WifiOff className="w-4 h-4 text-red-500 mr-2" />
@@ -123,13 +131,19 @@ export function ServerTable({ columns, serversData }: DataTableProps) {
   }, [refreshTable]);
 
   const table = useReactTable({
-    data: data,
+    data,
     columns,
     getCoreRowModel: getCoreRowModel(),
     onColumnFiltersChange: setColumnFilters,
     getFilteredRowModel: getFilteredRowModel(),
     getSortedRowModel: getSortedRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
     autoResetPageIndex: false,
+    initialState: {
+      pagination: {
+        pageSize: 5,
+      },
+    },
     state: {
       columnFilters,
     },
@@ -181,11 +195,29 @@ export function ServerTable({ columns, serversData }: DataTableProps) {
           </TableCell>
         }
       />
-      <div className="flex justify-end">
+      <div className="flex justify-between items-center">
         <span className="text-sm text-muted-foreground">
           {table.getFilteredSelectedRowModel().rows.length} of{" "}
           {table.getFilteredRowModel().rows.length} server(s) selected.
         </span>
+        <div className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => table.previousPage()}
+            disabled={!table.getCanPreviousPage()}
+          >
+            <ChevronLeft />
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => table.nextPage()}
+            disabled={!table.getCanNextPage()}
+          >
+            <ChevronRight />
+          </Button>
+        </div>
       </div>
     </div>
   );
