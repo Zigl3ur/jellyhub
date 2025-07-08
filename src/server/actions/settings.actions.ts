@@ -8,7 +8,7 @@ import {
   ServerActionReturn,
   userDataType,
 } from "@/types/actions.types";
-import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
+import { Prisma } from "@prisma/client";
 import { getUser } from "../utils";
 import { auth } from "@/lib/auth";
 import { z } from "zod/v4";
@@ -135,10 +135,15 @@ export async function editUserAction(
 
     if (newPassword) hashPassword = await ctx.password.hash(newPassword);
 
+    const newName = newUsername ? newUsername : baseUsername;
+
     await prisma.user.update({
       where: { id: id },
       data: {
-        username: newUsername ? newUsername : baseUsername,
+        username: newName,
+        name: newName,
+        displayUsername: newName,
+        email: `${newName}@jellyhub.com`,
         accounts: {
           updateMany: {
             where: {
@@ -156,10 +161,16 @@ export async function editUserAction(
       success: true,
       message: "Successfully updated user",
     };
-  } catch {
+  } catch (err) {
+    const errorMessage =
+      err instanceof Prisma.PrismaClientKnownRequestError &&
+      err.code === "P2002"
+        ? "Username already taken"
+        : "Failed to update user";
+
     return {
       success: false,
-      error: "Error while updating user",
+      error: errorMessage,
     };
   }
 }
@@ -224,7 +235,8 @@ export async function addServerAction(
     return { success: true, message: "Successfully added jellyfin server !" };
   } catch (err) {
     const errorMessage =
-      err instanceof PrismaClientKnownRequestError && err.code === "P2002"
+      err instanceof Prisma.PrismaClientKnownRequestError &&
+      err.code === "P2002"
         ? "Server already registered"
         : err instanceof Error
         ? err.message
@@ -236,7 +248,6 @@ export async function addServerAction(
     };
   }
 }
-
 /**
  * Server action to delete one or more jellyfin servers of the logged user.
  * @returns jellyfin server list of the account or nothing if not authenticated

@@ -24,7 +24,7 @@ import {
   FormMessage,
 } from "../../ui/form";
 import { useState } from "react";
-import { LoaderCircle, Pencil, Plus } from "lucide-react";
+import { LoaderCircle, Pencil } from "lucide-react";
 import { toast } from "sonner";
 import PasswordField from "@/components/auth/forms/fields/passwordField";
 import { User } from "better-auth";
@@ -43,7 +43,7 @@ export function EditUserDialog({ user, onEdit }: EditUserDialogProps) {
   const userForm = useForm<editUserSchemaType>({
     resolver: zodResolver(editUserSchema),
     defaultValues: {
-      username: user.username,
+      username: user.name,
       password: undefined,
       confirmPassword: undefined,
     },
@@ -57,7 +57,7 @@ export function EditUserDialog({ user, onEdit }: EditUserDialogProps) {
 
     setLoading(true);
 
-    editUserAction(user.id, user.username, username, confirmPassword)
+    editUserAction(user.id, user.name, username, confirmPassword)
       .then((result) => {
         if (result.error)
           toast.error("Error", {
