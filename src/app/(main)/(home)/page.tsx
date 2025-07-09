@@ -48,7 +48,6 @@ export default async function Home() {
   return (
     <div className="flex-col">
       <ServerStats
-        isLoading={false}
         count={[
           data.serverCount,
           data.movies.length,
@@ -60,14 +59,17 @@ export default async function Home() {
         <div className="grid gap-8 mt-8">
           {itemsValues.map((value) => {
             return value.data.length > 0 ? (
-              <section key={value.href}>
-                <h2 className="text-2xl font-semibold mb-4 pl-14">
+              <CardsCaroussel
+                key={value.title}
+                items={value.data}
+                isReduced={value.reduced}
+              >
+                <h2 className="text-2xl font-semibold">
                   <Link href={value.href} className="hover:underline">
                     {value.title}
                   </Link>
                 </h2>
-                <CardsCaroussel items={value.data} isReduced={value.reduced} />
-              </section>
+              </CardsCaroussel>
             ) : null;
           })}
         </div>

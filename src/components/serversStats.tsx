@@ -2,7 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Skeleton } from "./ui/skeleton";
 import { Film, Server, Tv, Music } from "lucide-react";
 
-const cardBaseData = [
+const cardData = [
   {
     title: "Servers",
     icon: <Server className="h-5 w-5" />,
@@ -16,23 +16,23 @@ const cardBaseData = [
     icon: <Tv className="h-5 w-5" />,
   },
   {
-    title: "Music Albums",
+    title: "Albums",
     icon: <Music className="h-5 w-5" />,
   },
 ];
 
 interface StatsProps {
-  isLoading: boolean;
   count: number[];
+  isLoading?: boolean;
 }
 
-export default function ServerStats(Props: StatsProps) {
+export default function ServerStats({ count, isLoading }: StatsProps) {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-      {cardBaseData.map((stats, key) => {
+      {cardData.map((stats, index) => {
         return (
           <Card
-            key={key}
+            key={index}
             className="flex flex-col justify-between p-6 bg bg-card/50"
           >
             <CardHeader className="p-0">
@@ -44,10 +44,10 @@ export default function ServerStats(Props: StatsProps) {
               </div>
             </CardHeader>
             <CardContent className="p-0 pt-6">
-              {Props.isLoading ? (
+              {isLoading ? (
                 <Skeleton className="h-10 w-20" />
               ) : (
-                <p className="text-4xl font-extrabold">{Props.count[key]}</p>
+                <p className="text-4xl font-extrabold">{count[index]}</p>
               )}
             </CardContent>
           </Card>
