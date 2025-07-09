@@ -1,7 +1,7 @@
 import { X } from "lucide-react";
 import Link from "next/link";
 
-export default function NotFound() {
+export default function NoItemFound() {
   return (
     <div className="flex flex-col flex-wrap justify-center items-center text-center min-h-[50vh]">
       <X />

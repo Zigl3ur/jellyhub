@@ -1,6 +1,7 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import crypto from "node:crypto";
+import { itemJellyfin } from "@/types/jellyfin-api.types";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -63,4 +64,24 @@ export function TicksToDuration(ticks: number): string {
   return `${hours.toString().padStart(2, "0")}:${minutes
     .toString()
     .padStart(2, "0")}:${remainingSeconds.toString().padStart(2, "0")}`;
+}
+
+export function filterItems(items: Array<itemJellyfin>): Array<itemJellyfin> {
+  const filteredItems = Object.values(
+    items.reduce((acc: Record<string, itemJellyfin>, current) => {
+      // combine the same ones
+      if (acc[current.item_name]) {
+        acc[current.item_name].item_location = [
+          ...acc[current.item_name].item_location,
+          ...current.item_location,
+        ];
+      } else {
+        acc[current.item_name] = { ...current };
+      }
+
+      return acc;
+    }, {})
+  );
+  
+  return filteredItems;
 }

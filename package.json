@@ -73,11 +73,11 @@
     "eslint": "^9.30.0",
     "eslint-config-next": "15.1.6",
     "postcss": "^8.5.6",
+    "prisma": "^6.11.0",
     "shx": "^0.3.4",
     "tailwindcss": "^4.1.11",
-    "tw-animate-css": "^1.3.5",
     "ts-node": "^10.9.2",
-    "typescript": "^5.8.3",
-    "prisma": "^6.11.0"
+    "tw-animate-css": "^1.3.5",
+    "typescript": "^5.8.3"
   }
 }

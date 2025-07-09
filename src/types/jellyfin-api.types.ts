@@ -37,7 +37,11 @@ export type rawItemJellyfin = {
 
 /** type of a jellyfin item retrieved and filtered from the api */
 export type itemJellyfin = {
-  item_location: Array<{ server_url: string; item_id: string }>;
+  item_location: Array<{
+    server_url: string;
+    server_id: string;
+    item_id: string;
+  }>;
   item_name: string;
   item_type: string;
   item_duration: string;

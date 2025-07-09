@@ -107,7 +107,7 @@ export async function getLibraryItems(
   token: string,
   itemsType: itemTypes
 ): Promise<callersResponse<Array<itemJellyfin>>> {
-  const response: Response = await fetch(
+  const response = await fetch(
     `${server_url}/Items?IncludeItemTypes=${itemsType}&Recursive=true`,
     {
       method: "GET",
@@ -121,10 +121,16 @@ export async function getLibraryItems(
   if (response.status === 200) {
     const data = await response.json();
 
-    const listItems: Array<itemJellyfin> = data.Items.forEach(
+    const listItems: Array<itemJellyfin> = data.Items.map(
       (item: rawItemJellyfin) => {
         return {
-          item_location: [{ server_url, item_id: item.Id }],
+          item_location: [
+            {
+              server_url: server_url,
+              server_id: item.ServerId,
+              item_id: item.Id,
+            },
+          ],
           item_name: item.Name,
           item_type: item.Type,
           item_duration: TicksToDuration(item.RunTimeTicks),
@@ -178,7 +184,7 @@ export async function getAllItems(
     return {
       success: true,
       data: {
-        // data will always be defined since succes is true
+        // data will always be defined since success is true
         movies: items[0].data as Array<itemJellyfin>,
         series: items[1].data as Array<itemJellyfin>,
         musicAlbum: items[2].data as Array<itemJellyfin>,
