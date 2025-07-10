@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/sidebar";
 import Image from "next/image";
 import Link from "next/link";
-import LogOutButton from "../auth/logOutButton";
+import LogOutButton from "./auth/logOutButton";
 
 const baseItems = [
   {
@@ -23,7 +23,7 @@ const baseItems = [
   },
   {
     title: "Movies",
-    url: "/movie",
+    url: "/movies",
     icon: Film,
   },
   {

@@ -1,10 +1,10 @@
-import Loader from "@/components/global/loader";
+import Loader from "@/components/loader";
 import SearchBar from "@/components/searchBar";
 
 export default function Loading() {
   return (
     <div>
-      <SearchBar items={[]} type="..." />
+      <SearchBar items={[]} disabled={true} placeholder="Search for Series" />
       <Loader />
     </div>
   );

@@ -7,7 +7,7 @@ import {
 } from "@/components/ui/carousel";
 import { itemJellyfin } from "@/types/jellyfin-api.types";
 import { X } from "lucide-react";
-import ItemDialog from "./global/itemDialog";
+import ItemDialog from "./itemDialog";
 
 interface CarouselProps {
   isReduced: boolean;
@@ -15,30 +15,22 @@ interface CarouselProps {
   items: itemJellyfin[];
 }
 
-export default function CardsCaroussel({
-  isReduced,
-  children,
-  items,
-}: CarouselProps) {
+export default function ItemsCarousel({ children, items }: CarouselProps) {
   return (
-    <div className="px-10">
+    <>
       {items.length === 0 ? (
         <div className="flex flex-col items-center justify-center">
           <X />
           <span>No items found.</span>
         </div>
       ) : (
-        <div className="relative px-2">
-          <Carousel className="grid relative space-y-4">
+        <div className="px-12">
+          <Carousel className="grid space-y-4">
             {children}
             <CarouselContent className="flex items-center">
-              {items.map((item, key) => (
-                <CarouselItem key={key} className="basis-auto">
-                  <ItemDialog
-                    key={item.item_name}
-                    item={item}
-                    reduced={isReduced}
-                  />
+              {items.map((item, incex) => (
+                <CarouselItem key={incex} className="basis-auto">
+                  <ItemDialog key={item.item_name} item={item} />
                 </CarouselItem>
               ))}
             </CarouselContent>
@@ -47,6 +39,6 @@ export default function CardsCaroussel({
           </Carousel>
         </div>
       )}
-    </div>
+    </>
   );
 }

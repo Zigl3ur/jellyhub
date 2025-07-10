@@ -5,7 +5,7 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
-import { AppSidebar } from "@/components/global/app-sidebar";
+import { AppSidebar } from "@/components/app-sidebar";
 
 export default async function MainLayout({
   children,

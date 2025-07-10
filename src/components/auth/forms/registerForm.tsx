@@ -16,7 +16,7 @@ import { Input } from "@/components/ui/input";
 import { registerSchema, registerSchemaType } from "@/schemas/auth.schema";
 import { authClient } from "@/lib/auth-client";
 import { toast } from "sonner";
-import Logo from "@/components/global/logo";
+import Logo from "@/components/logo";
 import PasswordField from "./fields/passwordField";
 import { useState } from "react";
 import { LoaderCircle } from "lucide-react";

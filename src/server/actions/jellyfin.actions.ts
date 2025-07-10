@@ -7,6 +7,7 @@ import { ServerActionReturn } from "@/types/actions.types";
 import { getAllItems } from "@/lib/api.jellyfin";
 import { decryptToken, filterItems } from "@/lib/utils";
 
+// TODO: arg to choose which type to fetch
 export async function getAllServerItems(): Promise<
   ServerActionReturn<{
     serverCount: number;
@@ -48,6 +49,8 @@ export async function getAllServerItems(): Promise<
       albumsList: [] as itemJellyfin[],
     }
   );
+
+  // TODO: shuffle items
 
   return {
     success: true,

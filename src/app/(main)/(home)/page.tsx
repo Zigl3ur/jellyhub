@@ -1,9 +1,9 @@
 import { Metadata } from "next";
 
 import ServerStats from "@/components/serversStats";
-import CardsCaroussel from "@/components/cardsCarroussel";
+import ItemsCarousel from "@/components/itemsCarousel";
 import Link from "next/link";
-import NotFound from "@/components/global/noItemFound";
+import NotFound from "@/components/noItemFound";
 import { getUser } from "@/server/utils";
 import { getAllServerItems } from "@/server/actions/jellyfin.actions";
 
@@ -46,7 +46,7 @@ export default async function Home() {
   ];
 
   return (
-    <div className="flex-col">
+    <>
       <ServerStats
         count={[
           data.serverCount,
@@ -56,26 +56,24 @@ export default async function Home() {
         ]}
       />
       {data.serverCount !== 0 ? (
-        <div className="grid gap-8 mt-8">
-          {itemsValues.map((value) => {
-            return value.data.length > 0 ? (
-              <CardsCaroussel
-                key={value.title}
-                items={value.data}
-                isReduced={value.reduced}
-              >
-                <h2 className="text-2xl font-semibold">
-                  <Link href={value.href} className="hover:underline">
-                    {value.title}
-                  </Link>
-                </h2>
-              </CardsCaroussel>
-            ) : null;
-          })}
+        <div className="space-y-8">
+          {itemsValues.map((value) => (
+            <ItemsCarousel
+              key={value.title}
+              items={value.data}
+              isReduced={value.reduced}
+            >
+              <h2 className="text-2xl font-semibold">
+                <Link href={value.href} className="hover:underline">
+                  {value.title}
+                </Link>
+              </h2>
+            </ItemsCarousel>
+          ))}
         </div>
       ) : (
         <NotFound />
       )}
-    </div>
+    </>
   );
 }

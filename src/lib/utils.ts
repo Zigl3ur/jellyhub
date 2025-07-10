@@ -69,19 +69,21 @@ export function TicksToDuration(ticks: number): string {
 export function filterItems(items: Array<itemJellyfin>): Array<itemJellyfin> {
   const filteredItems = Object.values(
     items.reduce((acc: Record<string, itemJellyfin>, current) => {
-      // combine the same ones
+      // if already exist
       if (acc[current.item_name]) {
+        // merge items locations
         acc[current.item_name].item_location = [
           ...acc[current.item_name].item_location,
           ...current.item_location,
         ];
       } else {
+        // add it
         acc[current.item_name] = { ...current };
       }
 
       return acc;
     }, {})
   );
-  
+
   return filteredItems;
 }
