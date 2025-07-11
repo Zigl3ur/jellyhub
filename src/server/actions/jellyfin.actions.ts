@@ -4,11 +4,10 @@ import { itemJellyfin } from "@/types/jellyfin-api.types";
 import { prisma } from "../../lib/prisma";
 import { getUser } from "../utils";
 import { ServerActionReturn } from "@/types/actions.types";
-import { getAllItems } from "@/lib/api.jellyfin";
+import { getAllItems, getLibraryItems } from "@/lib/api.jellyfin";
 import { decryptToken, filterItems } from "@/lib/utils";
 
-// TODO: arg to choose which type to fetch
-export async function getAllServerItems(): Promise<
+export async function getAllServersItems(): Promise<
   ServerActionReturn<{
     serverCount: number;
     movies: Array<itemJellyfin>;
@@ -60,5 +59,131 @@ export async function getAllServerItems(): Promise<
       series: filterItems(items.seriesList),
       musicAlbum: filterItems(items.albumsList),
     },
+  };
+}
+
+export async function getAllServersMovies(): Promise<
+  ServerActionReturn<itemJellyfin[]>
+> {
+  const user = await getUser();
+
+  const list = await prisma.jellydata.findMany({
+    where: { userId: user.id },
+    select: {
+      serverUrl: true,
+      serverToken: true,
+    },
+  });
+
+  const rawItems = await Promise.all(
+    list.map(async (jellydata) => {
+      return await getLibraryItems(
+        jellydata.serverUrl,
+        decryptToken(jellydata.serverToken),
+        "Movie"
+      );
+    })
+  );
+
+  const items = rawItems.reduce(
+    (acc, itemList) => {
+      return {
+        moviesList: [...acc.moviesList, ...(itemList.data ?? [])],
+      };
+    },
+    {
+      moviesList: [] as itemJellyfin[],
+    }
+  );
+
+  // TODO: shuffle items
+
+  return {
+    success: true,
+    data: filterItems(items.moviesList),
+  };
+}
+
+export async function getAllServersSeries(): Promise<
+  ServerActionReturn<itemJellyfin[]>
+> {
+  const user = await getUser();
+
+  const list = await prisma.jellydata.findMany({
+    where: { userId: user.id },
+    select: {
+      serverUrl: true,
+      serverToken: true,
+    },
+  });
+
+  const rawItems = await Promise.all(
+    list.map(async (jellydata) => {
+      return await getLibraryItems(
+        jellydata.serverUrl,
+        decryptToken(jellydata.serverToken),
+        "Series"
+      );
+    })
+  );
+
+  const items = rawItems.reduce(
+    (acc, itemList) => {
+      return {
+        seriesList: [...acc.seriesList, ...(itemList.data ?? [])],
+      };
+    },
+    {
+      seriesList: [] as itemJellyfin[],
+    }
+  );
+
+  // TODO: shuffle items
+
+  return {
+    success: true,
+    data: filterItems(items.seriesList),
+  };
+}
+
+export async function getAllServersAlbums(): Promise<
+  ServerActionReturn<itemJellyfin[]>
+> {
+  const user = await getUser();
+
+  const list = await prisma.jellydata.findMany({
+    where: { userId: user.id },
+    select: {
+      serverUrl: true,
+      serverToken: true,
+    },
+  });
+
+  const rawItems = await Promise.all(
+    list.map(async (jellydata) => {
+      return await getLibraryItems(
+        jellydata.serverUrl,
+        decryptToken(jellydata.serverToken),
+        "MusicAlbum"
+      );
+    })
+  );
+
+  const items = rawItems.reduce(
+    (acc, itemList) => {
+      return {
+        albumsList: [...acc.albumsList, ...(itemList.data ?? [])],
+      };
+    },
+    {
+      albumsList: [] as itemJellyfin[],
+    }
+  );
+
+  // TODO: shuffle items
+
+  return {
+    success: true,
+    data: filterItems(items.albumsList),
   };
 }

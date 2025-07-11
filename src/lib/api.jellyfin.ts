@@ -135,7 +135,6 @@ export async function getLibraryItems(
           item_type: item.Type,
           item_duration: TicksToDuration(item.RunTimeTicks),
           item_premier_date: item.ProductionYear,
-          item_rating: item.OfficialRating ?? "None",
           item_artist: item.AlbumArtist ?? "None",
           item_image:
             item.ImageTags.Primary === undefined

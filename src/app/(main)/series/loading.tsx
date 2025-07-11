@@ -1,10 +1,14 @@
 import Loader from "@/components/loader";
-import SearchBar from "@/components/searchBar";
+import { Input } from "@/components/ui/input";
 
 export default function Loading() {
   return (
-    <div>
-      <SearchBar items={[]} disabled={true} placeholder="Search for Series" />
+    <div className="space-y-20">
+      <Input
+        className="bg-background/50"
+        placeholder={"Search for Series"}
+        disabled={true}
+      />
       <Loader />
     </div>
   );

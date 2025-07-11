@@ -1,7 +1,5 @@
-import ItemDialog from "@/components/itemDialog";
-import NoItemFound from "@/components/noItemFound";
-import SearchBar from "@/components/searchBar";
-import { getAllServerItems } from "@/server/actions/jellyfin.actions";
+import ContentPage from "@/components/contentPage";
+import { getAllServersMovies } from "@/server/actions/jellyfin.actions";
 import { getUser } from "@/server/utils";
 import { Metadata } from "next";
 
@@ -12,27 +10,9 @@ export const metadata: Metadata = {
 export default async function AlbumsPage() {
   await getUser();
 
-  const list = await getAllServerItems();
+  const list = await getAllServersMovies();
 
-  const movies = list.data?.movies || [];
+  const movies = list.data || [];
 
-  return (
-    <div className="flex flex-col">
-      <div className="flex mb-4">
-        <SearchBar
-          placeholder="Search for Albums"
-          items={list.data?.musicAlbum || []}
-        />
-      </div>
-      {movies.length > 0 ? (
-        <div className="flex flex-wrap gap-4 justify-center">
-          {movies.map((item) => (
-            <ItemDialog key={item.item_name} item={item} />
-          ))}
-        </div>
-      ) : (
-        <NoItemFound />
-      )}
-    </div>
-  );
+  return <ContentPage placeholder="Search for Movies" data={movies} />;
 }

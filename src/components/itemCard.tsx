@@ -23,11 +23,11 @@ export default function ItemCard({ item }: ItemCardProps) {
 
   return (
     <Card
-      className={`flex flex-col w-50 ${
+      className={`flex flex-col w-50 bg-card/50 ${
         !isMusic && "h-[335px] justify-between"
       }`}
     >
-      <CardContent className="flex items-center justify-center relative">
+      <CardContent className="flex items-center justify-center">
         <div
           className={`relative w-[150px] h-[${isMusic ? "150px" : "225px"}]`}
         >

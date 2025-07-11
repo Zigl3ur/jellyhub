@@ -30,7 +30,6 @@ export type rawItemJellyfin = {
   Id: string;
   RunTimeTicks: number;
   ProductionYear: number;
-  OfficialRating?: string;
   AlbumArtist?: string;
   ImageTags: { Primary?: string };
 };
@@ -46,7 +45,6 @@ export type itemJellyfin = {
   item_type: string;
   item_duration: string;
   item_premier_date: number;
-  item_rating?: string;
   item_artist?: string;
   item_image: string;
 };

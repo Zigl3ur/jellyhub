@@ -8,11 +8,11 @@
 
 ## Security
 
-- [ ] Fully add Better Auth for correct auth management
+- [x] Fully add Better Auth for correct auth management
 - [x] Encrypt servers tokens in the database
 
 ## Features
 
-- [ ] Allow Register ?
-- [ ] Better search
+- [x] Allow Register ?
+- [x] Better search
 - [ ] More infos when seeing a media card ?

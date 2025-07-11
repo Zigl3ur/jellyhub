@@ -5,7 +5,7 @@ import ItemsCarousel from "@/components/itemsCarousel";
 import Link from "next/link";
 import NotFound from "@/components/noItemFound";
 import { getUser } from "@/server/utils";
-import { getAllServerItems } from "@/server/actions/jellyfin.actions";
+import { getAllServersItems } from "@/server/actions/jellyfin.actions";
 
 export const metadata: Metadata = {
   title: "JellyHub - Home",
@@ -14,7 +14,7 @@ export const metadata: Metadata = {
 export default async function Home() {
   await getUser();
 
-  const list = await getAllServerItems();
+  const list = await getAllServersItems();
 
   // easier to mess with undefined property
   const data = {

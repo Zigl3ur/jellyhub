@@ -59,11 +59,10 @@ export function TicksToDuration(ticks: number): string {
 
   const hours = Math.floor(seconds / 3600);
   const minutes = Math.floor((seconds % 3600) / 60);
-  const remainingSeconds = Math.floor(seconds % 60);
 
-  return `${hours.toString().padStart(2, "0")}:${minutes
+  return `${hours.toString().padStart(2, "0")}h${minutes
     .toString()
-    .padStart(2, "0")}:${remainingSeconds.toString().padStart(2, "0")}`;
+    .padStart(2, "0")}m`;
 }
 
 export function filterItems(items: Array<itemJellyfin>): Array<itemJellyfin> {
@@ -85,5 +84,8 @@ export function filterItems(items: Array<itemJellyfin>): Array<itemJellyfin> {
     }, {})
   );
 
-  return filteredItems;
+  return filteredItems
+    .map((value) => ({ value, sort: Math.random() }))
+    .sort((a, b) => a.sort - b.sort)
+    .map(({ value }) => value);
 }

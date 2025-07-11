@@ -1,95 +1,99 @@
+"use client";
+
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
 import type { itemJellyfin } from "@/types/jellyfin-api.types";
-import { ArrowUpRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import ItemCard from "./itemCard";
+import { Separator } from "./ui/separator";
+import { useState } from "react";
+import { Skeleton } from "./ui/skeleton";
 
 interface DialogProps {
   item: itemJellyfin;
 }
 
 export default function ItemDialog({ item }: DialogProps) {
+  const [loaded, setLoaded] = useState<boolean>(false);
+
   const specs = [
     {
-      title: "type",
-      value: item.item_type,
-    },
-    {
-      title: "duration",
-      value: item.item_duration,
-    },
-    {
-      title: "artist",
+      title: "Artist",
       value: item.item_artist,
     },
     {
-      title: "year",
+      title: "Year",
       value: item.item_premier_date,
     },
     {
-      title: "rating",
-      value: item.item_rating,
+      title: "Duration",
+      value: item.item_duration,
     },
   ];
-
-  const isMusic = item.item_type === "MusicAlbum";
 
   return (
     <Dialog>
       <DialogTrigger className="cursor-pointer">
         <ItemCard item={item} />
       </DialogTrigger>
-      <DialogContent className="max-w-fit">
-        <div className="flex flex-col sm:flex-row gap-4">
+      <DialogDescription />
+      <DialogContent className="flex flex-col gap-6 max-h-[90vh] max-w-4xl overflow-y-auto p-6">
+        <div className="relative shrink-0 self-center">
           <Image
-            className={`${
-              isMusic && "h-[150px] w-[150px]"
-            } rounded-sm object-cover`}
+            className="rounded-lg object-cover"
             src={item.item_image}
             alt={item.item_name}
-            height={item.item_type === "MusicAlbum" ? 150 : 225}
-            width={200}
+            height={300}
+            width={item.item_type === "MusicAlbum" ? 300 : 250}
+            onLoad={() => setLoaded(true)}
           />
-          <div className="flex flex-col">
-            <DialogTitle className="text-2xl mb-4">
-              {item.item_name}
-            </DialogTitle>
-            {specs.map((spec) =>
-              spec.value === "None" ||
-              (spec.title === "duration" &&
-                spec.value === "00:00:00") ? null : (
-                <div className="inline-flex mb-2 w-full" key={spec.title}>
-                  <p className="mr-2">{spec.title}</p>
-                  <p className="rounded-sm bg-slate-700 p-0.5 text-sm max-w-fit">
+          {!loaded && <Skeleton className="absolute inset-0 rounded-lg" />}
+        </div>
+        <div className="flex flex-col justify-between min-h-0 flex-1 space-y-4">
+          <DialogTitle className="text-3xl font-bold text-center mb-3">
+            {item.item_name}
+          </DialogTitle>
+
+          <Separator className="opacity-50" />
+
+          <div className="flex gap-3 justify-center">
+            {specs.map(
+              (spec) =>
+                spec.value !== "None" &&
+                spec.value !== "00h00m" && (
+                  <span
+                    key={spec.title}
+                    className="px-3 py-1 rounded-md bg-secondary text-secondary-foreground text-sm font-medium"
+                  >
                     {spec.value}
-                  </p>
-                </div>
-              )
+                  </span>
+                )
             )}
-            <div className="mt-auto">
-              <h3 className="font-semibold mb-2">Available on</h3>
-              <div className="flex flex-col">
-                {item.item_location.map((loc) => {
-                  return (
-                    <Link
-                      href={`${loc.server_url}/web/#/details?id=${loc.item_id}&serverId=${loc.server_id}`}
-                      key={loc.item_id}
-                      className="italic text-blue-500 text-sm inline-flex hover:underline max-w-fit"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      {loc.server_url.replace(/^https?:\/\//, "")}
-                      <ArrowUpRight size={20} className="ml-1" />
-                    </Link>
-                  );
-                })}
-              </div>
+          </div>
+          <Separator className="opacity-50" />
+
+          <div>
+            <h3 className="font-semibold text-lg mb-3 text-center">
+              Available on
+            </h3>
+            <div className="flex flex-wrap gap-2 justify-center">
+              {item.item_location.map((loc) => (
+                <Link
+                  href={`${loc.server_url}/web/#/details?id=${loc.item_id}&serverId=${loc.server_id}`}
+                  key={loc.item_id}
+                  className="inline-flex items-center text-blue-500 hover:underline text-sm font-medium"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {loc.server_url.replace(/^https?:\/\//, "")}
+                </Link>
+              ))}
             </div>
           </div>
         </div>

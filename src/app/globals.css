@@ -42,6 +42,8 @@
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
 
+  --breakpoint-xs: 30rem;
+
   --color-gradient: radial-gradient(circle at 0% 0%, rgb(15 23 42) 0%, transparent 50%),
     radial-gradient(circle at 100% 0%, rgb(17 24 39) 0%, transparent 50%),
     radial-gradient(at 0% 100%, rgb(23 37 84) 0%, transparent 50%),
