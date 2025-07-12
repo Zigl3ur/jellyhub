@@ -13,6 +13,10 @@ interface ContentPageProps {
   data: itemJellyfin[];
 }
 
+/**
+ * The content of a page where we display items like movies, series and albums
+ * @param Props take a placeholder for the search bar and the data that is the items to display
+ */
 export default function ContentPage({ placeholder, data }: ContentPageProps) {
   const [filtered, setFiltered] = useState(data);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -33,7 +37,7 @@ export default function ContentPage({ placeholder, data }: ContentPageProps) {
   );
 
   return (
-    <div className="flex flex-col space-y-4 max-w-7xl mx-auto px-4">
+    <div className="flex flex-col space-y-4 max-w-[2000px] mx-auto px-4">
       <div className="w-full max-w-xs xs:max-w-sm md:max-w-xl self-center sticky top-2 z-10">
         <div className="relative">
           <Input

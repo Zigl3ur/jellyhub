@@ -55,7 +55,7 @@ export default function RegisterForm() {
         fetchOptions: {
           onSuccess: (ctx) => {
             toast.success("Successfully registered", {
-              description: `Welcome, ${ctx.data["user"].username} !`,
+              description: `Welcome, ${ctx.data["user"].name} !`,
             });
             router.push("/");
           },

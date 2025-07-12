@@ -199,8 +199,6 @@ export async function resetPasswordAction(
     confirmPassword: confirmNewPassword,
   });
 
-  console.log(result);
-
   if (!result.success)
     return { success: false, error: z.prettifyError(result.error) };
 

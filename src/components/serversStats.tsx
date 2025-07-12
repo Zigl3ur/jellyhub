@@ -26,6 +26,10 @@ interface StatsProps {
   isLoading?: boolean;
 }
 
+/**
+ * 4 Cards that display globals stats about server count and items number
+ * @param Props count is the number of server, movies, series and albums items, isLoading to have skeleton
+ */
 export default function ServerStats({ count, isLoading }: StatsProps) {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">

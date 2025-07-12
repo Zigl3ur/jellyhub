@@ -23,11 +23,15 @@ import { LoaderCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
+interface LoginFormProps {
+  isSignupAllowed: boolean;
+}
+
 /**
  * LoginForm Component
  * @returns login form component
  */
-export default function LoginForm() {
+export default function LoginForm({ isSignupAllowed }: LoginFormProps) {
   const router = useRouter();
 
   const [loading, setLoading] = useState<boolean>(false);
@@ -121,7 +125,7 @@ export default function LoginForm() {
               )}
             </Button>
           </div>
-          {process.env.ALLOW_SIGNUP === "true" && (
+          {isSignupAllowed && (
             <div className="text-center text-xs">
               Doesn&apos;t have an account ?{" "}
               <Link

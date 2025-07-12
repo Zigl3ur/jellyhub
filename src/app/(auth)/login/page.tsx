@@ -6,9 +6,11 @@ export const metadata: Metadata = {
 };
 
 export default function LoginPage() {
+  const isSignupAllowed = process.env.ALLOW_SIGNUP === "true";
+
   return (
     <div className="flex items-center justify-center h-screen px-4">
-      <LoginForm />
+      <LoginForm isSignupAllowed={isSignupAllowed} />
     </div>
   );
 }

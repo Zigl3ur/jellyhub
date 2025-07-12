@@ -43,7 +43,7 @@ export default async function Home() {
   ];
 
   return (
-    <div className="max-w-12xl mx-auto">
+    <div className="max-w-[2000px] mx-auto">
       <ServerStats
         count={[
           data.serverCount,
