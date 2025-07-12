@@ -21,6 +21,7 @@ import PasswordField from "./fields/passwordField";
 import { useState } from "react";
 import { LoaderCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 /**
  * RegisterForm Component
@@ -140,6 +141,12 @@ export default function RegisterForm() {
                 "Register"
               )}
             </Button>
+          </div>
+          <div className="text-center text-xs">
+            Already registered ?{" "}
+            <Link href={"/login"} className="hover:underline text-blue-500">
+              Login
+            </Link>
           </div>
         </form>
       </Form>

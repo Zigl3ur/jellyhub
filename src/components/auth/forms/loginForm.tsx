@@ -21,6 +21,7 @@ import PasswordField from "./fields/passwordField";
 import { useState } from "react";
 import { LoaderCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 /**
  * LoginForm Component
@@ -120,6 +121,17 @@ export default function LoginForm() {
               )}
             </Button>
           </div>
+          {process.env.ALLOW_SIGNUP === "true" && (
+            <div className="text-center text-xs">
+              Doesn&apos;t have an account ?{" "}
+              <Link
+                href={"/register"}
+                className="hover:underline text-blue-500"
+              >
+                Register
+              </Link>
+            </div>
+          )}
         </form>
       </Form>
     </div>
