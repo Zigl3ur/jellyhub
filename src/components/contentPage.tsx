@@ -47,7 +47,7 @@ export default function ContentPage({ placeholder, data }: ContentPageProps) {
             onClick={() => {
               if (inputRef.current) {
                 inputRef.current.value = "";
-                debouncedSearch("");
+                handleSearch("");
               }
             }}
           >

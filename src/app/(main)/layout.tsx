@@ -19,7 +19,7 @@ export default async function MainLayout({
     <SidebarProvider defaultOpen={defaultOpen}>
       <AppSidebar />
       <SidebarInset>
-        <main className="py-2">{children}</main>
+        <main className="py-2 pr-2 pl-2 md:pl-0">{children}</main>
         <SidebarTrigger className="fixed z-10 ml-2 sm:ml-0 bottom-2 bg-background/50 border" />
       </SidebarInset>
     </SidebarProvider>

@@ -14,7 +14,7 @@ import { auth } from "@/lib/auth";
 import { z } from "zod/v4";
 import { loginSchema } from "@/schemas/auth.schema";
 import { headers } from "next/headers";
-import { editUserSchema } from "@/schemas/settings.schema";
+import { editUserSchema, resetPasswdScema } from "@/schemas/settings.schema";
 
 /**
  * Server action to create a user
@@ -180,6 +180,39 @@ export async function editUserAction(
       error: errorMessage,
     };
   }
+}
+
+/**
+ * Server action to reset password
+ * @param newPassword the new password
+ * @param confirmNewPassword the confirmed new password
+ * @returns message if it succeed or an error
+ */
+export async function resetPasswordAction(
+  newPassword: string,
+  confirmNewPassword: string
+): Promise<ServerActionReturn> {
+  const user = await getUser();
+
+  const result = resetPasswdScema.safeParse({
+    password: newPassword,
+    confirmPassword: confirmNewPassword,
+  });
+
+  console.log(result);
+
+  if (!result.success)
+    return { success: false, error: z.prettifyError(result.error) };
+
+  const ctx = await auth.$context;
+  const hash = await ctx.password.hash(result.data.confirmPassword);
+
+  await ctx.internalAdapter.updatePassword(user.id, hash);
+
+  return {
+    success: true,
+    message: "Successfully updated password !",
+  };
 }
 
 /**

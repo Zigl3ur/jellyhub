@@ -11,6 +11,7 @@ import {
 import { UserTable } from "@/components/settings/tables/userTable";
 import { Suspense } from "react";
 import LoadingTable from "@/components/settings/tables/loadingTable";
+import ResetPasswd from "@/components/settings/resetPasswd";
 
 export const metadata: Metadata = {
   title: "JellyHub - Settings",
@@ -47,7 +48,7 @@ export default async function SettingsPage() {
       >
         <ServersSection />
       </Suspense>
-      {isAdmin && (
+      {isAdmin ? (
         <Suspense
           fallback={
             <LoadingTable
@@ -58,6 +59,8 @@ export default async function SettingsPage() {
         >
           <UsersSection />
         </Suspense>
+      ) : (
+        <ResetPasswd />
       )}
     </div>
   );
