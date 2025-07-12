@@ -6,8 +6,12 @@ import { admin } from "better-auth/plugins/admin";
 
 export const auth = betterAuth({
   appName: "Jellyhub",
+  defaultCookieAttributes: {
+    httpOnly: true,
+    secure: true,
+  },
   advanced: {
-    cookiePrefix: "Jellyhub",
+    cookiePrefix: "jellyhub",
   },
   database: prismaAdapter(prisma, {
     provider: "postgresql",
