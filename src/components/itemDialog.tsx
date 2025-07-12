@@ -66,7 +66,8 @@ export default function ItemDialog({ item }: DialogProps) {
             {specs.map(
               (spec) =>
                 spec.value !== "None" &&
-                spec.value !== "00h00m" && (
+                spec.value !== "00h00m" &&
+                spec.value !== undefined && (
                   <span
                     key={spec.title}
                     className="px-3 py-1 rounded-md bg-secondary text-secondary-foreground text-sm font-medium"

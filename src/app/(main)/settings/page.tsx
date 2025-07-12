@@ -8,10 +8,7 @@ import {
   getJellyfinServers,
   getUsersList,
 } from "@/server/actions/settings.actions";
-import {
-  UserTable,
-  columns as usersTableColumns,
-} from "@/components/settings/tables/userTable";
+import { UserTable } from "@/components/settings/tables/userTable";
 import { Suspense } from "react";
 import LoadingTable from "@/components/settings/tables/loadingTable";
 
@@ -31,7 +28,7 @@ async function ServersSection() {
 
 async function UsersSection() {
   const users = await getUsersList();
-  return <UserTable columns={usersTableColumns} usersData={users.data!} />;
+  return <UserTable usersData={users.data!} />;
 }
 
 export default async function SettingsPage() {

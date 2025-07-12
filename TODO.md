@@ -16,3 +16,4 @@
 - [x] Allow Register ?
 - [x] Better search
 - [ ] More infos when seeing a media card ?
+- [ ] Use SQLite

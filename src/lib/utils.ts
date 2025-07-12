@@ -84,8 +84,24 @@ export function filterItems(items: Array<itemJellyfin>): Array<itemJellyfin> {
     }, {})
   );
 
+  // shuffle
   return filteredItems
     .map((value) => ({ value, sort: Math.random() }))
     .sort((a, b) => a.sort - b.sort)
     .map(({ value }) => value);
+}
+
+export function debounce<T extends unknown[]>(
+  callback: (...args: T) => void,
+  delay: number
+) {
+  let timeoutTimer: ReturnType<typeof setTimeout>;
+
+  return (...args: T) => {
+    clearTimeout(timeoutTimer);
+
+    timeoutTimer = setTimeout(() => {
+      callback(...args);
+    }, delay);
+  };
 }

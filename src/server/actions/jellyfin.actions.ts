@@ -49,8 +49,6 @@ export async function getAllServersItems(): Promise<
     }
   );
 
-  // TODO: shuffle items
-
   return {
     success: true,
     data: {
@@ -96,8 +94,6 @@ export async function getAllServersMovies(): Promise<
     }
   );
 
-  // TODO: shuffle items
-
   return {
     success: true,
     data: filterItems(items.moviesList),
@@ -138,8 +134,6 @@ export async function getAllServersSeries(): Promise<
     }
   );
 
-  // TODO: shuffle items
-
   return {
     success: true,
     data: filterItems(items.seriesList),
@@ -179,8 +173,6 @@ export async function getAllServersAlbums(): Promise<
       albumsList: [] as itemJellyfin[],
     }
   );
-
-  // TODO: shuffle items
 
   return {
     success: true,

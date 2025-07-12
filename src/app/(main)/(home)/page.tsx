@@ -46,7 +46,7 @@ export default async function Home() {
   ];
 
   return (
-    <>
+    <div className="max-w-12xl mx-auto">
       <ServerStats
         count={[
           data.serverCount,
@@ -74,6 +74,6 @@ export default async function Home() {
       ) : (
         <NotFound />
       )}
-    </>
+    </div>
   );
 }
