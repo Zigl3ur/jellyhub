@@ -7,6 +7,10 @@ import { ServerActionReturn } from "@/types/actions.types";
 import { getAllItems, getLibraryItems } from "@/lib/api.jellyfin";
 import { decryptToken, filterItems } from "@/lib/utils";
 
+/**
+ * action to fetch all items from registered and reachable servers
+ * @returns servercount, movies, series and albums list
+ */
 export async function getAllServersItems(): Promise<
   ServerActionReturn<{
     serverCount: number;
@@ -60,6 +64,10 @@ export async function getAllServersItems(): Promise<
   };
 }
 
+/**
+ * action to fetch all movies from registered and reachable servers
+ * @returns movies list
+ */
 export async function getAllServersMovies(): Promise<
   ServerActionReturn<itemJellyfin[]>
 > {
@@ -100,6 +108,10 @@ export async function getAllServersMovies(): Promise<
   };
 }
 
+/**
+ * action to fetch all series from registered and reachable servers
+ * @returns series list
+ */
 export async function getAllServersSeries(): Promise<
   ServerActionReturn<itemJellyfin[]>
 > {
@@ -140,6 +152,10 @@ export async function getAllServersSeries(): Promise<
   };
 }
 
+/**
+ * action to fetch all albums from registered and reachable servers
+ * @returns albums list
+ */
 export async function getAllServersAlbums(): Promise<
   ServerActionReturn<itemJellyfin[]>
 > {

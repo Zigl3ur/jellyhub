@@ -6,6 +6,7 @@ import Link from "next/link";
 import NotFound from "@/components/noItemFound";
 import { getUser } from "@/server/utils";
 import { getAllServersItems } from "@/server/actions/jellyfin.actions";
+import { X } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "JellyHub - Home",
@@ -55,14 +56,14 @@ export default async function Home() {
           data.albums.length,
         ]}
       />
-      {data.serverCount !== 0 ? (
+      {data.movies.length === 0 &&
+      data.series.length === 0 &&
+      data.albums.length === 0 ? (
+        <NotFound />
+      ) : (
         <div className="space-y-8">
           {itemsValues.map((value) => (
-            <ItemsCarousel
-              key={value.title}
-              items={value.data}
-              isReduced={value.reduced}
-            >
+            <ItemsCarousel key={value.title} items={value.data}>
               <h2 className="text-2xl font-semibold">
                 <Link href={value.href} className="hover:underline">
                   {value.title}
@@ -71,8 +72,6 @@ export default async function Home() {
             </ItemsCarousel>
           ))}
         </div>
-      ) : (
-        <NotFound />
       )}
     </div>
   );

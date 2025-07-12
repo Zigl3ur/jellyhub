@@ -14,6 +14,7 @@ import { auth } from "@/lib/auth";
 import { z } from "zod/v4";
 import { loginSchema } from "@/schemas/auth.schema";
 import { headers } from "next/headers";
+import { editUserSchema } from "@/schemas/settings.schema";
 
 /**
  * Server action to create a user
@@ -126,7 +127,13 @@ export async function editUserAction(
       error: "User is not an administrator",
     };
 
-  // TODO: validate with zod ?
+  const result = editUserSchema.safeParse({
+    username: newUsername,
+    password: newPassword,
+  });
+
+  if (!result.success)
+    return { success: false, error: z.prettifyError(result.error) };
 
   const ctx = await auth.$context;
 

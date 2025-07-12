@@ -1,6 +1,6 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
-import crypto from "node:crypto";
+import crypto from "crypto";
 import { itemJellyfin } from "@/types/jellyfin-api.types";
 
 export function cn(...inputs: ClassValue[]) {
