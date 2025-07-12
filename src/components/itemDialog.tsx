@@ -43,7 +43,7 @@ export default function ItemDialog({ item }: DialogProps) {
         <ItemCard item={item} />
       </DialogTrigger>
       <DialogDescription />
-      <DialogContent className="flex flex-col gap-6 max-h-[90vh] max-w-4xl overflow-y-auto p-6">
+      <DialogContent className="flex flex-col gap-6 max-h-[90vh] max-w-4xl overflow-y-auto">
         <div className="relative shrink-0 self-center">
           <Image
             className="rounded-lg object-cover"
@@ -70,7 +70,7 @@ export default function ItemDialog({ item }: DialogProps) {
                 spec.value !== undefined && (
                   <span
                     key={spec.title}
-                    className="px-3 py-1 rounded-md bg-secondary text-secondary-foreground text-sm font-medium"
+                    className="self-center px-3 py-1 rounded-md bg-secondary text-secondary-foreground text-sm font-medium"
                   >
                     {spec.value}
                   </span>

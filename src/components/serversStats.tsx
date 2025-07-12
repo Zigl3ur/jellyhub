@@ -12,7 +12,7 @@ const cardData = [
     icon: <Film className="h-5 w-5" />,
   },
   {
-    title: "Shows",
+    title: "Series",
     icon: <Tv className="h-5 w-5" />,
   },
   {

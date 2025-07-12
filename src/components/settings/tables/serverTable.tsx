@@ -24,7 +24,7 @@ import {
 } from "lucide-react";
 import { jellydataDisplayed } from "@/types/actions.types";
 import { State } from "@/types/jellyfin-api.types";
-import { AddServerDialog } from "../dialogs/AddserverDialog";
+import { AddServerDialog } from "../dialogs/addserverDialog";
 import Link from "next/link";
 import { getJellyfinServers } from "@/server/actions/settings.actions";
 import { Button } from "../../ui/button";

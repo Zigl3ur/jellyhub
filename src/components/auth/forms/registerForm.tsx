@@ -54,7 +54,7 @@ export default function RegisterForm() {
         fetchOptions: {
           onSuccess: (ctx) => {
             toast.success("Successfully registered", {
-              description: `Welcome, ${ctx.data["user"].name} !`,
+              description: `Welcome, ${ctx.data["user"].username} !`,
             });
             router.push("/");
           },
@@ -71,7 +71,7 @@ export default function RegisterForm() {
   };
 
   return (
-    <div className="w-full max-w-md mx-auto sm:w-[400px] p-5 bg-background rounded-md">
+    <div className="w-full max-w-md mx-auto xs:w-[400px] p-5 bg-background/50 rounded-md">
       <div className="py-4 text-center">
         <Logo />
       </div>
@@ -129,7 +129,7 @@ export default function RegisterForm() {
             <Button
               type="submit"
               disabled={loading}
-              className="w-full sm:w-auto"
+              className="w-full xs:w-auto"
             >
               {loading ? (
                 <>

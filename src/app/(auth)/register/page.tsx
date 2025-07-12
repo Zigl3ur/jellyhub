@@ -7,9 +7,9 @@ export const metadata: Metadata = {
 };
 
 export default function RegisterPage() {
-  const isSignupDisabled = process.env.DISABLE_SIGNUP === "true";
+  const isSignupAllowed = process.env.ALLOW_SIGNUP === "true";
 
-  if (isSignupDisabled) redirect("/login");
+  if (!isSignupAllowed) redirect("/login");
 
   return (
     <div className="flex items-center justify-center h-screen px-4">
