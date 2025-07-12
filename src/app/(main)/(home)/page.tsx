@@ -6,7 +6,6 @@ import Link from "next/link";
 import NotFound from "@/components/noItemFound";
 import { getUser } from "@/server/utils";
 import { getAllServersItems } from "@/server/actions/jellyfin.actions";
-import { X } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "JellyHub - Home",
@@ -30,19 +29,16 @@ export default async function Home() {
       href: "/movies",
       title: "Movies",
       data: data.movies,
-      reduced: false,
     },
     {
       href: "/series",
       title: "Series",
       data: data.series,
-      reduced: false,
     },
     {
       href: "/albums",
       title: "Albums",
       data: data.albums,
-      reduced: true,
     },
   ];
 

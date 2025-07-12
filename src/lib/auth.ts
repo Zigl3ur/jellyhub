@@ -17,7 +17,7 @@ export const auth = betterAuth({
   },
   emailAndPassword: {
     enabled: true,
-    disableSignUp: false, //TODO: can be setup in settings
+    disableSignUp: process.env.DISABLE_SIGNUP === "true",
     requireEmailVerification: false,
     minPasswordLength: 6,
     maxPasswordLength: 50,
