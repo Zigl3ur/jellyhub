@@ -47,7 +47,9 @@ export default function ResetPasswd() {
           resetPasswordForm.reset();
         }
       })
-      .finally(() => setLoading(false));
+      .finally(() => {
+        setLoading(false);
+      });
   };
 
   return (

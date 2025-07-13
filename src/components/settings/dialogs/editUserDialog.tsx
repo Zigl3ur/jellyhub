@@ -66,6 +66,7 @@ export function EditUserDialog({ user, onEdit }: EditUserDialogProps) {
         else if (result.success) {
           toast.success("Success", { description: result.message });
           setOpen(false);
+          userForm.reset();
         }
       })
       .finally(() => {

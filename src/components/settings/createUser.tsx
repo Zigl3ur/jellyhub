@@ -18,7 +18,7 @@ import { toast } from "sonner";
 import { addUserAction } from "@/server/actions/settings.actions";
 
 export default function CreateUser() {
-  const form = useForm<loginSchemaType>({
+  const userForm = useForm<loginSchemaType>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
       username: "",
@@ -32,7 +32,7 @@ export default function CreateUser() {
         toast.success("Success", {
           description: result.message,
         });
-        form.reset();
+        userForm.reset();
       } else if (result.error)
         toast.error("Error", {
           description: result.error,
@@ -42,10 +42,10 @@ export default function CreateUser() {
 
   return (
     <div className="rounded-md p-5 w-full">
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+      <Form {...userForm}>
+        <form onSubmit={userForm.handleSubmit(onSubmit)} className="space-y-8">
           <FormField
-            control={form.control}
+            control={userForm.control}
             name="username"
             render={({ field }) => (
               <FormItem>
@@ -58,7 +58,7 @@ export default function CreateUser() {
             )}
           />
           <FormField
-            control={form.control}
+            control={userForm.control}
             name="password"
             render={({ field }) => (
               <FormItem>
@@ -74,9 +74,7 @@ export default function CreateUser() {
               </FormItem>
             )}
           />
-          <Button type="submit">
-            Create
-          </Button>
+          <Button type="submit">Create</Button>
         </form>
       </Form>
     </div>

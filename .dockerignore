@@ -8,5 +8,5 @@ node_modules
 .next
 .env*
 .vscode
-README.md
+*.md
 LICENSE

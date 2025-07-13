@@ -62,6 +62,7 @@ export function AddUserDialog({ onAdd }: AddUserDialogProps) {
         else if (result.success) {
           toast.success("Success", { description: result.message });
           setOpen(false);
+          userForm.reset();
         }
       })
       .finally(() => {

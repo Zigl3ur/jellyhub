@@ -14,11 +14,8 @@ export const auth = betterAuth({
     cookiePrefix: "jellyhub",
   },
   database: prismaAdapter(prisma, {
-    provider: "postgresql",
+    provider: "sqlite",
   }),
-  user: {
-    deleteUser: { enabled: true },
-  },
   emailAndPassword: {
     enabled: true,
     disableSignUp: process.env.DISABLE_SIGNUP === "true",

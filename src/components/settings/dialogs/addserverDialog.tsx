@@ -66,6 +66,7 @@ export function AddServerDialog({ onAdd }: AddServerDialogProps) {
         else if (result.success) {
           toast.success("Success", { description: result.message });
           setOpen(false);
+          serverForm.reset();
         }
       })
       .finally(() => {
