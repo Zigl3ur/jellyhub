@@ -18,12 +18,10 @@ COPY . .
 # Learn more here: https://nextjs.org/telemetry
 # Uncomment the following line in case you want to disable telemetry during the build.
 ENV NEXT_TELEMETRY_DISABLED=1
-ENV DATABASE_URL=file:/app/data/jellyhub.db
+ENV DATABASE_URL=file:data/jellyhub.db
 
-RUN bunx prisma generate
+RUN bun run db:deploy
 RUN bun run build
-RUN bunx prisma migrate deploy
-RUN bunx prisma db seed
 
 # Production image, copy all the files and run next
 FROM base AS runner
@@ -34,16 +32,18 @@ ENV DATABASE_URL=file:/app/data/jellyhub.db
 # Uncomment the following line in case you want to disable telemetry during runtime.
 ENV NEXT_TELEMETRY_DISABLED=1
 
-RUN addgroup --system --gid 1001 jellyhub
 RUN adduser --system --uid 1001 jellyhub
+RUN addgroup --system --gid 1001 jellyhub
 
-COPY --from=builder /app/public ./public
-COPY --from=builder /app/data ./data
-COPY --from=builder /app/.next/standalone ./
-COPY --from=builder /app/.next/static ./.next/static
+RUN mkdir -p /app/data
+RUN chown jellyhub:jellyhub /app/data
 
-RUN chown -R jellyhub:jellyhub /app
-RUN mkdir -p .next/cache && chown -R jellyhub:jellyhub .next/cache
+COPY --from=builder --chown=jellyhub:jellyhub /app/public ./public
+COPY --from=builder --chown=jellyhub:jellyhub /app/.next/standalone ./
+COPY --from=builder --chown=jellyhub:jellyhub /app/.next/static ./.next/static
+COPY --from=builder --chown=jellyhub:jellyhub /app/prisma/data/jellyhub.db ./data/jellyhub.db
+
+VOLUME [ "/app/data" ]
 
 USER jellyhub
 
@@ -52,4 +52,4 @@ EXPOSE ${PORT:-3000}
 # server.js is created by next build from the standalone output
 # https://nextjs.org/docs/pages/api-reference/config/next-config-js/output
 ENV HOSTNAME="0.0.0.0"
-CMD ["sh", "-c", "bun server.js"]
+CMD ["bun", "server.js"]
