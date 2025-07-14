@@ -4,10 +4,10 @@ import { getUser } from "@/server/utils";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "JellyHub - Movies",
+  title: "Movies",
 };
 
-export default async function AlbumsPage() {
+export default async function MoviesPages() {
   await getUser();
 
   const list = await getAllServersMovies();

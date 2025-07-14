@@ -38,6 +38,7 @@ export default function ContentPage({ placeholder, data }: ContentPageProps) {
 
   return (
     <div className="flex flex-col space-y-4 max-w-[2000px] mx-auto px-4">
+      {/* depending on browser content move when not scrollable cause of native scrollbar (chromium) */}
       <div className="w-full max-w-xs xs:max-w-sm md:max-w-xl self-center sticky top-2 z-10">
         <div className="relative">
           <Input

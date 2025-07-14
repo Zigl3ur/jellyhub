@@ -30,4 +30,8 @@ export const auth = betterAuth({
       maxUsernameLength: 15,
     }),
   ],
+  // log if dev or test but not in prod
+  ...(process.env.NODE_ENV === "production" && {
+    logger: { log() {} },
+  }),
 });

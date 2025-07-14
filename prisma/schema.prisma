@@ -11,7 +11,7 @@ model Jellydata {
   id             String @id @default(uuid())
   userId         String
   serverId       String
-  serverUrl      String
+  serverUrl      String @unique
   serverUsername String
   serverToken    String
 

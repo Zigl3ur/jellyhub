@@ -14,7 +14,7 @@ import LoadingTable from "@/components/settings/tables/loadingTable";
 import ResetPasswd from "@/components/settings/resetPasswd";
 
 export const metadata: Metadata = {
-  title: "JellyHub - Settings",
+  title: "Settings",
 };
 
 async function ServersSection() {

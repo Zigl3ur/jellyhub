@@ -8,7 +8,7 @@ import { getUser } from "@/server/utils";
 import { getAllServersItems } from "@/server/actions/jellyfin.actions";
 
 export const metadata: Metadata = {
-  title: "JellyHub - Home",
+  title: "Home",
 };
 
 export default async function Home() {
