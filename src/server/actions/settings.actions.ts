@@ -116,7 +116,8 @@ export async function editUserAction(
   id: string,
   baseUsername: string,
   newUsername?: string,
-  newPassword?: string
+  newPassword?: string,
+  confirmNewPassword?: string
 ): Promise<ServerActionReturn> {
   const user = await getUser();
   const isAdmin = user.role === "admin";
@@ -130,6 +131,7 @@ export async function editUserAction(
   const result = editUserSchema.safeParse({
     username: newUsername,
     password: newPassword,
+    confirmPassword: confirmNewPassword,
   });
 
   if (!result.success)

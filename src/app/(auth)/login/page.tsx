@@ -5,7 +5,10 @@ export const metadata: Metadata = {
   title: "JellyHub - Login",
 };
 
-export default function LoginPage() {
+//to ALLOW_SIGNUP to be evaluated at runtime and not build time, else the user cant set it with -e in docker run cmd
+export const dynamic = "force-dynamic";
+
+export default async function LoginPage() {
   const isSignupAllowed = process.env.ALLOW_SIGNUP === "true";
 
   return (

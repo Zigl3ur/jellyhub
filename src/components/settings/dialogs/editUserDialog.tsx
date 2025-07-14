@@ -57,7 +57,13 @@ export function EditUserDialog({ user, onEdit }: EditUserDialogProps) {
 
     setLoading(true);
 
-    editUserAction(user.id, user.name, username, confirmPassword)
+    editUserAction(
+      user.id,
+      user.name,
+      username,
+      confirmPassword,
+      confirmPassword
+    )
       .then((result) => {
         if (result.error)
           toast.error("Error", {
