@@ -10,3 +10,4 @@ node_modules
 .vscode
 *.md
 LICENSE
+dev.sh

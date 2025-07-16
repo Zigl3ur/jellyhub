@@ -3,7 +3,6 @@ import { Roboto } from "next/font/google";
 import { Toaster } from "@/components/ui/sonner";
 import Script from "next/script";
 import { Metadata } from "next";
-import Head from "next/head";
 
 const roboto = Roboto({
   weight: ["300", "400", "500", "700"],
@@ -26,11 +25,11 @@ export default async function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <Head>
+      <head>
         {process.env.NODE_ENV === "development" && (
           <Script src="https://unpkg.com/react-scan/dist/auto.global.js" />
         )}
-      </Head>
+      </head>
       <body className={`${roboto.variable}`}>
         {children}
         <Toaster />

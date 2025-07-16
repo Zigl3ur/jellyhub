@@ -12,6 +12,9 @@ export const auth = betterAuth({
   },
   advanced: {
     cookiePrefix: "jellyhub",
+    database: {
+      generateId: false,
+    },
   },
   database: prismaAdapter(prisma, {
     provider: "sqlite",
