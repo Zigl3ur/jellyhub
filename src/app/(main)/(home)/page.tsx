@@ -1,5 +1,4 @@
 import { Metadata } from "next";
-
 import ServerStats from "@/components/serversStats";
 import ItemsCarousel from "@/components/itemsCarousel";
 import Link from "next/link";

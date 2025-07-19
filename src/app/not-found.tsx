@@ -2,7 +2,7 @@ import { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "JellyHub - Not Found",
+  title: "Not Found",
 };
 
 export default function NotFound() {

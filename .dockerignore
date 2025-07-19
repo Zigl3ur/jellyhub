@@ -7,7 +7,9 @@ docker-compose*
 node_modules
 .next
 .env*
+.prettierrc
 .vscode
 *.md
 LICENSE
 dev.sh
+data/

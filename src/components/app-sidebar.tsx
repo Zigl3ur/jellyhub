@@ -59,7 +59,7 @@ export async function AppSidebar() {
         <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu>
-              {baseItems.map(async (item) => {
+              {baseItems.map((item) => {
                 return (
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton asChild>

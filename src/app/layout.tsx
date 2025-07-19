@@ -11,6 +11,7 @@ const roboto = Roboto({
   variable: "--font-roboto",
 });
 
+// TODO: weird bug with metadata title where title is not set in loading.tsx
 export const metadata: Metadata = {
   title: {
     template: "JellyHub - %s",
