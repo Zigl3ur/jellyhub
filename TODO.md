@@ -4,7 +4,7 @@
 
 - [x] Better ui/ux and styling
 - [x] Add more docstrings
-- [ ] Have a consistent code
+- [x] Have a consistent code
 
 ## Security
 

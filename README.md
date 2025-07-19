@@ -20,7 +20,7 @@ Copy the following command with your personallized environment variables to run 
 
 ```sh
 docker run -d --name jellyhub \
-    -v jellyhub_data:/app/data \
+    -v jellyhub_data:/app/data \ # either use a volume or a bind mount to make db persistent
     -e ALLOW_SIGNUP=true \
     -e BETTER_AUTH_SECRET=randomsecretstring \
     -e SECRET_KEY=64charhexstring \
@@ -38,13 +38,13 @@ The default user is `admin` with password `adminadmin`
 
 ![Screenshot_0](./.github/README/home_page.png)
 
-![Screenshot_1](./.github/README/movie_page.png)
+![Screenshot_1](./.github/README/movies_page.png)
 
-![Screenshot_2](./.github/README/shows_page.png)
+![Screenshot_2](./.github/README/series_page.png)
 
-![Screenshot_3](./.github/README/musicalbum_page.png)
+![Screenshot_3](./.github/README/albums_page.png)
 
-![Screenshot_4](./.github/README/popup_item.png)
+![Screenshot_4](./.github/README/dialog_item.png)
 
 ![Screenshot_5](./.github/README/settings_page.png)
 
