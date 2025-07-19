@@ -7,10 +7,10 @@
     "build": "next build",
     "start": "cp -r public .next/standalone/ && cp -r .next/static .next/standalone/.next/ && node .next/standalone/server.js",
     "lint": "next lint",
-    "db:deploy": "pnpx prisma migrate deploy && pnpx prisma generate && pnpx prisma db seed"
+    "db:deploy": "pnpm -s dlx prisma migrate deploy && pnpm -s dlx prisma generate --no-hints && pnpm -s dlx prisma db seed"
   },
   "prisma": {
-    "seed": "pnpx tsx prisma/seed.ts"
+    "seed": "pnpm dlx tsx prisma/seed.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.1.1",

@@ -257,7 +257,7 @@ export async function addServerAction(
   if (!success || !data) {
     return {
       success: false,
-      error: error || "An Error Occured, check the URL / credentials",
+      error: error || "An error occured, check the URL / credentials",
     };
   }
 
