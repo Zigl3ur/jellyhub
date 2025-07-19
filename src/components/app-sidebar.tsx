@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/sidebar";
 import Image from "next/image";
 import Link from "next/link";
-import LogOutButton from "./auth/logOutButton";
+import LogOutButton from "./auth/log-out-button";
 
 const baseItems = [
   {

@@ -24,40 +24,46 @@ import {
   FormMessage,
 } from "../../ui/form";
 import { useState } from "react";
-import { LoaderCircle, Plus } from "lucide-react";
-import {
-  addServerSchema,
-  addServerSchemaType,
-} from "@/schemas/settings.schema";
-import { addServerAction } from "@/server/actions/settings.actions";
+import { LoaderCircle, Pencil } from "lucide-react";
 import { toast } from "sonner";
-import PasswordField from "@/components/auth/forms/fields/passwordField";
+import PasswordField from "@/components/auth/forms/fields/password-field";
+import { User } from "better-auth";
+import { editUserSchema, editUserSchemaType } from "@/schemas/settings.schema";
+import { editUserAction } from "@/server/actions/settings.actions";
 
-interface AddServerDialogProps {
-  onAdd: () => void;
+interface EditUserDialogProps {
+  user: User;
+  onEdit: () => void;
 }
 
-export function AddServerDialog({ onAdd }: AddServerDialogProps) {
+export function EditUserDialog({ user, onEdit }: EditUserDialogProps) {
   const [open, setOpen] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
 
-  const serverForm = useForm<addServerSchemaType>({
-    resolver: zodResolver(addServerSchema),
+  const userForm = useForm<editUserSchemaType>({
+    resolver: zodResolver(editUserSchema),
     defaultValues: {
-      address: "",
-      username: "",
-      password: "",
+      username: user.name,
+      password: undefined,
+      confirmPassword: undefined,
     },
   });
 
-  const { password: passwordError } = serverForm.formState.errors;
+  const { password: passwordError, confirmPassword: confirmPasswordError } =
+    userForm.formState.errors;
 
-  const onSubmit = async (values: addServerSchemaType) => {
-    const { address, username, password } = values;
+  const onSubmit = async (values: editUserSchemaType) => {
+    const { username, confirmPassword } = values;
 
     setLoading(true);
 
-    addServerAction(address, username, password)
+    editUserAction(
+      user.id,
+      user.name,
+      username,
+      confirmPassword,
+      confirmPassword
+    )
       .then((result) => {
         if (result.error)
           toast.error("Error", {
@@ -66,68 +72,70 @@ export function AddServerDialog({ onAdd }: AddServerDialogProps) {
         else if (result.success) {
           toast.success("Success", { description: result.message });
           setOpen(false);
-          serverForm.reset();
+          userForm.reset();
         }
       })
       .finally(() => {
         setLoading(false);
-        onAdd();
+        onEdit();
       });
   };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" size={"icon"}>
-          <Plus />
+        <Button size={"icon"} variant={"outline"}>
+          <Pencil />
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Add a Server</DialogTitle>
-          <DialogDescription>Add a Jellyfin Server</DialogDescription>
+          <DialogTitle>Edit a User</DialogTitle>
+          <DialogDescription>Edit the selected user</DialogDescription>
         </DialogHeader>
-        <Form {...serverForm}>
+        <Form {...userForm}>
           <form
-            onSubmit={serverForm.handleSubmit(onSubmit)}
+            onSubmit={userForm.handleSubmit(onSubmit)}
             className="space-y-4"
           >
             <FormField
-              control={serverForm.control}
-              name="address"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Server Address</FormLabel>
-                  <FormControl>
-                    <Input placeholder="address" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={serverForm.control}
+              control={userForm.control}
               name="username"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Server Username</FormLabel>
+                  <FormLabel>Username</FormLabel>
                   <FormControl>
-                    <Input placeholder="username" {...field} />
+                    <Input {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
             <FormField
-              control={serverForm.control}
+              control={userForm.control}
               name="password"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Server Password</FormLabel>
+                  <FormLabel>Password</FormLabel>
                   <PasswordField
                     placeholder="********"
-                    field={field}
                     error={passwordError}
+                    field={{ ...field, value: field.value || "" }}
+                  />
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={userForm.control}
+              name="confirmPassword"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Confirm Password</FormLabel>
+                  <PasswordField
+                    placeholder="********"
+                    error={confirmPasswordError}
+                    field={{ ...field, value: field.value || "" }}
                   />
                   <FormMessage />
                 </FormItem>
@@ -139,8 +147,19 @@ export function AddServerDialog({ onAdd }: AddServerDialogProps) {
                   Cancel
                 </Button>
               </DialogClose>
-              <Button type="submit">
-                {loading && <LoaderCircle className="animate-spin" />}Add Server
+              <Button
+                type="submit"
+                disabled={loading}
+                className="w-full sm:w-auto"
+              >
+                {loading ? (
+                  <>
+                    <LoaderCircle className="animate-spin" />
+                    Editing user...
+                  </>
+                ) : (
+                  "Edit User"
+                )}
               </Button>
             </DialogFooter>
           </form>

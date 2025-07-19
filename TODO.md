@@ -3,7 +3,7 @@
 ## Overall
 
 - [x] Better ui/ux and styling
-- [ ] Add more docstrings
+- [x] Add more docstrings
 - [ ] Have a consistent code
 
 ## Security

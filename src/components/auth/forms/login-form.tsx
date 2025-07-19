@@ -17,7 +17,7 @@ import { loginSchema, loginSchemaType } from "@/schemas/auth.schema";
 import { authClient } from "@/lib/auth-client";
 import { toast } from "sonner";
 import Logo from "@/components/logo";
-import PasswordField from "./fields/passwordField";
+import PasswordField from "./fields/password-field";
 import { useState } from "react";
 import { LoaderCircle } from "lucide-react";
 import { useRouter } from "next/navigation";

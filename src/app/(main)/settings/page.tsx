@@ -1,16 +1,16 @@
 import {
   ServerTable,
   columns as serversTableColumns,
-} from "@/components/settings/tables/serverTable";
+} from "@/components/settings/tables/server-table";
 import { getUser } from "@/server/utils";
 import {
   getJellyfinServers,
   getUsersList,
 } from "@/server/actions/settings.actions";
-import { UserTable } from "@/components/settings/tables/userTable";
+import { UserTable } from "@/components/settings/tables/user-table";
 import { Suspense } from "react";
-import LoadingTable from "@/components/settings/tables/loadingTable";
-import ResetPasswd from "@/components/settings/resetPasswd";
+import LoadingTable from "@/components/settings/tables/loading-table";
+import ResetPasswd from "@/components/settings/reset-password";
 
 async function ServersSection() {
   const servers = await getJellyfinServers();

@@ -1,5 +1,5 @@
 import ItemsLoader from "@/components/loader";
-import ServerStats from "@/components/serversStats";
+import ServerStats from "@/components/servers-stats";
 
 export default function Loading() {
   return (

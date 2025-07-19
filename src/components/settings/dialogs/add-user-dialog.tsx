@@ -24,46 +24,36 @@ import {
   FormMessage,
 } from "../../ui/form";
 import { useState } from "react";
-import { LoaderCircle, Pencil } from "lucide-react";
+import { LoaderCircle, Plus } from "lucide-react";
 import { toast } from "sonner";
-import PasswordField from "@/components/auth/forms/fields/passwordField";
-import { User } from "better-auth";
-import { editUserSchema, editUserSchemaType } from "@/schemas/settings.schema";
-import { editUserAction } from "@/server/actions/settings.actions";
+import { loginSchema, loginSchemaType } from "@/schemas/auth.schema";
+import { addUserAction } from "@/server/actions/settings.actions";
+import PasswordField from "@/components/auth/forms/fields/password-field";
 
-interface EditUserDialogProps {
-  user: User;
-  onEdit: () => void;
+interface AddUserDialogProps {
+  onAdd: () => void;
 }
 
-export function EditUserDialog({ user, onEdit }: EditUserDialogProps) {
+export function AddUserDialog({ onAdd }: AddUserDialogProps) {
   const [open, setOpen] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
 
-  const userForm = useForm<editUserSchemaType>({
-    resolver: zodResolver(editUserSchema),
+  const userForm = useForm<loginSchemaType>({
+    resolver: zodResolver(loginSchema),
     defaultValues: {
-      username: user.name,
-      password: undefined,
-      confirmPassword: undefined,
+      username: "",
+      password: "",
     },
   });
 
-  const { password: passwordError, confirmPassword: confirmPasswordError } =
-    userForm.formState.errors;
+  const { password: passwordError } = userForm.formState.errors;
 
-  const onSubmit = async (values: editUserSchemaType) => {
-    const { username, confirmPassword } = values;
+  const onSubmit = async (values: loginSchemaType) => {
+    const { username, password } = values;
 
     setLoading(true);
 
-    editUserAction(
-      user.id,
-      user.name,
-      username,
-      confirmPassword,
-      confirmPassword
-    )
+    addUserAction(username, password)
       .then((result) => {
         if (result.error)
           toast.error("Error", {
@@ -77,21 +67,21 @@ export function EditUserDialog({ user, onEdit }: EditUserDialogProps) {
       })
       .finally(() => {
         setLoading(false);
-        onEdit();
+        onAdd();
       });
   };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button size={"icon"} variant={"outline"}>
-          <Pencil />
+        <Button variant="outline" size={"icon"}>
+          <Plus />
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Edit a User</DialogTitle>
-          <DialogDescription>Edit the selected user</DialogDescription>
+          <DialogTitle>Add a User</DialogTitle>
+          <DialogDescription>Create a user</DialogDescription>
         </DialogHeader>
         <Form {...userForm}>
           <form
@@ -105,7 +95,7 @@ export function EditUserDialog({ user, onEdit }: EditUserDialogProps) {
                 <FormItem>
                   <FormLabel>Username</FormLabel>
                   <FormControl>
-                    <Input {...field} />
+                    <Input placeholder="eden" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -120,22 +110,7 @@ export function EditUserDialog({ user, onEdit }: EditUserDialogProps) {
                   <PasswordField
                     placeholder="********"
                     error={passwordError}
-                    field={{ ...field, value: field.value || "" }}
-                  />
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={userForm.control}
-              name="confirmPassword"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Confirm Password</FormLabel>
-                  <PasswordField
-                    placeholder="********"
-                    error={confirmPasswordError}
-                    field={{ ...field, value: field.value || "" }}
+                    field={{ ...field }}
                   />
                   <FormMessage />
                 </FormItem>
@@ -155,10 +130,10 @@ export function EditUserDialog({ user, onEdit }: EditUserDialogProps) {
                 {loading ? (
                   <>
                     <LoaderCircle className="animate-spin" />
-                    Editing user...
+                    Adding user...
                   </>
                 ) : (
-                  "Edit User"
+                  "Add User"
                 )}
               </Button>
             </DialogFooter>

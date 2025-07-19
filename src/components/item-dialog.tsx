@@ -10,7 +10,7 @@ import {
 import type { itemJellyfin } from "@/types/jellyfin-api.types";
 import Image from "next/image";
 import Link from "next/link";
-import ItemCard from "./itemCard";
+import ItemCard from "./item-card";
 import { Separator } from "./ui/separator";
 import { useState } from "react";
 import { Skeleton } from "./ui/skeleton";

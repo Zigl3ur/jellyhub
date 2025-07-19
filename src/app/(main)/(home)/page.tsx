@@ -1,7 +1,7 @@
-import ServerStats from "@/components/serversStats";
-import ItemsCarousel from "@/components/itemsCarousel";
+import ServerStats from "@/components/servers-stats";
+import ItemsCarousel from "@/components/items-carousel";
 import Link from "next/link";
-import NotFound from "@/components/noItemFound";
+import NotFound from "@/components/no-item-found";
 import { getUser } from "@/server/utils";
 import { getAllServersItems } from "@/server/actions/jellyfin.actions";
 

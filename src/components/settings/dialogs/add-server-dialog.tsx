@@ -25,35 +25,39 @@ import {
 } from "../../ui/form";
 import { useState } from "react";
 import { LoaderCircle, Plus } from "lucide-react";
+import {
+  addServerSchema,
+  addServerSchemaType,
+} from "@/schemas/settings.schema";
+import { addServerAction } from "@/server/actions/settings.actions";
 import { toast } from "sonner";
-import { loginSchema, loginSchemaType } from "@/schemas/auth.schema";
-import { addUserAction } from "@/server/actions/settings.actions";
-import PasswordField from "@/components/auth/forms/fields/passwordField";
+import PasswordField from "@/components/auth/forms/fields/password-field";
 
-interface AddUserDialogProps {
+interface AddServerDialogProps {
   onAdd: () => void;
 }
 
-export function AddUserDialog({ onAdd }: AddUserDialogProps) {
+export function AddServerDialog({ onAdd }: AddServerDialogProps) {
   const [open, setOpen] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
 
-  const userForm = useForm<loginSchemaType>({
-    resolver: zodResolver(loginSchema),
+  const serverForm = useForm<addServerSchemaType>({
+    resolver: zodResolver(addServerSchema),
     defaultValues: {
+      address: "",
       username: "",
       password: "",
     },
   });
 
-  const { password: passwordError } = userForm.formState.errors;
+  const { password: passwordError } = serverForm.formState.errors;
 
-  const onSubmit = async (values: loginSchemaType) => {
-    const { username, password } = values;
+  const onSubmit = async (values: addServerSchemaType) => {
+    const { address, username, password } = values;
 
     setLoading(true);
 
-    addUserAction(username, password)
+    addServerAction(address, username, password)
       .then((result) => {
         if (result.error)
           toast.error("Error", {
@@ -62,7 +66,7 @@ export function AddUserDialog({ onAdd }: AddUserDialogProps) {
         else if (result.success) {
           toast.success("Success", { description: result.message });
           setOpen(false);
-          userForm.reset();
+          serverForm.reset();
         }
       })
       .finally(() => {
@@ -80,37 +84,50 @@ export function AddUserDialog({ onAdd }: AddUserDialogProps) {
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Add a User</DialogTitle>
-          <DialogDescription>Create a user</DialogDescription>
+          <DialogTitle>Add a Server</DialogTitle>
+          <DialogDescription>Add a Jellyfin Server</DialogDescription>
         </DialogHeader>
-        <Form {...userForm}>
+        <Form {...serverForm}>
           <form
-            onSubmit={userForm.handleSubmit(onSubmit)}
+            onSubmit={serverForm.handleSubmit(onSubmit)}
             className="space-y-4"
           >
             <FormField
-              control={userForm.control}
-              name="username"
+              control={serverForm.control}
+              name="address"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Username</FormLabel>
+                  <FormLabel>Server Address</FormLabel>
                   <FormControl>
-                    <Input placeholder="eden" {...field} />
+                    <Input placeholder="address" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
             <FormField
-              control={userForm.control}
+              control={serverForm.control}
+              name="username"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Server Username</FormLabel>
+                  <FormControl>
+                    <Input placeholder="username" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={serverForm.control}
               name="password"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Password</FormLabel>
+                  <FormLabel>Server Password</FormLabel>
                   <PasswordField
                     placeholder="********"
+                    field={field}
                     error={passwordError}
-                    field={{ ...field }}
                   />
                   <FormMessage />
                 </FormItem>
@@ -122,19 +139,8 @@ export function AddUserDialog({ onAdd }: AddUserDialogProps) {
                   Cancel
                 </Button>
               </DialogClose>
-              <Button
-                type="submit"
-                disabled={loading}
-                className="w-full sm:w-auto"
-              >
-                {loading ? (
-                  <>
-                    <LoaderCircle className="animate-spin" />
-                    Adding user...
-                  </>
-                ) : (
-                  "Add User"
-                )}
+              <Button type="submit">
+                {loading && <LoaderCircle className="animate-spin" />}Add Server
               </Button>
             </DialogFooter>
           </form>

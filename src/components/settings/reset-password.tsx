@@ -11,7 +11,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { toast } from "sonner";
-import PasswordField from "../auth/forms/fields/passwordField";
+import PasswordField from "../auth/forms/fields/password-field";
 import { useState } from "react";
 import { LoaderCircle } from "lucide-react";
 import { resetPasswdScema, resetPasswdType } from "@/schemas/settings.schema";

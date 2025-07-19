@@ -1,4 +1,4 @@
-import ContentPage from "@/components/contentPage";
+import ContentPage from "@/components/content-page";
 import { getAllServersMovies } from "@/server/actions/jellyfin.actions";
 import { getUser } from "@/server/utils";
 

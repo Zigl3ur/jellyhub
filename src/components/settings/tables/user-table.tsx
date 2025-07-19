@@ -11,27 +11,22 @@ import {
 } from "@tanstack/react-table";
 
 import { Checkbox } from "@/components/ui/checkbox";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { Input } from "../../ui/input";
-import { DeleteAlertDialog } from "../alerts/deleteServerAlert";
-import {
-  ChevronLeft,
-  ChevronRight,
-  LoaderCircle,
-  RefreshCcw,
-  Wifi,
-  WifiOff,
-} from "lucide-react";
-import { jellydataDisplayed } from "@/types/actions.types";
-import { State } from "@/types/jellyfin-api.types";
-import { AddServerDialog } from "../dialogs/addserverDialog";
-import Link from "next/link";
-import { getJellyfinServers } from "@/server/actions/settings.actions";
+import { ChevronLeft, ChevronRight, RefreshCcw } from "lucide-react";
+import { userDataType } from "@/types/actions.types";
+import { getUsersList } from "@/server/actions/settings.actions";
 import { Button } from "../../ui/button";
-import DataTable from "@/components/dataTable";
+import { UserWithRole } from "better-auth/plugins/admin";
+import { AddUserDialog } from "../dialogs/add-user-dialog";
+import { DeleteUserDialog } from "../alerts/delete-user-alert";
+import DataTable from "@/components/data-table";
 import { TableCell } from "@/components/ui/table";
+import { EditUserDialog } from "../dialogs/edit-user-dialog";
 
-export const columns: ColumnDef<jellydataDisplayed>[] = [
+const createColumns = (
+  refreshTable: () => Promise<void>
+): ColumnDef<UserWithRole>[] => [
   {
     id: "select",
     header: ({ table }) => (
@@ -57,78 +52,74 @@ export const columns: ColumnDef<jellydataDisplayed>[] = [
     ),
   },
   {
-    accessorKey: "serverUrl",
-    header: "Address",
-    cell: ({ row }) => {
-      const address = row.getValue("serverUrl") as string;
-      return (
-        <div title={address}>
-          <Link href={address} className="hover:underline">
-            {address.split("//")[1]}
-          </Link>
-        </div>
-      );
-    },
-  },
-  {
-    accessorKey: "serverUsername",
+    accessorKey: "username",
     header: "Username",
     cell: ({ row }) => {
-      const username = row.getValue("serverUsername") as string;
+      const username = row.getValue("username") as string;
       return <div title={username}>{username}</div>;
     },
   },
   {
-    accessorKey: "status",
-    header: "Status",
+    accessorKey: "role",
+    header: "Role",
     cell: ({ row }) => {
-      const status = row.getValue("status") as State;
+      const role = row.getValue("role") as string;
+      return <div title={role}>{role}</div>;
+    },
+  },
+  {
+    accessorKey: "updatedAt",
+    header: "Updated At",
+    cell: ({ row }) => {
+      const updatedAt = row.getValue("updatedAt") as Date;
       return (
-        <div className="flex items-center">
-          {status === "Up" && <Wifi className="w-4 h-4 text-green-500 mr-2" />}
-          {status === "Down" && (
-            <WifiOff className="w-4 h-4 text-red-500 mr-2" />
-          )}
-          {status === "Checking" && (
-            <LoaderCircle className="w-4 h-4 mr-2 animate-reverse-spin" />
-          )}
-          {status}
+        <div title={updatedAt.toLocaleDateString()}>
+          {updatedAt.toLocaleDateString()}
         </div>
       );
+    },
+  },
+  {
+    accessorKey: "createdAt",
+    header: "Created At",
+    cell: ({ row }) => {
+      const createdAt = row.getValue("createdAt") as Date;
+      return (
+        <div title={createdAt.toLocaleDateString()}>
+          {createdAt.toLocaleDateString()}
+        </div>
+      );
+    },
+  },
+  {
+    accessorKey: "edit",
+    header: undefined,
+    cell: ({ row }) => {
+      return <EditUserDialog user={row.original} onEdit={refreshTable} />;
     },
   },
 ];
 
 interface DataTableProps {
-  columns: ColumnDef<jellydataDisplayed>[];
-  serversData: jellydataDisplayed[];
+  usersData: userDataType;
 }
 
-export function ServerTable({ columns, serversData }: DataTableProps) {
+export function UserTable({ usersData }: DataTableProps) {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-  const [data, setData] = useState<jellydataDisplayed[]>(serversData);
+  const [data, setData] = useState<UserWithRole[]>(usersData.users);
   const [isFetching, setIsFetching] = useState<boolean>(false);
 
   const refreshTable = useCallback(async () => {
     setIsFetching(true);
-
-    setData((prevData) =>
-      prevData.map((server) => ({ ...server, status: "Checking" as State }))
-    );
-    const response = await getJellyfinServers();
+    const response = await getUsersList();
 
     if (response.success && response.data) {
-      setData(response.data);
+      setData(response.data.users);
     }
     setIsFetching(false);
   }, []);
 
-  // refetch every 30s
-  useEffect(() => {
-    const refresh = setInterval(refreshTable, 30000);
-
-    return () => clearInterval(refresh);
-  }, [refreshTable]);
+  const columns = useMemo(() => createColumns(refreshTable), [refreshTable]);
 
   const table = useReactTable({
     data,
@@ -157,24 +148,23 @@ export function ServerTable({ columns, serversData }: DataTableProps) {
     <div className="w-full space-y-2">
       <div className="flex justify-between gap-2">
         <Input
-          placeholder="Search Servers"
+          placeholder="Search Users"
           disabled={data.length === 0}
           value={
-            (table.getColumn("serverUrl")?.getFilterValue() as string) ?? ""
+            (table.getColumn("username")?.getFilterValue() as string) ?? ""
           }
           onChange={(event) =>
-            table.getColumn("serverUrl")?.setFilterValue(event.target.value)
+            table.getColumn("username")?.setFilterValue(event.target.value)
           }
-          className="bg-background/50 max-w-sm"
+          className="bg-background/50  max-w-sm"
         />
         <div className="flex gap-2">
-          <AddServerDialog onAdd={refreshTable} />
-          <DeleteAlertDialog
+          <AddUserDialog onAdd={refreshTable} />
+          <DeleteUserDialog
             disable={table.getFilteredSelectedRowModel().rows.length === 0}
-            checkedRows={checkedRows.map((row) => ({
-              address: row.serverUrl,
-              username: row.serverUsername,
-            }))}
+            checkedRows={checkedRows.map((user) => {
+              return user.email;
+            })}
             onDelete={refreshTable}
           />
           <Button
@@ -191,14 +181,14 @@ export function ServerTable({ columns, serversData }: DataTableProps) {
         table={table}
         emptyPlaceholder={
           <TableCell colSpan={columns.length} className="h-24 text-center">
-            No Servers.
+            No Users.
           </TableCell>
         }
       />
       <div className="flex justify-between items-center">
         <span className="text-sm text-muted-foreground">
           {table.getFilteredSelectedRowModel().rows.length} of{" "}
-          {table.getFilteredRowModel().rows.length} server(s) selected.
+          {table.getFilteredRowModel().rows.length} user(s) selected.
         </span>
         <div className="flex items-center gap-2">
           <Button

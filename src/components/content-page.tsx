@@ -2,8 +2,8 @@
 
 import { itemJellyfin } from "@/types/jellyfin-api.types";
 import { useState, useCallback, useMemo, useRef } from "react";
-import ItemDialog from "./itemDialog";
-import NoItemFound from "./noItemFound";
+import ItemDialog from "./item-dialog";
+import NoItemFound from "./no-item-found";
 import { Input } from "./ui/input";
 import { debounce } from "@/lib/utils";
 import { X } from "lucide-react";

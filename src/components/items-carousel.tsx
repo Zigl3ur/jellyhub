@@ -6,7 +6,7 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import { itemJellyfin } from "@/types/jellyfin-api.types";
-import ItemDialog from "./itemDialog";
+import ItemDialog from "./item-dialog";
 
 interface CarouselProps {
   children: React.ReactNode;

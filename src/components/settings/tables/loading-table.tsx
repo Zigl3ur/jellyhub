@@ -60,15 +60,11 @@ export default function LoadingTable({
             {tableHeads.slice(0, -1).map((_, index) => (
               <TableRow key={index}>
                 <TableCell>
-                  <div className="flex">
-                    <Skeleton className="h-4 w-4" />
-                  </div>
+                  <Skeleton className="h-4 w-4" />
                 </TableCell>
                 {tableHeads.map((_, index) => (
                   <TableCell key={index}>
-                    <div className="w-[80px] sm:w-[150px] md:w-[200px]">
-                      <Skeleton className="h-4 w-full" />
-                    </div>
+                    <Skeleton className="h-4 w-full" />
                   </TableCell>
                 ))}
               </TableRow>

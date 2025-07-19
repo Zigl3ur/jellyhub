@@ -1,4 +1,4 @@
-import RegisterForm from "@/components/auth/forms/registerForm";
+import RegisterForm from "@/components/auth/forms/register-form";
 import { redirect } from "next/navigation";
 
 //to ALLOW_SIGNUP to be evaluated at runtime and not build time, else the user cant set it with -e in docker run cmd

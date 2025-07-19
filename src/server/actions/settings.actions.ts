@@ -14,7 +14,11 @@ import { auth } from "@/lib/auth";
 import { z } from "zod/v4";
 import { loginSchema } from "@/schemas/auth.schema";
 import { headers } from "next/headers";
-import { editUserSchema, resetPasswdScema } from "@/schemas/settings.schema";
+import {
+  addServerSchema,
+  editUserSchema,
+  resetPasswdScema,
+} from "@/schemas/settings.schema";
 
 /**
  * Server action to create a user
@@ -112,6 +116,15 @@ export async function deleteUserAction(
   }
 }
 
+/**
+ * Server action to edit a user
+ * @param id user id
+ * @param baseUsername the original user username
+ * @param newUsername the new usermane for the user
+ * @param newPassword the new password for the user
+ * @param confirmNewPassword the confirmed new password for the user
+ * @returns message if it succeed or an error
+ */
 export async function editUserAction(
   id: string,
   baseUsername: string,
@@ -238,7 +251,7 @@ export async function getUsersList(): Promise<
 }
 
 /**
- * Server action to add a jellyfin server of the logged user.
+ * Server action to add a jellyfin server.
  * @returns jellyfin server list of the account or nothing if not authenticated
  */
 export async function addServerAction(
@@ -247,6 +260,18 @@ export async function addServerAction(
   password: string
 ): Promise<ServerActionReturn> {
   const user = await getUser();
+
+  const result = addServerSchema.safeParse({
+    address: server_url,
+    username: username,
+    password: password,
+  });
+
+  if (!result.success)
+    return {
+      success: false,
+      error: z.prettifyError(result.error),
+    };
 
   const { success, data, error } = await getToken(
     server_url,

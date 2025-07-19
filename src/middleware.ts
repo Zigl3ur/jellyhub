@@ -6,7 +6,7 @@ export async function middleware(request: NextRequest) {
     cookiePrefix: "jellyhub",
   });
 
-  // redirect to login if no session cookie
+  // redirect to login if no session cookie, not actual auth check
   if (!sessionCookie) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
