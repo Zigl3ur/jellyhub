@@ -1,11 +1,6 @@
 import ContentPage from "@/components/contentPage";
 import { getAllServersSeries } from "@/server/actions/jellyfin.actions";
 import { getUser } from "@/server/utils";
-import { Metadata } from "next";
-
-export const metadata: Metadata = {
-  title: "Series",
-};
 
 export default async function AlbumsPage() {
   await getUser();

@@ -1,14 +1,9 @@
-import { Metadata } from "next";
 import ServerStats from "@/components/serversStats";
 import ItemsCarousel from "@/components/itemsCarousel";
 import Link from "next/link";
 import NotFound from "@/components/noItemFound";
 import { getUser } from "@/server/utils";
 import { getAllServersItems } from "@/server/actions/jellyfin.actions";
-
-export const metadata: Metadata = {
-  title: "Home",
-};
 
 export default async function Home() {
   await getUser();

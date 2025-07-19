@@ -3,7 +3,7 @@ import Link from "next/link";
 
 export default function NoItemFound() {
   return (
-    <div className="flex flex-col items-center text-center py-20">
+    <div className="flex flex-col items-center text-center py-16">
       <X />
       <span>No items found.</span>
       <span>Please add at least one server / Check servers status </span>

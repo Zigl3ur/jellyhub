@@ -2,7 +2,6 @@ import {
   ServerTable,
   columns as serversTableColumns,
 } from "@/components/settings/tables/serverTable";
-import { Metadata } from "next";
 import { getUser } from "@/server/utils";
 import {
   getJellyfinServers,
@@ -12,10 +11,6 @@ import { UserTable } from "@/components/settings/tables/userTable";
 import { Suspense } from "react";
 import LoadingTable from "@/components/settings/tables/loadingTable";
 import ResetPasswd from "@/components/settings/resetPasswd";
-
-export const metadata: Metadata = {
-  title: "Settings",
-};
 
 async function ServersSection() {
   const servers = await getJellyfinServers();
