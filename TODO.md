@@ -2,7 +2,7 @@
 
 ## Overall
 
-- [ ] Better ui/ux and styling
+- [x] Better ui/ux and styling
 - [ ] Add more docstrings
 - [ ] Have a consistent code
 
@@ -15,4 +15,4 @@
 
 - [x] Allow Register ?
 - [x] Better search
-- [ ] Use SQLite
+- [x] Use SQLite
