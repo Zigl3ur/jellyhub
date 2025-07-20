@@ -52,6 +52,4 @@ The default user is `admin` with password `adminadmin`
 
 <h2>Personal Note</h2>
 
-This project was made to learn NextJS and React, so definitely the code / css could be better and more optimized since I'm a beginner. But for now it works.
-
 Thanks to my friends [@firminunderscore](https://github.com/firminunderscore) [@0x4c756e61](https://github.com/0x4c756e61) and [@Zarox28](https://github.com/Zarox28) for allowing me to test the app on their jellyfin servers.
