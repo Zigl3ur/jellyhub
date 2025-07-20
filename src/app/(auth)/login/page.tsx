@@ -1,77 +1,14 @@
-import LoginForm from "@/components/loginForm";
-import { encrypt } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
-import { loginSchema } from "@/schemas/auth.schema";
-import { Metadata } from "next";
-import { z } from "zod";
-import bcrypt from "bcryptjs";
-import { loginActionType, payloadType } from "@/types/auth.types";
-import { cookies } from "next/headers";
+import LoginForm from "@/components/auth/forms/login-form";
 
-export const metadata: Metadata = {
-  title: "JellyHub - Login",
-};
+//to ALLOW_SIGNUP to be evaluated at runtime and not build time, else the user cant set it with -e in docker run cmd
+export const dynamic = "force-dynamic";
 
-async function loginAction(
-  values: z.infer<typeof loginSchema>
-): Promise<loginActionType> {
-  "use server";
+export default async function LoginPage() {
+  const isSignupAllowed = process.env.ALLOW_SIGNUP === "true";
 
-  try {
-    const schema = z.object({
-      username: z.string().min(3).max(15),
-      password: z.string().min(6).max(50),
-    });
-
-    const validateSchema = schema.safeParse(values);
-
-    if (!validateSchema.success) {
-      return { state: false, desc: "Given Values are not Valid !", href: "/" };
-    }
-
-    const userData = await prisma.accounts.findFirst({
-      where: { username: values.username },
-    });
-
-    // return if account doesnt exist
-    if (!userData) {
-      return { state: false, desc: "Bad Credentials", href: "" };
-    }
-
-    // check password match
-    const passwordCheck = await bcrypt.compare(
-      values.password,
-      userData.password
-    );
-
-    if (!passwordCheck) {
-      return { state: false, desc: "Bad Credentials", href: "" };
-    }
-
-    // Create the session
-    const expires: Date = new Date(Date.now() + 24 * 60 * 60 * 1000); // one day
-    const payload: payloadType = {
-      username: userData.username,
-      admin: userData.admin,
-      expires,
-    };
-    const session: string = await encrypt(payload);
-
-    // create cookie session
-    (await cookies()).set("session-token", session, {
-      expires,
-      httpOnly: true,
-    });
-    return { state: true, desc: "Successfully Logged In", href: "/" };
-  } catch {
-    return { state: false, desc: "Server Error", href: "" };
-  }
-}
-
-export default function LoginPage() {
   return (
     <div className="flex items-center justify-center h-screen px-4">
-      <LoginForm onSubmit={loginAction} />
+      <LoginForm isSignupAllowed={isSignupAllowed} />
     </div>
   );
 }

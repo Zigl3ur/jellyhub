@@ -1,5 +1,5 @@
 .git
-assets
+.github
 .gitignore
 *Dockerfile*
 docker-compose*
@@ -7,6 +7,9 @@ docker-compose*
 node_modules
 .next
 .env*
+.prettierrc
 .vscode
-README.md
+*.md
 LICENSE
+dev.sh
+/prisma/data/

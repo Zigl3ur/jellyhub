@@ -1,56 +1,40 @@
-import { payloadType } from "@/types/auth.types";
-import { JWTPayload, SignJWT, jwtVerify } from "jose";
-import { cookies } from "next/headers";
+import { betterAuth } from "better-auth";
+import { username } from "better-auth/plugins/username";
+import { prismaAdapter } from "better-auth/adapters/prisma";
+import { prisma } from "./prisma";
+import { admin } from "better-auth/plugins/admin";
 
-const secretKey = process.env.JWT_SECRET;
-const key = new TextEncoder().encode(secretKey);
-
-/**
- * Functio n to create a jwt token from a payload
- * @param payload payload for jwt
- * @returns JWT token
- */
-export async function encrypt(payload: payloadType): Promise<string> {
-  return await new SignJWT(payload)
-    .setProtectedHeader({ alg: "HS256" })
-    .setIssuedAt()
-    .setExpirationTime("1d")
-    .sign(key);
-}
-
-/**
- * Funtion to decrypt a JWT
- * @param token JWT token to decrypt
- * @returns the jwt payload from the decrypted token
- */
-export async function decrypt(token: string): Promise<JWTPayload> {
-  const { payload } = await jwtVerify(token, key, {
-    algorithms: ["HS256"],
-  });
-  return payload;
-}
-/**
- *  Function to delete the session token of the user
- * @returns nothing
- */
-export async function logout(): Promise<void> {
-  // delete cookie session
-  (await cookies()).delete("session-token");
-}
-
-/**
- *  Function to get the user session
- * @returns null or the jwt payload if session token valid
- */
-export async function getSession(): Promise<null | JWTPayload> {
-  const cookieStore = await cookies();
-  const session = cookieStore.get("session-token")?.value;
-  if (!session) return null;
-
-  try {
-    return await decrypt(session);
-  } catch {
-    cookieStore.delete("session-token");
-    return null;
-  }
-}
+export const auth = betterAuth({
+  appName: "Jellyhub",
+  defaultCookieAttributes: {
+    httpOnly: true,
+    secure: true,
+  },
+  advanced: {
+    cookiePrefix: "jellyhub",
+    database: {
+      generateId: false,
+    },
+  },
+  database: prismaAdapter(prisma, {
+    provider: "sqlite",
+  }),
+  emailAndPassword: {
+    enabled: true,
+    disableSignUp: process.env.DISABLE_SIGNUP === "true",
+    requireEmailVerification: false,
+    minPasswordLength: 6,
+    maxPasswordLength: 50,
+  },
+  plugins: [
+    admin(),
+    username({
+      minUsernameLength: 3,
+      maxUsernameLength: 15,
+    }),
+  ],
+  // log if dev or test but not in prod
+  ...(process.env.NODE_ENV === "production" && {
+    logger: { log() {} },
+  }),
+});

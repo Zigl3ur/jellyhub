@@ -3,25 +3,91 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
-model accounts {
-  id        Int         @id @default(autoincrement())
-  username  String      @unique @db.VarChar(255)
-  password  String      @db.VarChar(255)
-  admin     Boolean     @default(false) @db.Boolean
-  jellydata jellydata[]
+model Jellydata {
+  id             String @id @default(uuid())
+  userId         String
+  serverId       String
+  serverUrl      String @unique
+  serverUsername String
+  serverToken    String
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("jellydata")
 }
 
-model jellydata {
-  id        Int      @id @default(autoincrement())
-  accountid Int
-  username  String   @db.VarChar(255)
-  server    String   @db.VarChar(255)
-  token     String   @db.VarChar(255)
-  account   accounts @relation(fields: [accountid], references: [id])
+model User {
+  id            String      @id @default(uuid())
+  name          String
+  email         String
+  emailVerified Boolean
+  image         String?
+  createdAt     DateTime
+  updatedAt     DateTime
+  sessions      Session[]
+  accounts      Account[]
+  jellydata     Jellydata[]
 
-  @@unique([accountid, server])
+  username        String
+  displayUsername String?
+
+  role       String?
+  banned     Boolean?
+  banReason  String?
+  banExpires DateTime?
+
+  @@unique([email])
+  @@unique([username])
+  @@map("user")
+}
+
+model Session {
+  id        String   @id @default(uuid())
+  expiresAt DateTime
+  token     String
+  createdAt DateTime
+  updatedAt DateTime
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  impersonatedBy String?
+
+  @@unique([token])
+  @@map("session")
+}
+
+model Account {
+  id                    String    @id @default(uuid())
+  accountId             String    @default(uuid())
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime
+  updatedAt             DateTime
+
+  @@map("account")
+}
+
+model Verification {
+  id         String    @id @default(uuid())
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime?
+  updatedAt  DateTime?
+
+  @@map("verification")
 }

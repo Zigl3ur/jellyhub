@@ -1,114 +1,67 @@
-import { Metadata } from "next";
-
-import { checkConn, getAllServerItems } from "@/lib/api.jellyfin";
-import { getSession } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
-import { AllItemsType } from "@/types/jellyfin.types";
-import ServerStats from "@/components/serversStats";
-import CardsCaroussel from "@/components/cardsCarroussel";
+import ServerStats from "@/components/servers-stats";
+import ItemsCarousel from "@/components/items-carousel";
 import Link from "next/link";
-import NotFound from "@/components/global/notFound";
-
-export const metadata: Metadata = {
-  title: "JellyHub - Home",
-};
-
-async function getAllItems(): Promise<void | {
-  serverCount: number;
-  allItems: AllItemsType;
-}> {
-  "use server";
-  const session = await getSession();
-
-  if (!session) return;
-
-  const itemsList = await prisma.accounts.findFirst({
-    where: {
-      username: session.username as string,
-    },
-    select: {
-      jellydata: true,
-    },
-  });
-
-  if (!itemsList) return;
-
-  const serverList = await Promise.all(
-    itemsList.jellydata.map(
-      async (server: { server: string; token: string }) => {
-        const status = await checkConn(server.server, server.token);
-        if (status === "Up")
-          return { address: server.server, token: server.token };
-      }
-    )
-  );
-
-  const filteredServers = serverList.filter((server) => server !== undefined);
-
-  const allItems = (await getAllServerItems(filteredServers)) as AllItemsType;
-
-  return { serverCount: filteredServers.length, allItems };
-}
+import NotFound from "@/components/no-item-found";
+import { getUser } from "@/server/utils";
+import { getAllServersItems } from "@/server/actions/jellyfin.actions";
 
 export default async function Home() {
-  const data = (await getAllItems()) ?? {
-    serverCount: 0,
-    allItems: { movies: [], shows: [], musicAlbum: [] },
+  await getUser();
+
+  const list = await getAllServersItems();
+
+  // easier to mess with undefined property
+  const data = {
+    serverCount: list.data?.serverCount || 0,
+    movies: list.data?.movies || [],
+    series: list.data?.series || [],
+    albums: list.data?.musicAlbum || [],
   };
 
   const itemsValues = [
     {
-      href: "/Movie",
+      href: "/movies",
       title: "Movies",
-      data: data.allItems.movies,
-      reduced: false,
+      data: data.movies,
     },
     {
-      href: "/Series",
+      href: "/series",
       title: "Series",
-      data: data.allItems.shows,
-      reduced: false,
+      data: data.series,
     },
     {
-      href: "/MusicAlbum",
-      title: "Music Albums",
-      data: data.allItems.musicAlbum,
-      reduced: true,
+      href: "/albums",
+      title: "Albums",
+      data: data.albums,
     },
   ];
 
   return (
-    <div className="flex-col">
+    <div className="max-w-[2000px] mx-auto">
       <ServerStats
-        isLoading={false}
         count={[
           data.serverCount,
-          data.allItems.movies.length,
-          data.allItems.shows.length,
-          data.allItems.musicAlbum.length,
+          data.movies.length,
+          data.series.length,
+          data.albums.length,
         ]}
       />
-      {data.serverCount !== 0 ? (
-        <div className="grid gap-8 mt-8">
-          {itemsValues.map((value) => {
-            return value.data.length > 0 ? (
-              <section key={value.href}>
-                <h2 className="text-2xl font-semibold mb-4 pl-14">
-                  <Link href={value.href} className="hover:underline">
-                    {value.title}
-                  </Link>
-                </h2>
-                <CardsCaroussel
-                  isLoading={false}
-                  items={value.data}
-                  isReduced={value.reduced}
-                />
-              </section>
-            ) : null;
-          })}
-        </div>
-      ) : (
+      {data.movies.length === 0 &&
+      data.series.length === 0 &&
+      data.albums.length === 0 ? (
         <NotFound />
+      ) : (
+        <div className="space-y-8">
+          {itemsValues.map((value) => (
+            <ItemsCarousel key={value.title} items={value.data}>
+              <h2 className="text-2xl font-semibold">
+                <Link href={value.href} className="hover:underline">
+                  {value.title}
+                </Link>
+              </h2>
+            </ItemsCarousel>
+          ))}
+        </div>
       )}
     </div>
   );
