@@ -17,16 +17,16 @@ import { ChevronLeft, ChevronRight, RefreshCcw } from "lucide-react";
 import { userDataType } from "@/types/actions.types";
 import { getUsersList } from "@/server/actions/settings.actions";
 import { Button } from "../../ui/button";
-import { UserWithRole } from "better-auth/plugins/admin";
 import { AddUserDialog } from "../dialogs/add-user-dialog";
 import { DeleteUserDialog } from "../alerts/delete-user-alert";
 import DataTable from "@/components/data-table";
 import { TableCell } from "@/components/ui/table";
 import { EditUserDialog } from "../dialogs/edit-user-dialog";
+import { User } from "better-auth";
 
 const createColumns = (
   refreshTable: () => Promise<void>
-): ColumnDef<UserWithRole>[] => [
+): ColumnDef<User>[] => [
   {
     id: "select",
     header: ({ table }) => (
@@ -106,7 +106,7 @@ interface DataTableProps {
 
 export function UserTable({ usersData }: DataTableProps) {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-  const [data, setData] = useState<UserWithRole[]>(usersData.users);
+  const [data, setData] = useState<User[]>(usersData.users);
   const [isFetching, setIsFetching] = useState<boolean>(false);
 
   const refreshTable = useCallback(async () => {

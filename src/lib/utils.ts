@@ -53,7 +53,9 @@ export function decryptToken(encrypted: string): string {
  * @param ticks ticks to convert
  * @returns date from the given ticks
  */
-export function TicksToDuration(ticks: number): string {
+export function TicksToDuration(ticks: number): string | undefined {
+  if (ticks === undefined || ticks === 0) return undefined;
+
   const ticksPerSecond = 10000000;
   const seconds = ticks / ticksPerSecond;
 
@@ -68,18 +70,28 @@ export function TicksToDuration(ticks: number): string {
 export function filterItems(items: Array<itemJellyfin>): Array<itemJellyfin> {
   const filteredItems = Object.values(
     items.reduce((acc: Record<string, itemJellyfin>, current) => {
-      // compare in lowerkeys to avoid dumb duplicate by title
-      const nameKey = current.item_name.toLowerCase();
+      // format title to avoid dumb duplicates with spaces and Upper case
+      const nameKey = current.item_name.toLowerCase().replaceAll(" ", "");
 
-      // if already exist
       if (acc[nameKey]) {
-        // merge items locations
-        acc[nameKey].item_location = [
-          ...acc[nameKey].item_location,
-          ...current.item_location,
-        ];
+        // merge locations
+        // prefer keeping the one with image if available
+        if (current.item_image !== "/default.svg") {
+          acc[nameKey] = {
+            ...current,
+            item_location: [
+              ...acc[nameKey].item_location,
+              ...current.item_location,
+            ],
+          };
+        } else {
+          acc[nameKey].item_location = [
+            ...acc[nameKey].item_location,
+            ...current.item_location,
+          ];
+        }
       } else {
-        // add it
+        // Add new item
         acc[nameKey] = { ...current };
       }
 

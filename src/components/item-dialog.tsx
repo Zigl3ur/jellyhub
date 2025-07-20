@@ -62,22 +62,27 @@ export default function ItemDialog({ item }: DialogProps) {
 
           <Separator className="opacity-50" />
 
-          <div className="flex gap-3 justify-center">
-            {specs.map(
-              (spec) =>
-                spec.value !== "None" &&
-                spec.value !== "00h00m" &&
-                spec.value !== undefined && (
-                  <span
-                    key={spec.title}
-                    className="self-center px-3 py-1 rounded-md bg-secondary text-secondary-foreground text-sm font-medium"
-                  >
-                    {spec.value}
-                  </span>
-                )
-            )}
-          </div>
-          <Separator className="opacity-50" />
+          {specs.some(
+            (spec) => spec.value !== "None" && spec.value !== undefined
+          ) && (
+            <>
+              <div className="flex gap-3 justify-center">
+                {specs.map(
+                  (spec) =>
+                    spec.value !== "None" &&
+                    spec.value !== undefined && (
+                      <span
+                        key={spec.title}
+                        className="self-center px-3 py-1 rounded-md bg-secondary text-secondary-foreground text-sm font-medium"
+                      >
+                        {spec.value}
+                      </span>
+                    )
+                )}
+              </div>
+              <Separator className="opacity-50" />
+            </>
+          )}
 
           <div>
             <h3 className="font-semibold text-lg mb-3 text-center">
