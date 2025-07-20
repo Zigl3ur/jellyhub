@@ -74,24 +74,25 @@ export function filterItems(items: Array<itemJellyfin>): Array<itemJellyfin> {
       const nameKey = current.item_name.toLowerCase().replaceAll(" ", "");
 
       if (acc[nameKey]) {
+        const itemLoc = [
+          ...acc[nameKey].item_location,
+          ...current.item_location,
+        ].filter(
+          (item, index, self) =>
+            self.findIndex((i) => i.server_url === item.server_url) === index
+        );
         // merge locations
         // prefer keeping the one with image if available
         if (current.item_image !== "/default.svg") {
           acc[nameKey] = {
             ...current,
-            item_location: [
-              ...acc[nameKey].item_location,
-              ...current.item_location,
-            ],
+            item_location: itemLoc,
           };
         } else {
-          acc[nameKey].item_location = [
-            ...acc[nameKey].item_location,
-            ...current.item_location,
-          ];
+          acc[nameKey].item_location = itemLoc;
         }
       } else {
-        // Add new item
+        // add new item
         acc[nameKey] = { ...current };
       }
 
