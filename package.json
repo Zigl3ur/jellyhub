@@ -8,9 +8,6 @@
     "lint": "next lint",
     "db:deploy": "pnpm -s dlx prisma migrate deploy && pnpm -s dlx prisma generate --no-hints && pnpm dlx prisma db seed"
   },
-  "prisma": {
-    "seed": "pnpm -s dlx tsx prisma/seed.ts"
-  },
   "dependencies": {
     "@hookform/resolvers": "^5.2.1",
     "@prisma/client": "^6.13.0",
