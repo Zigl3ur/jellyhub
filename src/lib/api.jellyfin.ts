@@ -107,54 +107,61 @@ export async function getLibraryItems(
   token: string,
   itemsType: itemTypes
 ): Promise<callersResponse<Array<itemJellyfin>>> {
-  const response = await fetch(
-    `${server_url}/Items?IncludeItemTypes=${itemsType}&Recursive=true`,
-    {
-      method: "GET",
-      headers: {
-        "Content-type": "application/json",
-        "X-Emby-Authorization": `MediaBrowser Token=${token}`,
-      },
-    }
-  );
-
-  if (response.status === 200) {
-    const data = await response.json();
-
-    const listItems: Array<itemJellyfin> = data.Items.map(
-      (item: rawItemJellyfin) => {
-        return {
-          item_location: [
-            {
-              server_url: server_url,
-              server_id: item.ServerId,
-              item_id: item.Id,
-            },
-          ],
-          item_name: item.Name,
-          item_type: item.Type,
-          item_duration: TicksToDuration(item.RunTimeTicks),
-          item_premier_date: item.ProductionYear,
-          item_artist: item.AlbumArtist ?? "None",
-          item_image:
-            item.ImageTags.Primary === undefined
-              ? "/default.svg"
-              : `${server_url}/Items/${item.Id}/Images/Primary?tag=${item.ImageTags.Primary}`,
-        };
+  try {
+    const response = await fetch(
+      `${server_url}/Items?IncludeItemTypes=${itemsType}&Recursive=true`,
+      {
+        method: "GET",
+        headers: {
+          "Content-type": "application/json",
+          "X-Emby-Authorization": `MediaBrowser Token=${token}`,
+        },
       }
     );
 
-    return { success: true, data: listItems };
-  } else if (response.status === 401) {
+    if (response.status === 200) {
+      const data = await response.json();
+
+      const listItems: Array<itemJellyfin> = data.Items.map(
+        (item: rawItemJellyfin) => {
+          return {
+            item_location: [
+              {
+                server_url: server_url,
+                server_id: item.ServerId,
+                item_id: item.Id,
+              },
+            ],
+            item_name: item.Name,
+            item_type: item.Type,
+            item_duration: TicksToDuration(item.RunTimeTicks),
+            item_premier_date: item.ProductionYear,
+            item_artist: item.AlbumArtist ?? "None",
+            item_image:
+              item.ImageTags.Primary === undefined
+                ? "/default.svg"
+                : `${server_url}/Items/${item.Id}/Images/Primary?tag=${item.ImageTags.Primary}`,
+          };
+        }
+      );
+
+      return { success: true, data: listItems };
+    } else if (response.status === 401) {
+      return {
+        success: false,
+        error: "Token is invalid",
+      };
+    }
     return {
       success: false,
-      error: "Token is invalid",
+      error: "An unknown error occured",
+    };
+  } catch {
+    return {
+      success: false,
+      error: "Failed to reach server",
     };
   }
-  return {
-    success: false,
-    error: "An unknow error occured",
-  };
 }
 
 /**
@@ -173,25 +180,32 @@ export async function getAllItems(
     musicAlbum: Array<itemJellyfin>;
   }>
 > {
-  const items = await Promise.all([
-    getLibraryItems(server_url, token, "Movie"),
-    getLibraryItems(server_url, token, "Series"),
-    getLibraryItems(server_url, token, "MusicAlbum"),
-  ]);
+  try {
+    const items = await Promise.all([
+      getLibraryItems(server_url, token, "Movie"),
+      getLibraryItems(server_url, token, "Series"),
+      getLibraryItems(server_url, token, "MusicAlbum"),
+    ]);
 
-  if (items[0].success && items[1].success && items[2].success) {
+    if (items[0].success && items[1].success && items[2].success) {
+      return {
+        success: true,
+        data: {
+          // data will always be defined since success is true
+          movies: items[0].data as Array<itemJellyfin>,
+          series: items[1].data as Array<itemJellyfin>,
+          musicAlbum: items[2].data as Array<itemJellyfin>,
+        },
+      };
+    }
     return {
-      success: true,
-      data: {
-        // data will always be defined since success is true
-        movies: items[0].data as Array<itemJellyfin>,
-        series: items[1].data as Array<itemJellyfin>,
-        musicAlbum: items[2].data as Array<itemJellyfin>,
-      },
+      success: false,
+      error: `Failed to retrieves items from ${server_url}`,
+    };
+  } catch {
+    return {
+      success: false,
+      error: "Failed to reach server",
     };
   }
-  return {
-    success: false,
-    error: `Failed to retrieves items from ${server_url}`,
-  };
 }
