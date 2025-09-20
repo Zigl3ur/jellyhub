@@ -1,16 +1,20 @@
 name: Build and Publish Docker Image
 
 on:
-  workflow_dispatch:
+  push:
+    branches:
+      - main
 
 jobs:
   publish:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
+
       - name: build image
         run: docker build -t zigleur/jellyhub:latest .
+
       - name: push image
         run: |
           docker login -u zigleur -p ${{ secrets.DOCKER_HUB_TOKEN }}
