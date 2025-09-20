@@ -1,4 +1,4 @@
-import { Jellydata } from "@prisma/client";
+import { Jellydata } from "@/generated/prisma";
 import { State } from "./jellyfin-api.types";
 import { auth } from "@/lib/auth";
 
