@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from "@/generated/prisma";
 
 const isDevEnv = process.env.NODE_ENV !== "production";
 

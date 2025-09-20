@@ -42,4 +42,5 @@ next-env.d.ts
 
 # dev stuff
 dev.sh
-/prisma/data/
+prisma/data/
+generated/

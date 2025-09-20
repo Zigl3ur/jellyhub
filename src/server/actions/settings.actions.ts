@@ -8,7 +8,7 @@ import {
   ServerActionReturn,
   userDataType,
 } from "@/types/actions.types";
-import { Prisma } from "@prisma/client";
+import { Prisma } from "@/generated/prisma";
 import { getUser } from "../utils";
 import { auth } from "@/lib/auth";
 import { z } from "zod/v4";
