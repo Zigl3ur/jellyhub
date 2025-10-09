@@ -2,7 +2,7 @@ import ContentPage from "@/components/content-page";
 import { getAllServersSeries } from "@/server/actions/jellyfin.actions";
 import { getUser } from "@/server/utils";
 
-export default async function AlbumsPage() {
+export default async function SeriesPage() {
   await getUser();
 
   const list = await getAllServersSeries();
