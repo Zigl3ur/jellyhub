@@ -1,11 +1,11 @@
 "use client";
 
-import { authClient } from "@/lib/auth-client";
 import { LogOutIcon } from "lucide-react";
-import { useRouter } from "next/navigation";
 import React from "react";
 import { toast } from "sonner";
+import { useRouter } from "@tanstack/react-router";
 import { SidebarMenuButton, SidebarMenuItem } from "../ui/sidebar";
+import { authClient } from "@/lib/auth-client";
 
 export default function LogOutButton() {
   const router = useRouter();
@@ -17,7 +17,7 @@ export default function LogOutButton() {
           toast.success("Success", {
             description: "Successfully logged out",
           });
-          router.push("/login");
+          router.navigate({ to: "/login", replace: true });
         },
         onError: (ctx) => {
           toast.error("Error", {

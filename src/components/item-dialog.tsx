@@ -1,5 +1,9 @@
-"use client";
-
+import { useState } from "react";
+import { Link } from "@tanstack/react-router";
+import ItemCard from "./item-card";
+import { Separator } from "./ui/separator";
+import { Skeleton } from "./ui/skeleton";
+import type { itemJellyfin } from "@/types/jellyfin-api.types";
 import {
   Dialog,
   DialogContent,
@@ -7,13 +11,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import type { itemJellyfin } from "@/types/jellyfin-api.types";
-import Image from "next/image";
-import Link from "next/link";
-import ItemCard from "./item-card";
-import { Separator } from "./ui/separator";
-import { useState } from "react";
-import { Skeleton } from "./ui/skeleton";
 
 interface DialogProps {
   item: itemJellyfin;
@@ -45,7 +42,7 @@ export default function ItemDialog({ item }: DialogProps) {
       <DialogDescription />
       <DialogContent className="flex flex-col gap-6 max-h-[90vh] max-w-4xl overflow-y-auto">
         <div className="relative shrink-0 self-center">
-          <Image
+          <img
             className="rounded-lg object-cover"
             src={item.item_image}
             alt={item.item_name}
@@ -63,7 +60,7 @@ export default function ItemDialog({ item }: DialogProps) {
           <Separator className="opacity-50" />
 
           {specs.some(
-            (spec) => spec.value !== "None" && spec.value !== undefined
+            (spec) => spec.value !== "None" && spec.value !== undefined,
           ) && (
             <>
               <div className="flex gap-3 justify-center">
@@ -77,7 +74,7 @@ export default function ItemDialog({ item }: DialogProps) {
                       >
                         {spec.value}
                       </span>
-                    )
+                    ),
                 )}
               </div>
               <Separator className="opacity-50" />
@@ -91,7 +88,7 @@ export default function ItemDialog({ item }: DialogProps) {
             <div className="flex flex-wrap gap-2 justify-center">
               {item.item_location.map((loc) => (
                 <Link
-                  href={`${loc.server_url}/web/#/details?id=${loc.item_id}&serverId=${loc.server_id}`}
+                  to={`${loc.server_url}/web/#/details?id=${loc.item_id}&serverId=${loc.server_id}`}
                   key={loc.item_id}
                   className="inline-flex items-center text-blue-500 hover:underline text-sm font-medium"
                   target="_blank"

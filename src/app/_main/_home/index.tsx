@@ -1,9 +1,16 @@
+import { Link, createFileRoute } from "@tanstack/react-router";
 import ServerStats from "@/components/servers-stats";
 import ItemsCarousel from "@/components/items-carousel";
-import Link from "next/link";
 import NotFound from "@/components/no-item-found";
 import { getUser } from "@/server/utils";
 import { getAllServersItems } from "@/server/actions/jellyfin.actions";
+import ItemsLoader from "@/components/loader";
+
+export const Route = createFileRoute("/_main/_home/")({
+  component: Home,
+  pendingComponent: LoadingComponent,
+  pendingMs: 0,
+});
 
 export default async function Home() {
   await getUser();
@@ -55,7 +62,7 @@ export default async function Home() {
           {itemsValues.map((value) => (
             <ItemsCarousel key={value.title} items={value.data}>
               <h2 className="text-2xl font-semibold">
-                <Link href={value.href} className="hover:underline">
+                <Link to={value.href} className="hover:underline">
                   {value.title}
                 </Link>
               </h2>
@@ -63,6 +70,15 @@ export default async function Home() {
           ))}
         </div>
       )}
+    </div>
+  );
+}
+
+function LoadingComponent() {
+  return (
+    <div className="flex flex-col gap-20 max-w-[2000px] mx-auto">
+      <ServerStats isLoading={true} count={[0, 0, 0, 0]} />
+      <ItemsLoader />
     </div>
   );
 }

@@ -1,9 +1,9 @@
+import { Eye, EyeOff } from "lucide-react";
+import { useState } from "react";
+import type { FieldError } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { FormControl } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { EyeOff, Eye } from "lucide-react";
-import { useState } from "react";
-import { FieldError } from "react-hook-form";
 
 interface PasswordFieldProps {
   placeholder: string;

@@ -3,6 +3,12 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 
+import { toast } from "sonner";
+import { useState } from "react";
+import { LoaderCircle } from "lucide-react";
+import { Link, useRouter } from "@tanstack/react-router";
+import PasswordField from "./fields/password-field";
+import type { loginSchemaType } from "@/schemas/auth.schema";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -13,15 +19,9 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { loginSchema, loginSchemaType } from "@/schemas/auth.schema";
+import { loginSchema } from "@/schemas/auth.schema";
 import { authClient } from "@/lib/auth-client";
-import { toast } from "sonner";
 import Logo from "@/components/logo";
-import PasswordField from "./fields/password-field";
-import { useState } from "react";
-import { LoaderCircle } from "lucide-react";
-import { useRouter } from "next/navigation";
-import Link from "next/link";
 
 interface LoginFormProps {
   isSignupAllowed: boolean;
@@ -58,7 +58,7 @@ export default function LoginForm({ isSignupAllowed }: LoginFormProps) {
             toast.success("Successfully logged in", {
               description: `Welcome back, ${ctx.data["user"].username} !`,
             });
-            router.push("/");
+            router.navigate({ to: "/" });
           },
           onError: (ctx) => {
             toast.error("Login failed", {
@@ -128,10 +128,7 @@ export default function LoginForm({ isSignupAllowed }: LoginFormProps) {
           {isSignupAllowed && (
             <div className="text-center text-xs">
               Doesn&apos;t have an account ?{" "}
-              <Link
-                href={"/register"}
-                className="hover:underline text-blue-500"
-              >
+              <Link to="/register" className="hover:underline text-blue-500">
                 Register
               </Link>
             </div>

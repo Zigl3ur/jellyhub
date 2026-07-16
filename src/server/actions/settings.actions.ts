@@ -1,19 +1,17 @@
-"use server";
-
+import { z } from "zod/v4";
+import { createServerFn } from "@tanstack/react-start";
+import { getRequestHeaders } from "@tanstack/react-start/server";
+import { getUser } from "../utils";
+import type {
+  ServerActionReturn,
+  jellydataDisplayed,
+  userDataType,
+} from "@/types/actions.types";
 import { checkConn, getToken } from "@/lib/api.jellyfin";
 import { prisma } from "@/lib/prisma";
 import { decryptToken, encryptToken } from "@/lib/utils";
-import {
-  jellydataDisplayed,
-  ServerActionReturn,
-  userDataType,
-} from "@/types/actions.types";
-import { Prisma } from "@/generated/prisma";
-import { getUser } from "../utils";
 import { auth } from "@/lib/auth";
-import { z } from "zod/v4";
 import { loginSchema } from "@/schemas/auth.schema";
-import { headers } from "next/headers";
 import {
   addServerSchema,
   editUserSchema,
@@ -26,95 +24,96 @@ import {
  * @param password the new user password
  * @returns message if it succeed or an error
  */
-export async function addUserAction(
-  username: string,
-  password: string
-): Promise<ServerActionReturn> {
-  const user = await getUser();
+export const addUserAction = createServerFn()
+  .validator((data: { username: string; password: string }) => data)
+  .handler(async ({ data }): Promise<ServerActionReturn> => {
+    const { username, password } = data;
+    const user = await getUser();
 
-  if (user.role !== "admin")
-    return { success: false, error: "User is not an administrator" };
+    if (user.role !== "admin")
+      return { success: false, error: "User is not an administrator" };
 
-  const result = loginSchema.safeParse({ username, password });
+    const result = loginSchema.safeParse({ username, password });
 
-  if (!result.success)
-    return { success: false, error: z.prettifyError(result.error) };
+    if (!result.success)
+      return { success: false, error: z.prettifyError(result.error) };
 
-  try {
-    const createdUser = await auth.api.createUser({
-      headers: await headers(),
-      body: {
-        email: `${username}@jellyhub.com`,
-        name: username,
-        password: password,
-        data: {
-          username: username,
-          displayUsername: username,
+    try {
+      const createdUser = await auth.api.createUser({
+        headers: getRequestHeaders(),
+        body: {
+          email: `${username}@jellyhub.com`,
+          name: username,
+          password: password,
+          data: {
+            username: username,
+            displayUsername: username,
+          },
         },
-      },
-    });
-    if (!createdUser.user.id)
-      return { success: false, error: "Failed to create user" };
+      });
+      if (!createdUser.user.id)
+        return { success: false, error: "Failed to create user" };
 
-    return {
-      success: true,
-      message: "User Successfully created",
-    };
-  } catch (err) {
-    return {
-      success: false,
-      error: err instanceof Error ? err.message : "Failed to create user",
-    };
-  }
-}
+      return {
+        success: true,
+        message: "User Successfully created",
+      };
+    } catch (err) {
+      return {
+        success: false,
+        error: err instanceof Error ? err.message : "Failed to create user",
+      };
+    }
+  });
 
 /**
  * Server action to delete a user
  * @param emails array of users's emails to remove
  * @returns message if it succeed or an error
  */
-export async function deleteUserAction(
-  emails: Array<string>
-): Promise<ServerActionReturn> {
-  const user = await getUser();
+export const deleteUserAction = createServerFn()
+  .validator((data: { emails: Array<string> }) => data)
+  .handler(async ({ data }): Promise<ServerActionReturn> => {
+    const { emails } = data;
+    const user = await getUser();
 
-  if (user.role !== "admin")
-    return { success: false, error: "User is not an administrator" };
+    if (user.role !== "admin")
+      return { success: false, error: "User is not an administrator" };
 
-  try {
-    const usersId = await prisma.user.findMany({
-      where: {
-        email: {
-          in: emails,
+    try {
+      const usersId = await prisma.user.findMany({
+        where: {
+          email: {
+            in: emails,
+          },
         },
-      },
-      select: { id: true },
-    });
+        select: { id: true },
+      });
 
-    if (usersId.length < 1)
-      return { success: false, error: "User(s) not found" };
+      if (usersId.length < 1)
+        return { success: false, error: "User(s) not found" };
 
-    await prisma.user.deleteMany({
-      where: {
-        id: {
-          in: usersId.map((data) => {
-            return data.id;
-          }),
+      await prisma.user.deleteMany({
+        where: {
+          id: {
+            in: usersId.map((data) => {
+              return data.id;
+            }),
+          },
         },
-      },
-    });
+      });
 
-    return {
-      success: true,
-      message: "Successfully deleted user(s)",
-    };
-  } catch {
-    return {
-      success: false,
-      error: "Failed to delete user(s)",
-    };
-  }
-}
+      return {
+        success: true,
+        message: "Successfully deleted user(s)",
+      };
+    } catch {
+      return {
+        success: false,
+        error: "Failed to delete user(s)",
+      };
+    }
+  });
 
 /**
  * Server action to edit a user
@@ -125,77 +124,83 @@ export async function deleteUserAction(
  * @param confirmNewPassword the confirmed new password for the user
  * @returns message if it succeed or an error
  */
-export async function editUserAction(
-  id: string,
-  baseUsername: string,
-  newUsername?: string,
-  newPassword?: string,
-  confirmNewPassword?: string
-): Promise<ServerActionReturn> {
-  const user = await getUser();
-  const isAdmin = user.role === "admin";
+export const editUserAction = createServerFn()
+  .validator(
+    (data: {
+      id: string;
+      baseUsername: string;
+      newUsername?: string;
+      newPassword?: string;
+      confirmNewPassword?: string;
+    }) => data,
+  )
+  .handler(async ({ data }): Promise<ServerActionReturn> => {
+    const { id, baseUsername, newUsername, newPassword, confirmNewPassword } =
+      data;
+    const user = await getUser();
+    const isAdmin = user.role === "admin";
 
-  if (!isAdmin)
-    return {
-      success: false,
-      error: "User is not an administrator",
-    };
+    if (!isAdmin)
+      return {
+        success: false,
+        error: "User is not an administrator",
+      };
 
-  const result = editUserSchema.safeParse({
-    username: newUsername,
-    password: newPassword,
-    confirmPassword: confirmNewPassword,
-  });
+    const result = editUserSchema.safeParse({
+      username: newUsername,
+      password: newPassword,
+      confirmPassword: confirmNewPassword,
+    });
 
-  if (!result.success)
-    return { success: false, error: z.prettifyError(result.error) };
+    if (!result.success)
+      return { success: false, error: z.prettifyError(result.error) };
 
-  const ctx = await auth.$context;
+    const ctx = await auth.$context;
 
-  try {
-    let hashPassword;
+    try {
+      let hashPassword;
 
-    if (newPassword) hashPassword = await ctx.password.hash(newPassword);
+      if (newPassword) hashPassword = await ctx.password.hash(newPassword);
 
-    const newName = newUsername ? newUsername : baseUsername;
+      const newName = newUsername ? newUsername : baseUsername;
 
-    await prisma.user.update({
-      where: { id: id },
-      data: {
-        username: newName,
-        name: newName,
-        displayUsername: newName,
-        email: `${newName}@jellyhub.com`,
-        accounts: {
-          updateMany: {
-            where: {
-              userId: id,
-            },
-            data: {
-              password: hashPassword,
+      await prisma.user.update({
+        where: { id: id },
+        data: {
+          username: newName,
+          name: newName,
+          displayUsername: newName,
+          email: `${newName}@jellyhub.com`,
+          accounts: {
+            updateMany: {
+              where: {
+                userId: id,
+              },
+              data: {
+                password: hashPassword,
+              },
             },
           },
         },
-      },
-    });
+      });
 
-    return {
-      success: true,
-      message: "Successfully updated user",
-    };
-  } catch (err) {
-    const errorMessage =
-      err instanceof Prisma.PrismaClientKnownRequestError &&
-      err.code === "P2002"
-        ? "Username already taken"
-        : "Failed to update user";
+      return {
+        success: true,
+        message: "Successfully updated user",
+      };
+    } catch (err) {
+      const errorMessage =
+        err instanceof Prisma.PrismaClientKnownRequestError &&
+        err.code === "P2002"
+          ? "Username already taken"
+          : "Failed to update user";
 
-    return {
-      success: false,
-      error: errorMessage,
-    };
-  }
-}
+      return {
+        success: false,
+        error: errorMessage,
+      };
+    }
+  });
 
 /**
  * Server action to reset password
@@ -205,7 +210,7 @@ export async function editUserAction(
  */
 export async function resetPasswordAction(
   newPassword: string,
-  confirmNewPassword: string
+  confirmNewPassword: string,
 ): Promise<ServerActionReturn> {
   const user = await getUser();
 
@@ -241,7 +246,7 @@ export async function getUsersList(): Promise<
     return { success: false, error: "User is not an administrator" };
 
   const users = await auth.api.listUsers({
-    headers: await headers(),
+    headers: getRequestHeaders(),
     query: {
       limit: 100,
     },
@@ -257,7 +262,7 @@ export async function getUsersList(): Promise<
 export async function addServerAction(
   server_url: string,
   username: string,
-  password: string
+  password: string,
 ): Promise<ServerActionReturn> {
   const user = await getUser();
 
@@ -276,7 +281,7 @@ export async function addServerAction(
   const { success, data, error } = await getToken(
     server_url,
     username,
-    password
+    password,
   );
 
   if (!success || !data) {
@@ -304,8 +309,8 @@ export async function addServerAction(
       err.code === "P2002"
         ? "Server already registered"
         : err instanceof Error
-        ? err.message
-        : "An Unknown Error Occurred";
+          ? err.message
+          : "An Unknown Error Occurred";
 
     return {
       success: false,
@@ -318,7 +323,7 @@ export async function addServerAction(
  * @returns jellyfin server list of the account or nothing if not authenticated
  */
 export async function deleteServerAction(
-  data: Array<{ address: string; username: string }>
+  data: Array<{ address: string; username: string }>,
 ): Promise<ServerActionReturn> {
   const user = await getUser();
 
@@ -380,7 +385,7 @@ export async function getJellyfinServers(): Promise<
         status: (await checkConn(server.serverUrl, decryptToken(serverToken)))
           .data,
       };
-    })
+    }),
   );
 
   return {

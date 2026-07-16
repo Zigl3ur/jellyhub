@@ -1,17 +1,15 @@
-"use server";
-
+import { getRequestHeaders } from "@tanstack/react-start/server";
+import { createServerFn } from "@tanstack/react-start";
 import { auth } from "@/lib/auth";
-import { headers } from "next/headers";
-import { redirect } from "next/navigation";
 
-export async function getUser(): Promise<typeof auth.$Infer.Session.user> {
+export const getUser = createServerFn().handler(async () => {
   const session = await auth.api.getSession({
-    headers: await headers(),
+    headers: getRequestHeaders(),
   });
 
   if (!session?.user) {
-    redirect("/login");
+    throw new Error("Unauthorized");
   }
 
   return session.user;
-}
+});

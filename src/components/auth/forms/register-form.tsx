@@ -3,6 +3,12 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 
+import { toast } from "sonner";
+import { useState } from "react";
+import { LoaderCircle } from "lucide-react";
+import { Link, useRouter } from "@tanstack/react-router";
+import PasswordField from "./fields/password-field";
+import type { registerSchemaType } from "@/schemas/auth.schema";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -13,15 +19,9 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { registerSchema, registerSchemaType } from "@/schemas/auth.schema";
+import { registerSchema } from "@/schemas/auth.schema";
 import { authClient } from "@/lib/auth-client";
-import { toast } from "sonner";
 import Logo from "@/components/logo";
-import PasswordField from "./fields/password-field";
-import { useState } from "react";
-import { LoaderCircle } from "lucide-react";
-import { useRouter } from "next/navigation";
-import Link from "next/link";
 
 /**
  * RegisterForm Component
@@ -43,7 +43,7 @@ export default function RegisterForm() {
   const { password: passwordError, confirmPassword: confirmPasswordError } =
     registerForm.formState.errors;
 
-  const onSubmit = async (values: registerSchemaType) => {
+  const onSubmit = (values: registerSchemaType) => {
     const { username, password } = values;
 
     authClient.signUp
@@ -57,7 +57,7 @@ export default function RegisterForm() {
             toast.success("Successfully registered", {
               description: `Welcome, ${ctx.data["user"].name} !`,
             });
-            router.push("/");
+            router.navigate({ to: "/" });
           },
           onError: (ctx) => {
             toast.error("Register failed", {
@@ -144,7 +144,7 @@ export default function RegisterForm() {
           </div>
           <div className="text-center text-xs">
             Already registered ?{" "}
-            <Link href={"/login"} className="hover:underline text-blue-500">
+            <Link to={"/login"} className="hover:underline text-blue-500">
               Login
             </Link>
           </div>

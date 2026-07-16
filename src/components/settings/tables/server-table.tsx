@@ -1,19 +1,14 @@
 "use client";
 
 import {
-  ColumnDef,
   getCoreRowModel,
-  useReactTable,
-  getSortedRowModel,
-  ColumnFiltersState,
   getFilteredRowModel,
   getPaginationRowModel,
+  getSortedRowModel,
+  useReactTable,
 } from "@tanstack/react-table";
 
-import { Checkbox } from "@/components/ui/checkbox";
 import { useCallback, useEffect, useState } from "react";
-import { Input } from "../../ui/input";
-import { DeleteAlertDialog } from "../alerts/delete-server-alert";
 import {
   ChevronLeft,
   ChevronRight,
@@ -22,16 +17,20 @@ import {
   Wifi,
   WifiOff,
 } from "lucide-react";
-import { jellydataDisplayed } from "@/types/actions.types";
-import { State } from "@/types/jellyfin-api.types";
+import { Link } from "@tanstack/react-router";
+import { Input } from "../../ui/input";
+import { DeleteAlertDialog } from "../alerts/delete-server-alert";
 import { AddServerDialog } from "../dialogs/add-server-dialog";
-import Link from "next/link";
-import { getJellyfinServers } from "@/server/actions/settings.actions";
 import { Button } from "../../ui/button";
+import type { jellydataDisplayed } from "@/types/actions.types";
+import type { State } from "@/types/jellyfin-api.types";
+import type { ColumnDef, ColumnFiltersState } from "@tanstack/react-table";
+import { getJellyfinServers } from "@/server/actions/settings.actions";
+import { Checkbox } from "@/components/ui/checkbox";
 import DataTable from "@/components/data-table";
 import { TableCell } from "@/components/ui/table";
 
-export const columns: ColumnDef<jellydataDisplayed>[] = [
+export const columns: Array<ColumnDef<jellydataDisplayed>> = [
   {
     id: "select",
     header: ({ table }) => (
@@ -60,10 +59,10 @@ export const columns: ColumnDef<jellydataDisplayed>[] = [
     accessorKey: "serverUrl",
     header: "Address",
     cell: ({ row }) => {
-      const address = row.getValue("serverUrl") as string;
+      const address = row.getValue("serverUrl");
       return (
         <div title={address}>
-          <Link href={address} className="hover:underline">
+          <Link to={address} className="hover:underline">
             {address.split("//")[1]}
           </Link>
         </div>
@@ -74,7 +73,7 @@ export const columns: ColumnDef<jellydataDisplayed>[] = [
     accessorKey: "serverUsername",
     header: "Username",
     cell: ({ row }) => {
-      const username = row.getValue("serverUsername") as string;
+      const username = row.getValue("serverUsername");
       return <div title={username}>{username}</div>;
     },
   },
@@ -82,7 +81,7 @@ export const columns: ColumnDef<jellydataDisplayed>[] = [
     accessorKey: "status",
     header: "Status",
     cell: ({ row }) => {
-      const status = row.getValue("status") as State;
+      const status = row.getValue("status");
       return (
         <div className="flex items-center">
           {status === "Up" && <Wifi className="w-4 h-4 text-green-500 mr-2" />}
@@ -100,20 +99,20 @@ export const columns: ColumnDef<jellydataDisplayed>[] = [
 ];
 
 interface DataTableProps {
-  columns: ColumnDef<jellydataDisplayed>[];
-  serversData: jellydataDisplayed[];
+  columns: Array<ColumnDef<jellydataDisplayed>>;
+  serversData: Array<jellydataDisplayed>;
 }
 
 export function ServerTable({ columns, serversData }: DataTableProps) {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-  const [data, setData] = useState<jellydataDisplayed[]>(serversData);
+  const [data, setData] = useState<Array<jellydataDisplayed>>(serversData);
   const [isFetching, setIsFetching] = useState<boolean>(false);
 
   const refreshTable = useCallback(async () => {
     setIsFetching(true);
 
     setData((prevData) =>
-      prevData.map((server) => ({ ...server, status: "Checking" as State }))
+      prevData.map((server) => ({ ...server, status: "Checking" as State })),
     );
     const response = await getJellyfinServers();
 

@@ -1,3 +1,5 @@
+import { createFileRoute } from "@tanstack/react-router";
+import { Suspense } from "react";
 import {
   ServerTable,
   columns as serversTableColumns,
@@ -8,9 +10,13 @@ import {
   getUsersList,
 } from "@/server/actions/settings.actions";
 import { UserTable } from "@/components/settings/tables/user-table";
-import { Suspense } from "react";
 import LoadingTable from "@/components/settings/tables/loading-table";
 import ResetPasswd from "@/components/settings/reset-password";
+
+export const Route = createFileRoute("/_main/settings/")({
+  component: SettingsPage,
+  pendingMs: 0,
+});
 
 async function ServersSection() {
   const servers = await getJellyfinServers();

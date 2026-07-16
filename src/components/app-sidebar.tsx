@@ -1,5 +1,7 @@
-import { Home, Settings, Film, Tv, Music } from "lucide-react";
+import { Film, Home, Music, Settings, Tv } from "lucide-react";
 
+import { Link } from "@tanstack/react-router";
+import LogOutButton from "./auth/log-out-button";
 import {
   Sidebar,
   SidebarContent,
@@ -11,9 +13,6 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import Image from "next/image";
-import Link from "next/link";
-import LogOutButton from "./auth/log-out-button";
 
 const baseItems = [
   {
@@ -38,16 +37,16 @@ const baseItems = [
   },
 ];
 
-export async function AppSidebar() {
+export function AppSidebar() {
   return (
     <Sidebar collapsible="icon" variant="floating">
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild>
-              <Link href="/">
+              <Link to="/">
                 <div className="flex aspect-square size-8 items-center justify-center rounded-lg">
-                  <Image src={"/icon.svg"} alt="icon" width={25} height={25} />
+                  <img src={"/icon.svg"} alt="icon" width={25} height={25} />
                 </div>
                 <span className="font-semibold text-xl">JellyHub</span>
               </Link>
@@ -63,7 +62,7 @@ export async function AppSidebar() {
                 return (
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton asChild>
-                      <Link href={item.url}>
+                      <Link to={item.url}>
                         <item.icon />
                         <span>{item.title}</span>
                       </Link>
@@ -79,7 +78,7 @@ export async function AppSidebar() {
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton asChild>
-              <Link href={"/settings"}>
+              <Link to={"/settings"}>
                 <Settings />
                 <span>Settings</span>
               </Link>

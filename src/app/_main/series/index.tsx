@@ -1,8 +1,28 @@
+import { createFileRoute } from "@tanstack/react-router";
+import { X } from "lucide-react";
+import ContentPage from "@/components/content-page";
 import Loader from "@/components/loader";
 import { Input } from "@/components/ui/input";
-import { X } from "lucide-react";
+import { getAllServersSeries } from "@/server/actions/jellyfin.actions";
+import { getUser } from "@/server/utils";
 
-export default function Loading() {
+export const Route = createFileRoute("/_main/series/")({
+  component: SeriesPage,
+  pendingComponent: LoadingComponent,
+  pendingMs: 0,
+});
+
+async function SeriesPage() {
+  await getUser();
+
+  const list = await getAllServersSeries();
+
+  const series = list.data || [];
+
+  return <ContentPage placeholder="Search for Series" data={series} />;
+}
+
+export default function LoadingComponent() {
   return (
     <div className="flex flex-col gap-20 max-w-[2000px] mx-auto px-4">
       <div className="w-full max-w-xs xs:max-w-sm md:max-w-xl self-center sticky top-2 z-10">

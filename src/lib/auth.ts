@@ -1,8 +1,9 @@
 import { betterAuth } from "better-auth";
 import { username } from "better-auth/plugins/username";
 import { prismaAdapter } from "better-auth/adapters/prisma";
-import { prisma } from "./prisma";
 import { admin } from "better-auth/plugins/admin";
+import { tanstackStartCookies } from "better-auth/tanstack-start";
+import { prisma } from "./prisma";
 
 export const auth = betterAuth({
   appName: "Jellyhub",
@@ -32,6 +33,7 @@ export const auth = betterAuth({
       minUsernameLength: 3,
       maxUsernameLength: 15,
     }),
+    tanstackStartCookies(),
   ],
   // log if dev or test but not in prod
   ...(process.env.NODE_ENV === "production" && {

@@ -1,16 +1,15 @@
 "use client";
 
-import Image from "next/image";
+import { useState } from "react";
 import {
   Card,
   CardContent,
+  CardDescription,
   CardFooter,
   CardTitle,
-  CardDescription,
 } from "./ui/card";
 import { Skeleton } from "./ui/skeleton";
-import { itemJellyfin } from "@/types/jellyfin-api.types";
-import { useState } from "react";
+import type { itemJellyfin } from "@/types/jellyfin-api.types";
 
 interface ItemCardProps {
   item: itemJellyfin;
@@ -31,7 +30,7 @@ export default function ItemCard({ item }: ItemCardProps) {
         <div
           className={`relative w-[150px] h-[${isMusic ? "150px" : "225px"}]`}
         >
-          <Image
+          <img
             className={`w-full ${
               isMusic ? "h-[150px]" : "h-full"
             } rounded-sm object-cover`}
