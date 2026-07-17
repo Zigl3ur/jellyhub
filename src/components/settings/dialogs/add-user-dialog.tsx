@@ -27,7 +27,7 @@ import { useState } from "react";
 import { LoaderCircle, Plus } from "lucide-react";
 import { toast } from "sonner";
 import { loginSchema, loginSchemaType } from "@/schemas/auth.schema";
-import { addUserAction } from "@/server/actions/settings.actions";
+import { addUserAction } from "@/server/functions/settings.functions";
 import PasswordField from "@/components/auth/forms/fields/password-field";
 
 interface AddUserDialogProps {

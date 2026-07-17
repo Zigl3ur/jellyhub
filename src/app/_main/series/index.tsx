@@ -3,7 +3,7 @@ import { X } from "lucide-react";
 import ContentPage from "@/components/content-page";
 import Loader from "@/components/loader";
 import { Input } from "@/components/ui/input";
-import { getAllServersSeries } from "@/server/actions/jellyfin.actions";
+import { getAllServersSeries } from "@/server/jellyfin.functions";
 import { getUser } from "@/server/utils";
 
 export const Route = createFileRoute("/_main/series/")({

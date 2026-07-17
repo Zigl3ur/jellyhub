@@ -29,7 +29,7 @@ import { toast } from "sonner";
 import PasswordField from "@/components/auth/forms/fields/password-field";
 import { User } from "better-auth";
 import { editUserSchema, editUserSchemaType } from "@/schemas/settings.schema";
-import { editUserAction } from "@/server/actions/settings.actions";
+import { editUserAction } from "@/server/functions/settings.functions";
 
 interface EditUserDialogProps {
   user: User;
@@ -62,7 +62,7 @@ export function EditUserDialog({ user, onEdit }: EditUserDialogProps) {
       user.name,
       username,
       confirmPassword,
-      confirmPassword
+      confirmPassword,
     )
       .then((result) => {
         if (result.error)

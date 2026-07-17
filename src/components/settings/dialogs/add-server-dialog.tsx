@@ -29,7 +29,7 @@ import {
   addServerSchema,
   addServerSchemaType,
 } from "@/schemas/settings.schema";
-import { addServerAction } from "@/server/actions/settings.actions";
+import { addServerAction } from "@/server/functions/settings.functions";
 import { toast } from "sonner";
 import PasswordField from "@/components/auth/forms/fields/password-field";
 

@@ -3,7 +3,7 @@ import ServerStats from "@/components/servers-stats";
 import ItemsCarousel from "@/components/items-carousel";
 import NotFound from "@/components/no-item-found";
 import { getUser } from "@/server/utils";
-import { getAllServersItems } from "@/server/actions/jellyfin.actions";
+import { getAllServersItems } from "@/server/functions/jellyfin.functions";
 import ItemsLoader from "@/components/loader";
 
 export const Route = createFileRoute("/_main/_home/")({

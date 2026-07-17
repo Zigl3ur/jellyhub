@@ -1,9 +1,11 @@
-import { clsx, type ClassValue } from "clsx";
+import { createCipheriv, createDecipheriv, randomBytes } from "node:crypto";
+import { clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
-import crypto from "crypto";
-import { itemJellyfin } from "@/types/jellyfin-api.types";
+import { createServerOnlyFn } from "@tanstack/react-start";
+import type { ClassValue } from "clsx";
+import type { itemJellyfin } from "@/types/jellyfin-api.types";
 
-export function cn(...inputs: ClassValue[]) {
+export function cn(...inputs: Array<ClassValue>) {
   return twMerge(clsx(inputs));
 }
 
@@ -12,41 +14,34 @@ export function cn(...inputs: ClassValue[]) {
  * @param token the token to encrypt
  * @returns the encrypted token
  */
-export function encryptToken(token: string): string {
-  const secretKey = process.env.SECRET_KEY as string;
-  if (!secretKey) throw new Error("SECRET_KEY env var is not defined");
+export const encrypt = createServerOnlyFn((value: string): string => {
+  const ENCRYPTION_KEY = Buffer.from(process.env.SECRET_KEY as string, "hex");
 
-  const iv = crypto.randomBytes(16);
-  const cipher = crypto.createCipheriv(
-    "aes-256-cbc",
-    Buffer.from(secretKey, "hex"),
-    iv
-  );
-  let encrypted = cipher.update(token, "utf8", "hex");
-  encrypted += cipher.final("hex");
-  return iv.toString("hex") + ":" + encrypted;
-}
+  const iv = randomBytes(16);
+  const cipher = createCipheriv("aes-256-gcm", ENCRYPTION_KEY, iv);
+  const encrypted = Buffer.concat([
+    cipher.update(value, "utf8"),
+    cipher.final(),
+  ]);
+  const tag = cipher.getAuthTag();
+  return `${iv.toString("hex")}:${tag.toString("hex")}:${encrypted.toString("hex")}`;
+});
 
 /**
  * decrypt the given data
  * @param encrypted the data to decrypt
  * @returns the decrypted data
  */
-export function decryptToken(encrypted: string): string {
-  const secretKey = process.env.SECRET_KEY as string;
-  if (!secretKey) throw new Error("SECRET_KEY env var is not defined");
+export const decrypt = createServerOnlyFn((raw: string): string => {
+  const ENCRYPTION_KEY = Buffer.from(process.env.ENCRYPTION_KEY!, "hex");
 
-  const [ivHex, encryptedText] = encrypted.split(":");
-  const iv = Buffer.from(ivHex, "hex");
-  const decipher = crypto.createDecipheriv(
-    "aes-256-cbc",
-    Buffer.from(secretKey, "hex"),
-    iv
+  const [iv, tag, encrypted] = raw.split(":").map((s) => Buffer.from(s, "hex"));
+  const decipher = createDecipheriv("aes-256-gcm", ENCRYPTION_KEY, iv);
+  decipher.setAuthTag(tag);
+  return Buffer.concat([decipher.update(encrypted), decipher.final()]).toString(
+    "utf8",
   );
-  let decrypted = decipher.update(encryptedText, "hex", "utf8");
-  decrypted += decipher.final("utf8");
-  return decrypted;
-}
+});
 
 /**
  * Function to get ticks to readable duration
@@ -79,7 +74,7 @@ export function filterItems(items: Array<itemJellyfin>): Array<itemJellyfin> {
           ...current.item_location,
         ].filter(
           (item, index, self) =>
-            self.findIndex((i) => i.server_url === item.server_url) === index
+            self.findIndex((i) => i.server_url === item.server_url) === index,
         );
         // merge locations
         // prefer keeping the one with image if available
@@ -97,7 +92,7 @@ export function filterItems(items: Array<itemJellyfin>): Array<itemJellyfin> {
       }
 
       return acc;
-    }, {})
+    }, {}),
   );
 
   // shuffle
@@ -107,9 +102,9 @@ export function filterItems(items: Array<itemJellyfin>): Array<itemJellyfin> {
     .map(({ value }) => value);
 }
 
-export function debounce<T extends unknown[]>(
+export function debounce<T extends Array<unknown>>(
   callback: (...args: T) => void,
-  delay: number
+  delay: number,
 ) {
   let timeoutTimer: ReturnType<typeof setTimeout>;
 

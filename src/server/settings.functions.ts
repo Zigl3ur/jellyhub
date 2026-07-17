@@ -1,15 +1,14 @@
 import { z } from "zod/v4";
 import { createServerFn } from "@tanstack/react-start";
 import { getRequestHeaders } from "@tanstack/react-start/server";
-import { getUser } from "../utils";
+import { and, eq, inArray } from "drizzle-orm";
+import { getUser } from "./utils";
 import type {
   ServerActionReturn,
   jellydataDisplayed,
   userDataType,
 } from "@/types/actions.types";
 import { checkConn, getToken } from "@/lib/api.jellyfin";
-import { prisma } from "@/lib/prisma";
-import { decryptToken, encryptToken } from "@/lib/utils";
 import { auth } from "@/lib/auth";
 import { loginSchema } from "@/schemas/auth.schema";
 import {
@@ -17,6 +16,11 @@ import {
   editUserSchema,
   resetPasswdScema,
 } from "@/schemas/settings.schema";
+import db from "@/lib/db";
+import {
+  jellydata as jellydataSchema,
+  user as userSchema,
+} from "@/lib/db/schema";
 
 /**
  * Server action to create a user
@@ -81,27 +85,34 @@ export const deleteUserAction = createServerFn()
       return { success: false, error: "User is not an administrator" };
 
     try {
-      const usersId = await prisma.user.findMany({
+      const usersId = await db.query.user.findMany({
         where: {
           email: {
             in: emails,
           },
         },
-        select: { id: true },
+        columns: { id: true },
       });
 
       if (usersId.length < 1)
         return { success: false, error: "User(s) not found" };
 
-      await prisma.user.deleteMany({
-        where: {
-          id: {
-            in: usersId.map((data) => {
-              return data.id;
-            }),
-          },
-        },
-      });
+      // await prisma.user.deleteMany({
+      //   where: {
+      //     id: {
+      //       in: usersId.map((data) => {
+      //         return data.id;
+      //       }),
+      //     },
+      //   },
+      // });
+
+      await db.delete(jellydataSchema).where(
+        inArray(
+          jellydataSchema.userId,
+          usersId.map((u) => u.id),
+        ),
+      );
 
       return {
         success: true,
@@ -164,40 +175,44 @@ export const editUserAction = createServerFn()
 
       const newName = newUsername ? newUsername : baseUsername;
 
-      await prisma.user.update({
-        where: { id: id },
-        data: {
+      // await prisma.user.update({
+      //   where: { id: id },
+      //   data: {
+      //     username: newName,
+      //     name: newName,
+      //     displayUsername: newName,
+      //     email: `${newName}@jellyhub.com`,
+      //     accounts: {
+      //       updateMany: {
+      //         where: {
+      //           userId: id,
+      //         },
+      //         data: {
+      //           password: hashPassword,
+      //         },
+      //       },
+      //     },
+      //   },
+      // });
+
+      await db
+        .update(userSchema)
+        .set({
           username: newName,
           name: newName,
           displayUsername: newName,
           email: `${newName}@jellyhub.com`,
-          accounts: {
-            updateMany: {
-              where: {
-                userId: id,
-              },
-              data: {
-                password: hashPassword,
-              },
-            },
-          },
-        },
-      });
+        })
+        .where(inArray(userSchema.id, [id]));
 
       return {
         success: true,
         message: "Successfully updated user",
       };
     } catch (err) {
-      const errorMessage =
-        err instanceof Prisma.PrismaClientKnownRequestError &&
-        err.code === "P2002"
-          ? "Username already taken"
-          : "Failed to update user";
-
       return {
         success: false,
-        error: errorMessage,
+        error: "Failed to update user",
       };
     }
   });
@@ -292,29 +307,29 @@ export async function addServerAction(
   }
 
   try {
-    await prisma.jellydata.create({
-      data: {
-        userId: user.id,
-        serverId: data.server_id,
-        serverUrl: data.server_url,
-        serverUsername: data.server_username,
-        serverToken: encryptToken(data.token),
-      },
+    // await prisma.jellydata.create({
+    //   data: {
+    //     userId: user.id,
+    //     serverId: data.server_id,
+    //     serverUrl: data.server_url,
+    //     serverUsername: data.server_username,
+    //     serverToken: encryptToken(data.token),
+    //   },
+    // });
+
+    await db.insert(jellydataSchema).values({
+      userId: user.id,
+      serverId: data.server_id,
+      serverUrl: data.server_url,
+      serverUsername: data.server_username,
+      serverToken: data.token,
     });
 
     return { success: true, message: "Successfully added jellyfin server !" };
   } catch (err) {
-    const errorMessage =
-      err instanceof Prisma.PrismaClientKnownRequestError &&
-      err.code === "P2002"
-        ? "Server already registered"
-        : err instanceof Error
-          ? err.message
-          : "An Unknown Error Occurred";
-
     return {
       success: false,
-      error: errorMessage,
+      error: "Failed to add jellyfin server",
     };
   }
 }
@@ -328,17 +343,19 @@ export async function deleteServerAction(
   const user = await getUser();
 
   try {
-    await prisma.jellydata.deleteMany({
-      where: {
-        userId: user.id,
-        serverUrl: {
-          in: data.map((server) => server.address),
-        },
-        serverUsername: {
-          in: data.map((server) => server.username),
-        },
-      },
-    });
+    await db.delete(jellydataSchema).where(
+      and(
+        eq(jellydataSchema.userId, user.id),
+        inArray(
+          jellydataSchema.serverUrl,
+          data.map((server) => server.address),
+        ),
+        inArray(
+          jellydataSchema.serverUsername,
+          data.map((server) => server.username),
+        ),
+      ),
+    );
     return {
       success: true,
       message: `Successfully deleted server${data.length > 1 ? "s" : ""}`,
@@ -365,11 +382,11 @@ export async function getJellyfinServers(): Promise<
 > {
   const user = await getUser();
 
-  const serverList = await prisma.jellydata.findMany({
+  const serverList = await db.query.jellydata.findMany({
     where: {
       userId: user.id,
     },
-    select: {
+    columns: {
       serverUrl: true,
       serverUsername: true,
       serverToken: true,
@@ -382,8 +399,7 @@ export async function getJellyfinServers(): Promise<
       const { serverToken, ...serverReturn } = server; // remove token to not send it to client
       return {
         ...serverReturn,
-        status: (await checkConn(server.serverUrl, decryptToken(serverToken)))
-          .data,
+        status: (await checkConn(server.serverUrl, serverToken)).data,
       };
     }),
   );

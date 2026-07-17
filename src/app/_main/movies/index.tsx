@@ -1,7 +1,7 @@
 import ContentPage from "@/components/content-page";
 import Loader from "@/components/loader";
 import { Input } from "@/components/ui/input";
-import { getAllServersMovies } from "@/server/actions/jellyfin.actions";
+import { getAllServersMovies } from "@/server/functions/jellyfin.functions";
 import { getUser } from "@/server/utils";
 import { createFileRoute } from "@tanstack/react-router";
 import { X } from "lucide-react";

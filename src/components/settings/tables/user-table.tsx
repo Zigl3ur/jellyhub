@@ -15,7 +15,7 @@ import { useCallback, useMemo, useState } from "react";
 import { Input } from "../../ui/input";
 import { ChevronLeft, ChevronRight, RefreshCcw } from "lucide-react";
 import { userDataType } from "@/types/actions.types";
-import { getUsersList } from "@/server/actions/settings.actions";
+import { getUsersList } from "@/server/functions/settings.functions";
 import { Button } from "../../ui/button";
 import { AddUserDialog } from "../dialogs/add-user-dialog";
 import { DeleteUserDialog } from "../alerts/delete-user-alert";
@@ -25,7 +25,7 @@ import { EditUserDialog } from "../dialogs/edit-user-dialog";
 import { User } from "better-auth";
 
 const createColumns = (
-  refreshTable: () => Promise<void>
+  refreshTable: () => Promise<void>,
 ): ColumnDef<User>[] => [
   {
     id: "select",

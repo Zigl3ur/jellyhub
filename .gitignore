@@ -1,12 +1,7 @@
-/node_modules
-
-/build
+node_modules/
+.tanstack/
 
 .env
 .env.*.local
 
-# dev stuff
-dev.sh
-*.db
-prisma/data/
-generated/
+jellyhub.db

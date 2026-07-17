@@ -25,7 +25,7 @@ import { Button } from "../../ui/button";
 import type { jellydataDisplayed } from "@/types/actions.types";
 import type { State } from "@/types/jellyfin-api.types";
 import type { ColumnDef, ColumnFiltersState } from "@tanstack/react-table";
-import { getJellyfinServers } from "@/server/actions/settings.actions";
+import { getJellyfinServers } from "@/server/functions/settings.functions";
 import { Checkbox } from "@/components/ui/checkbox";
 import DataTable from "@/components/data-table";
 import { TableCell } from "@/components/ui/table";
@@ -112,7 +112,7 @@ export function ServerTable({ columns, serversData }: DataTableProps) {
     setIsFetching(true);
 
     setData((prevData) =>
-      prevData.map((server) => ({ ...server, status: "Checking" as State })),
+      prevData.map((server) => ({ ...server, status: "Checking" })),
     );
     const response = await getJellyfinServers();
 

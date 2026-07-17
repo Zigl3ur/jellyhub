@@ -1,9 +1,9 @@
 import { betterAuth } from "better-auth";
 import { username } from "better-auth/plugins/username";
-import { prismaAdapter } from "better-auth/adapters/prisma";
 import { admin } from "better-auth/plugins/admin";
 import { tanstackStartCookies } from "better-auth/tanstack-start";
-import { prisma } from "./prisma";
+import { drizzleAdapter } from "@better-auth/drizzle-adapter";
+import db from "./db";
 
 export const auth = betterAuth({
   appName: "Jellyhub",
@@ -17,7 +17,7 @@ export const auth = betterAuth({
       generateId: false,
     },
   },
-  database: prismaAdapter(prisma, {
+  database: drizzleAdapter(db, {
     provider: "sqlite",
   }),
   emailAndPassword: {

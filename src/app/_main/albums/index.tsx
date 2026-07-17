@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { Loader, X } from "lucide-react";
 import ContentPage from "@/components/content-page";
 import { Input } from "@/components/ui/input";
-import { getAllServersAlbums } from "@/server/actions/jellyfin.actions";
+import { getAllServersAlbums } from "@/server/jellyfin.functions";
 import { getUser } from "@/server/utils";
 
 export const Route = createFileRoute("/_main/albums/")({

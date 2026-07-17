@@ -9,7 +9,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import { deleteUserAction } from "@/server/actions/settings.actions";
+import { deleteUserAction } from "@/server/functions/settings.functions";
 import { LoaderCircle, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";

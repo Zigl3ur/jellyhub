@@ -1,10 +1,10 @@
 import { createServerFn } from "@tanstack/react-start";
-import { getUser } from "../utils";
+import { getUser } from "./utils";
 import type { ServerActionReturn } from "@/types/actions.types";
 import type { itemJellyfin } from "@/types/jellyfin-api.types";
 import { getAllItems, getLibraryItems } from "@/lib/api.jellyfin";
-import { decryptToken, filterItems } from "@/lib/utils";
-import { prisma } from "@/lib/prisma";
+import { filterItems } from "@/lib/utils";
+import db from "@/lib/db";
 
 /**
  * action to fetch all items from registered and reachable servers
@@ -21,9 +21,9 @@ export const getAllServersItems = createServerFn().handler(
   > => {
     const user = await getUser();
 
-    const list = await prisma.jellydata.findMany({
+    const list = await db.query.jellydata.findMany({
       where: { userId: user.id },
-      select: {
+      columns: {
         serverUrl: true,
         serverToken: true,
       },
@@ -31,10 +31,7 @@ export const getAllServersItems = createServerFn().handler(
 
     const rawItems = await Promise.all(
       list.map(async (jellydata) => {
-        return await getAllItems(
-          jellydata.serverUrl,
-          decryptToken(jellydata.serverToken),
-        );
+        return await getAllItems(jellydata.serverUrl, jellydata.serverToken);
       }),
     );
 
@@ -73,9 +70,9 @@ export const getAllServersMovies = createServerFn().handler(
   async (): Promise<ServerActionReturn<Array<itemJellyfin>>> => {
     const user = await getUser();
 
-    const list = await prisma.jellydata.findMany({
+    const list = await db.query.jellydata.findMany({
       where: { userId: user.id },
-      select: {
+      columns: {
         serverUrl: true,
         serverToken: true,
       },
@@ -85,7 +82,7 @@ export const getAllServersMovies = createServerFn().handler(
       list.map(async (jellydata) => {
         return await getLibraryItems(
           jellydata.serverUrl,
-          decryptToken(jellydata.serverToken),
+          jellydata.serverToken,
           "Movie",
         );
       }),
@@ -117,9 +114,9 @@ export const getAllServersSeries = createServerFn().handler(
   async (): Promise<ServerActionReturn<Array<itemJellyfin>>> => {
     const user = await getUser();
 
-    const list = await prisma.jellydata.findMany({
+    const list = await db.query.jellydata.findMany({
       where: { userId: user.id },
-      select: {
+      columns: {
         serverUrl: true,
         serverToken: true,
       },
@@ -129,7 +126,7 @@ export const getAllServersSeries = createServerFn().handler(
       list.map(async (jellydata) => {
         return await getLibraryItems(
           jellydata.serverUrl,
-          decryptToken(jellydata.serverToken),
+          jellydata.serverToken,
           "Series",
         );
       }),
@@ -161,9 +158,9 @@ export const getAllServersAlbums = createServerFn().handler(
   async (): Promise<ServerActionReturn<Array<itemJellyfin>>> => {
     const user = await getUser();
 
-    const list = await prisma.jellydata.findMany({
+    const list = await db.query.jellydata.findMany({
       where: { userId: user.id },
-      select: {
+      columns: {
         serverUrl: true,
         serverToken: true,
       },
@@ -173,7 +170,7 @@ export const getAllServersAlbums = createServerFn().handler(
       list.map(async (jellydata) => {
         return await getLibraryItems(
           jellydata.serverUrl,
-          decryptToken(jellydata.serverToken),
+          jellydata.serverToken,
           "MusicAlbum",
         );
       }),

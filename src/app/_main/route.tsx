@@ -1,13 +1,21 @@
+import { Outlet, createFileRoute, redirect } from "@tanstack/react-router";
+import { getCookie } from "@tanstack/react-start/server";
 import { AppSidebar } from "@/components/app-sidebar";
 import {
   SidebarInset,
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
-import { createFileRoute, Outlet } from "@tanstack/react-router";
-import { getCookie } from "@tanstack/react-start/server";
+import { getSession } from "@/lib/auth.functions";
 
 export const Route = createFileRoute("/_main")({
+  beforeLoad: async () => {
+    const session = await getSession();
+
+    if (!session) throw redirect({ to: "/login" });
+
+    return { session };
+  },
   component: MainLayout,
 });
 

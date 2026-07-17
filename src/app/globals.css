@@ -1,7 +1,7 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
-@import "@fontsource-variable/noto-sans-jp";
+@import "@fontsource-variable/hanken-grotesk";
 @import "@fontsource-variable/roboto-mono";
 
 @custom-variant dark (&:is(.dark *));
@@ -45,7 +45,7 @@
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
 
-  --font-sans: "Noto Sans JP Variable", sans-serif;
+  --font-sans: "Hanken Grotesk Variable", sans-serif;
   --font-mono: "Roboto Mono Variable", monospace;
 
   --breakpoint-xs: 30rem;

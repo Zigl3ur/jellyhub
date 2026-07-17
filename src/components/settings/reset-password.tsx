@@ -15,7 +15,7 @@ import PasswordField from "../auth/forms/fields/password-field";
 import { useState } from "react";
 import { LoaderCircle } from "lucide-react";
 import { resetPasswdScema, resetPasswdType } from "@/schemas/settings.schema";
-import { resetPasswordAction } from "@/server/actions/settings.actions";
+import { resetPasswordAction } from "@/server/functions/settings.functions";
 
 export default function ResetPasswd() {
   const [loading, setLoading] = useState<boolean>(false);

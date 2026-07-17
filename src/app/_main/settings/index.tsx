@@ -5,10 +5,7 @@ import {
   columns as serversTableColumns,
 } from "@/components/settings/tables/server-table";
 import { getUser } from "@/server/utils";
-import {
-  getJellyfinServers,
-  getUsersList,
-} from "@/server/actions/settings.actions";
+import { getJellyfinServers, getUsersList } from "@/server/settings.functions";
 import { UserTable } from "@/components/settings/tables/user-table";
 import LoadingTable from "@/components/settings/tables/loading-table";
 import ResetPasswd from "@/components/settings/reset-password";
