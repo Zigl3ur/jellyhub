@@ -11,6 +11,7 @@ import { FieldError, FieldLabel, FieldRoot } from "@/components/ui/field";
 import Button from "@/components/ui/button";
 import { Input, InputAddon } from "@/components/ui/input";
 import { Alert } from "@/components/ui/alert";
+import LoaderIcon from "@/components/ui/loader-icon";
 
 export const Route = createFileRoute("/_auth/login/")({
   loader: async () => {
@@ -19,6 +20,7 @@ export const Route = createFileRoute("/_auth/login/")({
     return { canSignup };
   },
   component: LoginPage,
+  head: () => ({ meta: [{ title: "Login - JellyHub" }] }),
 });
 
 function LoginPage() {
@@ -33,34 +35,34 @@ function LoginPage() {
       username: "",
       password: "",
     } satisfies loginSchemaType,
+    validators: {
+      onChange: loginSchema,
+    },
     onSubmit: async ({ value }) => {
-      setError(null);
       const { username, password } = value;
 
       await authClient.signIn.username({
         username,
         password,
         fetchOptions: {
-          onSuccess: (ctx) => {
+          onSuccess: () => {
+            setError(null);
+            loginForm.reset();
             router.navigate({ to: "/" });
           },
           onError: ({ error }) => setError(error.message),
         },
       });
-      loginForm.reset();
     },
   });
 
   return (
     <div className="flex items-center flex-col justify-center h-dvh gap-8">
       <Logo />
-      <div className="max-w-sm w-full p-6 rounded-xl space-y-6 bg-accent-foreground">
+      <div className="max-w-sm w-full p-6 rounded-xl space-y-8 bg-accent-foreground">
         <h3 className="font-serif italic text-3xl font-semibold text-foreground">
           Login to continue
         </h3>
-        {error && (
-          <Alert type="destructive" title="Login Failed" message={error} />
-        )}
         <form
           className="space-y-4"
           onSubmit={(e) => {
@@ -69,14 +71,13 @@ function LoginPage() {
             loginForm.handleSubmit();
           }}
         >
-          <loginForm.Field
-            name="username"
-            validators={{ onChange: loginSchema.shape.username }}
-          >
+          {error && (
+            <Alert type="destructive" title="Login Failed" message={error} />
+          )}
+          <loginForm.Field name="username">
             {(field) => {
               const error = field.state.meta.errors[0];
-              const invalid =
-                field.state.meta.isTouched && !field.state.meta.isValid;
+              const invalid = !field.state.meta.isValid;
 
               return (
                 <FieldRoot name={field.name} invalid={invalid}>
@@ -95,15 +96,10 @@ function LoginPage() {
               );
             }}
           </loginForm.Field>
-
-          <loginForm.Field
-            name="password"
-            validators={{ onChange: loginSchema.shape.password }}
-          >
+          <loginForm.Field name="password">
             {(field) => {
               const error = field.state.meta.errors[0];
-              const invalid =
-                field.state.meta.isTouched && !field.state.meta.isValid;
+              const invalid = !field.state.meta.isValid;
 
               return (
                 <FieldRoot name="password" invalid={invalid}>
@@ -132,7 +128,6 @@ function LoginPage() {
               );
             }}
           </loginForm.Field>
-
           <div className="flex justify-center w-full">
             <loginForm.Subscribe
               selector={(state) => [state.canSubmit, state.isSubmitting]}
@@ -144,7 +139,7 @@ function LoginPage() {
                 >
                   {isSubmitting ? (
                     <>
-                      <IconLoader2 className="animate-spin" />
+                      <LoaderIcon />
                       Logging in...
                     </>
                   ) : (

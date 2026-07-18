@@ -2,7 +2,7 @@ import { Button as BaseButton } from "@base-ui/react/button";
 import { cn } from "@sglara/cn";
 
 const baseClassName =
-  "inline-flex items-center outline-none focus-visible:ring-2 justify-center hover:cursor-pointer active:translate-y-px active:opacity-70 transition-all duration-200 disabled:cursor-not-allowed disabled:opacity-50 rounded leading-none whitespace-nowrap font-normal select-none focus-visible:outline-2 focus-visible:-outline-offset-1";
+  "inline-flex items-center gap-2 outline-none focus-visible:ring-2 justify-center hover:cursor-pointer active:translate-y-px active:opacity-70 transition-all duration-200 disabled:cursor-not-allowed disabled:opacity-50 rounded leading-none whitespace-nowrap font-normal select-none focus-visible:outline-2 focus-visible:-outline-offset-1";
 
 const sizes = {
   icon: "size-6 p-1",
