@@ -1,21 +1,44 @@
-import * as React from "react"
+import { Input as BaseInput } from "@base-ui/react/input";
+import { cn } from "@sglara/cn";
+import type { PropsWithChildren } from "react";
 
-import { cn } from "@/lib/utils"
-
-function Input({ className, type, ...props }: React.ComponentProps<"input">) {
+export function Input({ children, className, ...props }: BaseInput.Props) {
   return (
-    <input
-      type={type}
-      data-slot="input"
+    <div
       className={cn(
-        "file:text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground dark:bg-input/30 border-input flex h-9 w-full min-w-0 rounded-md border bg-transparent px-3 py-1 text-base shadow-xs transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
-        "focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]",
-        "aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
-        className
+        "w-full flex items-center h-8 rounded bg-input/20 border border-input transition-colors duration-200 ",
+        "has-[[data-slot='input']:disabled]:opacity-50 has-[[data-slot='input']:disabled]:text-muted-foreground/50 has-[[data-slot=input][data-invalid]]:border-destructive/80 has-[[data-slot='input']:focus]:border-ring/80 has-[[data-slot='input']:focus]:ring-3 has-[[data-slot='input']:focus]:ring-ring/40 has-[[data-slot=input][data-invalid]:focus]:border-destructive has-[[data-slot=input][data-invalid]:focus]:ring-destructive/50",
+        "has-[[data-slot=input-addon][data-side=left]]:**:data-[slot=input]:pl-1 has-[[data-slot=input-addon][data-side=right]]:**:data-[slot=input]:pr-1",
       )}
-      {...props}
-    />
-  )
+    >
+      <BaseInput
+        data-slot="input"
+        className={cn(
+          "w-full min-w-0 placeholder:text-muted-foreground/50 py-0.5 px-2 outline-none ",
+          className,
+        )}
+        {...props}
+      />
+      {children}
+    </div>
+  );
 }
 
-export { Input }
+interface InputAddonProps extends PropsWithChildren {
+  side?: "left" | "right";
+}
+
+export function InputAddon({ side = "right", children }: InputAddonProps) {
+  return (
+    <div
+      data-slot="input-addon"
+      data-side={side}
+      className={cn(
+        "h-full flex items-center py-0.5",
+        side === "left" ? "pl-1 order-first" : "pr-1",
+      )}
+    >
+      {children}
+    </div>
+  );
+}

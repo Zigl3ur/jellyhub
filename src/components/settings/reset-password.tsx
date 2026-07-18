@@ -1,34 +1,22 @@
 "use client";
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { Button } from "@/components/ui/button";
-import {
-  Form,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { toast } from "sonner";
-import PasswordField from "../auth/forms/fields/password-field";
 import { useState } from "react";
-import { LoaderCircle } from "lucide-react";
-import { resetPasswdScema, resetPasswdType } from "@/schemas/settings.schema";
-import { resetPasswordAction } from "@/server/functions/settings.functions";
+import { useForm } from "@tanstack/react-form";
+import type { resetPasswdType } from "@/schemas/settings.schema";
+import { resetPasswdScema } from "@/schemas/settings.schema";
+import { resetPasswordAction } from "@/functions/settings.functions";
 
 export default function ResetPasswd() {
   const [loading, setLoading] = useState<boolean>(false);
 
-  const resetPasswordForm = useForm<resetPasswdType>({
-    resolver: zodResolver(resetPasswdScema),
+  const resetPasswordForm = useForm({
     defaultValues: {
       password: "",
       confirmPassword: "",
     },
   });
   const { password: passwordError, confirmPassword: confirmPasswordError } =
-    resetPasswordForm.formState.errors;
+    resetPasswordForm.state.errorMap;
 
   const onSubmit = async (values: resetPasswdType) => {
     const { password, confirmPassword } = values;

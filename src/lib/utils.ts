@@ -1,13 +1,6 @@
 import { createCipheriv, createDecipheriv, randomBytes } from "node:crypto";
-import { clsx } from "clsx";
-import { twMerge } from "tailwind-merge";
 import { createServerOnlyFn } from "@tanstack/react-start";
-import type { ClassValue } from "clsx";
 import type { itemJellyfin } from "@/types/jellyfin-api.types";
-
-export function cn(...inputs: Array<ClassValue>) {
-  return twMerge(clsx(inputs));
-}
 
 /**
  * encrypt the given token

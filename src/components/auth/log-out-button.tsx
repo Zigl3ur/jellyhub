@@ -1,8 +1,5 @@
 "use client";
 
-import { LogOutIcon } from "lucide-react";
-import React from "react";
-import { toast } from "sonner";
 import { useRouter } from "@tanstack/react-router";
 import { SidebarMenuButton, SidebarMenuItem } from "../ui/sidebar";
 import { authClient } from "@/lib/auth-client";
@@ -32,7 +29,6 @@ export default function LogOutButton() {
     <SidebarMenuItem>
       <SidebarMenuButton asChild>
         <button onClick={handleLogout} className="hover:cursor-pointer">
-          <LogOutIcon />
           <span>Logout</span>
         </button>
       </SidebarMenuButton>

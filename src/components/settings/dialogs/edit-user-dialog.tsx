@@ -1,5 +1,22 @@
 "use client";
 
+import { useState } from "react";
+import { LoaderCircle, Pencil } from "lucide-react";
+import { toast } from "sonner";
+import { useForm } from "@tanstack/react-form";
+import { Button } from "../../ui/button";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "../../ui/field";
+import type { editUserSchemaType } from "@/schemas/settings.schema";
+import type { User } from "better-auth";
+import PasswordField from "@/components/auth/forms/fields/password-field";
+import { Input } from "@/components/ui/input";
 import {
   Dialog,
   DialogClose,
@@ -10,26 +27,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { Button } from "../../ui/button";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "../../ui/form";
-import { useState } from "react";
-import { LoaderCircle, Pencil } from "lucide-react";
-import { toast } from "sonner";
-import PasswordField from "@/components/auth/forms/fields/password-field";
-import { User } from "better-auth";
-import { editUserSchema, editUserSchemaType } from "@/schemas/settings.schema";
-import { editUserAction } from "@/server/functions/settings.functions";
+import { editUserSchema } from "@/schemas/settings.schema";
+import { editUserAction } from "@/functions/settings.functions";
 
 interface EditUserDialogProps {
   user: User;
@@ -40,8 +39,7 @@ export function EditUserDialog({ user, onEdit }: EditUserDialogProps) {
   const [open, setOpen] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
 
-  const userForm = useForm<editUserSchemaType>({
-    resolver: zodResolver(editUserSchema),
+  const userForm = useForm({
     defaultValues: {
       username: user.name,
       password: undefined,
@@ -52,18 +50,18 @@ export function EditUserDialog({ user, onEdit }: EditUserDialogProps) {
   const { password: passwordError, confirmPassword: confirmPasswordError } =
     userForm.formState.errors;
 
-  const onSubmit = async (values: editUserSchemaType) => {
+  const onSubmit = (values: editUserSchemaType) => {
     const { username, confirmPassword } = values;
 
     setLoading(true);
 
-    editUserAction(
-      user.id,
-      user.name,
-      username,
-      confirmPassword,
-      confirmPassword,
-    )
+    editUserAction({
+      data: {
+        id: user.id,
+        baseUsername: user.name,
+        confirmNewPassword: confirmPassword,
+      },
+    })
       .then((result) => {
         if (result.error)
           toast.error("Error", {

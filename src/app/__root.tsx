@@ -5,7 +5,6 @@ import {
   Scripts,
   createRootRoute,
 } from "@tanstack/react-router";
-import { Toaster } from "sonner";
 import appCss from "./globals.css?url";
 
 export const Route = createRootRoute({
@@ -43,9 +42,8 @@ function RootLayout() {
       <head>
         <HeadContent />
       </head>
-      <body>
+      <body className="root">
         <Outlet />
-        <Toaster />
         <Scripts />
       </body>
     </html>

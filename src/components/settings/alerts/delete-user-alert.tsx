@@ -1,3 +1,6 @@
+import { LoaderCircle, Trash2 } from "lucide-react";
+import { useState } from "react";
+import { toast } from "sonner";
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -9,10 +12,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import { deleteUserAction } from "@/server/functions/settings.functions";
-import { LoaderCircle, Trash2 } from "lucide-react";
-import { useState } from "react";
-import { toast } from "sonner";
+import { deleteUserAction } from "@/functions/settings.functions";
 
 interface DeleteUserDialogProps {
   disable: boolean;
@@ -31,7 +31,7 @@ export function DeleteUserDialog({
   const handleDelete = async () => {
     setLoading(true);
 
-    deleteUserAction(checkedRows)
+    deleteUserAction({ data: { emails: checkedRows } })
       .then((result) => {
         if (result.success) {
           toast.success("Success", { description: result.message });

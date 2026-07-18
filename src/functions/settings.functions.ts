@@ -2,7 +2,7 @@ import { z } from "zod/v4";
 import { createServerFn } from "@tanstack/react-start";
 import { getRequestHeaders } from "@tanstack/react-start/server";
 import { and, eq, inArray } from "drizzle-orm";
-import { getUser } from "./utils";
+import { getUser } from "./auth.functions";
 import type {
   ServerActionReturn,
   jellydataDisplayed,

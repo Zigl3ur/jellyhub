@@ -1,11 +1,12 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import RegisterForm from "@/components/auth/forms/register-form";
+import { isSignupAllowed } from "@/functions/auth.functions";
 
 export const Route = createFileRoute("/_auth/register/")({
-  beforeLoad: () => {
-    const isSignupAllowed = process.env.ALLOW_SIGNUP === "true";
+  beforeLoad: async () => {
+    const canSignup = await isSignupAllowed();
 
-    if (!isSignupAllowed) throw redirect({ to: "/login" });
+    if (!canSignup) throw redirect({ to: "/login" });
   },
   component: RegisterPage,
 });

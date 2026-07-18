@@ -1,10 +1,8 @@
 import { Link } from "@tanstack/react-router";
-import { X } from "lucide-react";
 
 export default function NoItemFound() {
   return (
     <div className="flex flex-col items-center text-center py-16">
-      <X />
       <span>No items found.</span>
       <span>Please add at least one server / Check servers status </span>
       <Link to="/settings" className="hover:underline italic text-cyan-600">

@@ -1,5 +1,21 @@
 "use client";
 
+import { useState } from "react";
+import { LoaderCircle, Plus } from "lucide-react";
+import { toast } from "sonner";
+import { Button } from "../../ui/button";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "../../ui/field";
+import type { addServerSchemaType } from "@/schemas/settings.schema";
+import { addServerSchema } from "@/schemas/settings.schema";
+import { addServerAction } from "@/functions/settings.functions";
+import { Input } from "@/components/ui/input";
 import {
   Dialog,
   DialogClose,
@@ -10,28 +26,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { Button } from "../../ui/button";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "../../ui/form";
-import { useState } from "react";
-import { LoaderCircle, Plus } from "lucide-react";
-import {
-  addServerSchema,
-  addServerSchemaType,
-} from "@/schemas/settings.schema";
-import { addServerAction } from "@/server/functions/settings.functions";
-import { toast } from "sonner";
 import PasswordField from "@/components/auth/forms/fields/password-field";
+import { useForm } from "@tanstack/react-form";
 
 interface AddServerDialogProps {
   onAdd: () => void;
@@ -41,16 +37,13 @@ export function AddServerDialog({ onAdd }: AddServerDialogProps) {
   const [open, setOpen] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
 
-  const serverForm = useForm<addServerSchemaType>({
-    resolver: zodResolver(addServerSchema),
+  const serverForm = useForm({
     defaultValues: {
       address: "",
       username: "",
       password: "",
     },
   });
-
-  const { password: passwordError } = serverForm.formState.errors;
 
   const onSubmit = async (values: addServerSchemaType) => {
     const { address, username, password } = values;

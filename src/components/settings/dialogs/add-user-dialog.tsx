@@ -1,5 +1,20 @@
 "use client";
 
+import { useState } from "react";
+import { LoaderCircle, Plus } from "lucide-react";
+import { toast } from "sonner";
+import { useForm } from "@tanstack/react-form";
+import { Button } from "../../ui/button";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "../../ui/field";
+import type { loginSchemaType } from "@/schemas/auth.schema";
+import { Input } from "@/components/ui/input";
 import {
   Dialog,
   DialogClose,
@@ -10,24 +25,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { Button } from "../../ui/button";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "../../ui/form";
-import { useState } from "react";
-import { LoaderCircle, Plus } from "lucide-react";
-import { toast } from "sonner";
-import { loginSchema, loginSchemaType } from "@/schemas/auth.schema";
-import { addUserAction } from "@/server/functions/settings.functions";
+import { loginSchema } from "@/schemas/auth.schema";
+import { addUserAction } from "@/functions/settings.functions";
 import PasswordField from "@/components/auth/forms/fields/password-field";
 
 interface AddUserDialogProps {
@@ -38,8 +37,7 @@ export function AddUserDialog({ onAdd }: AddUserDialogProps) {
   const [open, setOpen] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
 
-  const userForm = useForm<loginSchemaType>({
-    resolver: zodResolver(loginSchema),
+  const userForm = useForm({
     defaultValues: {
       username: "",
       password: "",
@@ -48,12 +46,12 @@ export function AddUserDialog({ onAdd }: AddUserDialogProps) {
 
   const { password: passwordError } = userForm.formState.errors;
 
-  const onSubmit = async (values: loginSchemaType) => {
+  const onSubmit = (values: loginSchemaType) => {
     const { username, password } = values;
 
     setLoading(true);
 
-    addUserAction(username, password)
+    addUserAction({ data: { username, password } })
       .then((result) => {
         if (result.error)
           toast.error("Error", {

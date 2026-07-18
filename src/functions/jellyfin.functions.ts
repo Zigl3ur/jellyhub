@@ -1,5 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
-import { getUser } from "./utils";
+import { getUser } from "./auth.functions";
 import type { ServerActionReturn } from "@/types/actions.types";
 import type { itemJellyfin } from "@/types/jellyfin-api.types";
 import { getAllItems, getLibraryItems } from "@/lib/api.jellyfin";

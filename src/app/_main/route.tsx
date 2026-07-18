@@ -6,7 +6,7 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
-import { getSession } from "@/lib/auth.functions";
+import { getSession } from "@/functions/auth.functions";
 
 export const Route = createFileRoute("/_main")({
   beforeLoad: async () => {

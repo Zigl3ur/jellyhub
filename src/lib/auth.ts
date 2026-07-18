@@ -1,9 +1,9 @@
 import { betterAuth } from "better-auth";
-import { username } from "better-auth/plugins/username";
-import { admin } from "better-auth/plugins/admin";
+import { admin, username } from "better-auth/plugins";
 import { tanstackStartCookies } from "better-auth/tanstack-start";
 import { drizzleAdapter } from "@better-auth/drizzle-adapter";
 import db from "./db";
+import * as schema from "./db/schema";
 
 export const auth = betterAuth({
   appName: "Jellyhub",
@@ -19,10 +19,13 @@ export const auth = betterAuth({
   },
   database: drizzleAdapter(db, {
     provider: "sqlite",
+    schema,
   }),
   emailAndPassword: {
     enabled: true,
-    disableSignUp: process.env.DISABLE_SIGNUP === "true",
+    disableSignUp:
+      process.env.DISABLE_SIGNUP === "true" ||
+      process.env.ALLOW_SIGNUP !== "true",
     requireEmailVerification: false,
     minPasswordLength: 6,
     maxPasswordLength: 50,

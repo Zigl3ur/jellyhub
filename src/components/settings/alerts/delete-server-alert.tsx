@@ -1,25 +1,12 @@
-import {
-  AlertDialog,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-import { Button } from "@/components/ui/button";
-import { deleteServerAction } from "@/server/functions/settings.functions";
-import { LoaderCircle, Trash2 } from "lucide-react";
 import { useState } from "react";
-import { toast } from "sonner";
+import { deleteServerAction } from "@/functions/settings.functions";
 
 interface DeleteAlertDialogProps {
   disable: boolean;
-  checkedRows: {
+  checkedRows: Array<{
     address: string;
     username: string;
-  }[];
+  }>;
   onDelete: () => void;
 }
 

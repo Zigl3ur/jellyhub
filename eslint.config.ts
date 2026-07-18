@@ -4,5 +4,8 @@ export default [
   ...tanstackConfig,
   {
     // Custom rules go here
+    rules: {
+      "no-shadow": "off",
+    },
   },
 ];
