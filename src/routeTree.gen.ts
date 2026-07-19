@@ -9,94 +9,110 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './app/__root'
-import { Route as AuthRouteRouteImport } from './app/_auth/route'
 import { Route as MainRouteRouteImport } from './app/_main/route'
-import { Route as AuthLoginIndexRouteImport } from './app/_auth/login/index'
-import { Route as AuthRegisterIndexRouteImport } from './app/_auth/register/index'
+import { Route as MainAuthRouteRouteImport } from './app/_main/_auth/route'
+import { Route as MainHomeRouteRouteImport } from './app/_main/_home/route'
+import { Route as GetStartedIndexRouteImport } from './app/get-started/index'
 import { Route as MainHomeIndexRouteImport } from './app/_main/_home/index'
-import { Route as MainAlbumsIndexRouteImport } from './app/_main/albums/index'
-import { Route as MainMoviesIndexRouteImport } from './app/_main/movies/index'
-import { Route as MainSeriesIndexRouteImport } from './app/_main/series/index'
 import { Route as ApiAuthSplatRouteImport } from './app/api/auth/$'
+import { Route as MainAuthLoginIndexRouteImport } from './app/_main/_auth/login/index'
+import { Route as MainAuthRegisterIndexRouteImport } from './app/_main/_auth/register/index'
+import { Route as MainHomeAlbumsIndexRouteImport } from './app/_main/_home/albums/index'
+import { Route as MainHomeMoviesIndexRouteImport } from './app/_main/_home/movies/index'
+import { Route as MainHomeSeriesIndexRouteImport } from './app/_main/_home/series/index'
 
-const AuthRouteRoute = AuthRouteRouteImport.update({
-  id: '/_auth',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const MainRouteRoute = MainRouteRouteImport.update({
   id: '/_main',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthLoginIndexRoute = AuthLoginIndexRouteImport.update({
-  id: '/login/',
-  path: '/login/',
-  getParentRoute: () => AuthRouteRoute,
+const MainAuthRouteRoute = MainAuthRouteRouteImport.update({
+  id: '/_auth',
+  getParentRoute: () => MainRouteRoute,
 } as any)
-const AuthRegisterIndexRoute = AuthRegisterIndexRouteImport.update({
-  id: '/register/',
-  path: '/register/',
-  getParentRoute: () => AuthRouteRoute,
+const MainHomeRouteRoute = MainHomeRouteRouteImport.update({
+  id: '/_home',
+  getParentRoute: () => MainRouteRoute,
+} as any)
+const GetStartedIndexRoute = GetStartedIndexRouteImport.update({
+  id: '/get-started/',
+  path: '/get-started/',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const MainHomeIndexRoute = MainHomeIndexRouteImport.update({
-  id: '/_home/',
+  id: '/',
   path: '/',
-  getParentRoute: () => MainRouteRoute,
-} as any)
-const MainAlbumsIndexRoute = MainAlbumsIndexRouteImport.update({
-  id: '/albums/',
-  path: '/albums/',
-  getParentRoute: () => MainRouteRoute,
-} as any)
-const MainMoviesIndexRoute = MainMoviesIndexRouteImport.update({
-  id: '/movies/',
-  path: '/movies/',
-  getParentRoute: () => MainRouteRoute,
-} as any)
-const MainSeriesIndexRoute = MainSeriesIndexRouteImport.update({
-  id: '/series/',
-  path: '/series/',
-  getParentRoute: () => MainRouteRoute,
+  getParentRoute: () => MainHomeRouteRoute,
 } as any)
 const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   id: '/api/auth/$',
   path: '/api/auth/$',
   getParentRoute: () => rootRouteImport,
 } as any)
+const MainAuthLoginIndexRoute = MainAuthLoginIndexRouteImport.update({
+  id: '/login/',
+  path: '/login/',
+  getParentRoute: () => MainAuthRouteRoute,
+} as any)
+const MainAuthRegisterIndexRoute = MainAuthRegisterIndexRouteImport.update({
+  id: '/register/',
+  path: '/register/',
+  getParentRoute: () => MainAuthRouteRoute,
+} as any)
+const MainHomeAlbumsIndexRoute = MainHomeAlbumsIndexRouteImport.update({
+  id: '/albums/',
+  path: '/albums/',
+  getParentRoute: () => MainHomeRouteRoute,
+} as any)
+const MainHomeMoviesIndexRoute = MainHomeMoviesIndexRouteImport.update({
+  id: '/movies/',
+  path: '/movies/',
+  getParentRoute: () => MainHomeRouteRoute,
+} as any)
+const MainHomeSeriesIndexRoute = MainHomeSeriesIndexRouteImport.update({
+  id: '/series/',
+  path: '/series/',
+  getParentRoute: () => MainHomeRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof MainHomeIndexRoute
+  '/get-started/': typeof GetStartedIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
-  '/login/': typeof AuthLoginIndexRoute
-  '/register/': typeof AuthRegisterIndexRoute
-  '/albums/': typeof MainAlbumsIndexRoute
-  '/movies/': typeof MainMoviesIndexRoute
-  '/series/': typeof MainSeriesIndexRoute
+  '/login/': typeof MainAuthLoginIndexRoute
+  '/register/': typeof MainAuthRegisterIndexRoute
+  '/albums/': typeof MainHomeAlbumsIndexRoute
+  '/movies/': typeof MainHomeMoviesIndexRoute
+  '/series/': typeof MainHomeSeriesIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof MainHomeIndexRoute
+  '/get-started': typeof GetStartedIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
-  '/login': typeof AuthLoginIndexRoute
-  '/register': typeof AuthRegisterIndexRoute
-  '/albums': typeof MainAlbumsIndexRoute
-  '/movies': typeof MainMoviesIndexRoute
-  '/series': typeof MainSeriesIndexRoute
+  '/login': typeof MainAuthLoginIndexRoute
+  '/register': typeof MainAuthRegisterIndexRoute
+  '/albums': typeof MainHomeAlbumsIndexRoute
+  '/movies': typeof MainHomeMoviesIndexRoute
+  '/series': typeof MainHomeSeriesIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/_auth': typeof AuthRouteRouteWithChildren
   '/_main': typeof MainRouteRouteWithChildren
+  '/_main/_auth': typeof MainAuthRouteRouteWithChildren
+  '/_main/_home': typeof MainHomeRouteRouteWithChildren
+  '/get-started/': typeof GetStartedIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
-  '/_auth/login/': typeof AuthLoginIndexRoute
-  '/_auth/register/': typeof AuthRegisterIndexRoute
   '/_main/_home/': typeof MainHomeIndexRoute
-  '/_main/albums/': typeof MainAlbumsIndexRoute
-  '/_main/movies/': typeof MainMoviesIndexRoute
-  '/_main/series/': typeof MainSeriesIndexRoute
+  '/_main/_auth/login/': typeof MainAuthLoginIndexRoute
+  '/_main/_auth/register/': typeof MainAuthRegisterIndexRoute
+  '/_main/_home/albums/': typeof MainHomeAlbumsIndexRoute
+  '/_main/_home/movies/': typeof MainHomeMoviesIndexRoute
+  '/_main/_home/series/': typeof MainHomeSeriesIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/get-started/'
     | '/api/auth/$'
     | '/login/'
     | '/register/'
@@ -106,6 +122,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/get-started'
     | '/api/auth/$'
     | '/login'
     | '/register'
@@ -114,32 +131,27 @@ export interface FileRouteTypes {
     | '/series'
   id:
     | '__root__'
-    | '/_auth'
     | '/_main'
+    | '/_main/_auth'
+    | '/_main/_home'
+    | '/get-started/'
     | '/api/auth/$'
-    | '/_auth/login/'
-    | '/_auth/register/'
     | '/_main/_home/'
-    | '/_main/albums/'
-    | '/_main/movies/'
-    | '/_main/series/'
+    | '/_main/_auth/login/'
+    | '/_main/_auth/register/'
+    | '/_main/_home/albums/'
+    | '/_main/_home/movies/'
+    | '/_main/_home/series/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  AuthRouteRoute: typeof AuthRouteRouteWithChildren
   MainRouteRoute: typeof MainRouteRouteWithChildren
+  GetStartedIndexRoute: typeof GetStartedIndexRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/_auth': {
-      id: '/_auth'
-      path: ''
-      fullPath: '/'
-      preLoaderRoute: typeof AuthRouteRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/_main': {
       id: '/_main'
       path: ''
@@ -147,47 +159,33 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MainRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_auth/login/': {
-      id: '/_auth/login/'
-      path: '/login'
-      fullPath: '/login/'
-      preLoaderRoute: typeof AuthLoginIndexRouteImport
-      parentRoute: typeof AuthRouteRoute
+    '/_main/_auth': {
+      id: '/_main/_auth'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof MainAuthRouteRouteImport
+      parentRoute: typeof MainRouteRoute
     }
-    '/_auth/register/': {
-      id: '/_auth/register/'
-      path: '/register'
-      fullPath: '/register/'
-      preLoaderRoute: typeof AuthRegisterIndexRouteImport
-      parentRoute: typeof AuthRouteRoute
+    '/_main/_home': {
+      id: '/_main/_home'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof MainHomeRouteRouteImport
+      parentRoute: typeof MainRouteRoute
+    }
+    '/get-started/': {
+      id: '/get-started/'
+      path: '/get-started'
+      fullPath: '/get-started/'
+      preLoaderRoute: typeof GetStartedIndexRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/_main/_home/': {
       id: '/_main/_home/'
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof MainHomeIndexRouteImport
-      parentRoute: typeof MainRouteRoute
-    }
-    '/_main/albums/': {
-      id: '/_main/albums/'
-      path: '/albums'
-      fullPath: '/albums/'
-      preLoaderRoute: typeof MainAlbumsIndexRouteImport
-      parentRoute: typeof MainRouteRoute
-    }
-    '/_main/movies/': {
-      id: '/_main/movies/'
-      path: '/movies'
-      fullPath: '/movies/'
-      preLoaderRoute: typeof MainMoviesIndexRouteImport
-      parentRoute: typeof MainRouteRoute
-    }
-    '/_main/series/': {
-      id: '/_main/series/'
-      path: '/series'
-      fullPath: '/series/'
-      preLoaderRoute: typeof MainSeriesIndexRouteImport
-      parentRoute: typeof MainRouteRoute
+      parentRoute: typeof MainHomeRouteRoute
     }
     '/api/auth/$': {
       id: '/api/auth/$'
@@ -196,35 +194,84 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiAuthSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_main/_auth/login/': {
+      id: '/_main/_auth/login/'
+      path: '/login'
+      fullPath: '/login/'
+      preLoaderRoute: typeof MainAuthLoginIndexRouteImport
+      parentRoute: typeof MainAuthRouteRoute
+    }
+    '/_main/_auth/register/': {
+      id: '/_main/_auth/register/'
+      path: '/register'
+      fullPath: '/register/'
+      preLoaderRoute: typeof MainAuthRegisterIndexRouteImport
+      parentRoute: typeof MainAuthRouteRoute
+    }
+    '/_main/_home/albums/': {
+      id: '/_main/_home/albums/'
+      path: '/albums'
+      fullPath: '/albums/'
+      preLoaderRoute: typeof MainHomeAlbumsIndexRouteImport
+      parentRoute: typeof MainHomeRouteRoute
+    }
+    '/_main/_home/movies/': {
+      id: '/_main/_home/movies/'
+      path: '/movies'
+      fullPath: '/movies/'
+      preLoaderRoute: typeof MainHomeMoviesIndexRouteImport
+      parentRoute: typeof MainHomeRouteRoute
+    }
+    '/_main/_home/series/': {
+      id: '/_main/_home/series/'
+      path: '/series'
+      fullPath: '/series/'
+      preLoaderRoute: typeof MainHomeSeriesIndexRouteImport
+      parentRoute: typeof MainHomeRouteRoute
+    }
   }
 }
 
-interface AuthRouteRouteChildren {
-  AuthLoginIndexRoute: typeof AuthLoginIndexRoute
-  AuthRegisterIndexRoute: typeof AuthRegisterIndexRoute
+interface MainAuthRouteRouteChildren {
+  MainAuthLoginIndexRoute: typeof MainAuthLoginIndexRoute
+  MainAuthRegisterIndexRoute: typeof MainAuthRegisterIndexRoute
 }
 
-const AuthRouteRouteChildren: AuthRouteRouteChildren = {
-  AuthLoginIndexRoute: AuthLoginIndexRoute,
-  AuthRegisterIndexRoute: AuthRegisterIndexRoute,
+const MainAuthRouteRouteChildren: MainAuthRouteRouteChildren = {
+  MainAuthLoginIndexRoute: MainAuthLoginIndexRoute,
+  MainAuthRegisterIndexRoute: MainAuthRegisterIndexRoute,
 }
 
-const AuthRouteRouteWithChildren = AuthRouteRoute._addFileChildren(
-  AuthRouteRouteChildren,
+const MainAuthRouteRouteWithChildren = MainAuthRouteRoute._addFileChildren(
+  MainAuthRouteRouteChildren,
+)
+
+interface MainHomeRouteRouteChildren {
+  MainHomeIndexRoute: typeof MainHomeIndexRoute
+  MainHomeAlbumsIndexRoute: typeof MainHomeAlbumsIndexRoute
+  MainHomeMoviesIndexRoute: typeof MainHomeMoviesIndexRoute
+  MainHomeSeriesIndexRoute: typeof MainHomeSeriesIndexRoute
+}
+
+const MainHomeRouteRouteChildren: MainHomeRouteRouteChildren = {
+  MainHomeIndexRoute: MainHomeIndexRoute,
+  MainHomeAlbumsIndexRoute: MainHomeAlbumsIndexRoute,
+  MainHomeMoviesIndexRoute: MainHomeMoviesIndexRoute,
+  MainHomeSeriesIndexRoute: MainHomeSeriesIndexRoute,
+}
+
+const MainHomeRouteRouteWithChildren = MainHomeRouteRoute._addFileChildren(
+  MainHomeRouteRouteChildren,
 )
 
 interface MainRouteRouteChildren {
-  MainHomeIndexRoute: typeof MainHomeIndexRoute
-  MainAlbumsIndexRoute: typeof MainAlbumsIndexRoute
-  MainMoviesIndexRoute: typeof MainMoviesIndexRoute
-  MainSeriesIndexRoute: typeof MainSeriesIndexRoute
+  MainAuthRouteRoute: typeof MainAuthRouteRouteWithChildren
+  MainHomeRouteRoute: typeof MainHomeRouteRouteWithChildren
 }
 
 const MainRouteRouteChildren: MainRouteRouteChildren = {
-  MainHomeIndexRoute: MainHomeIndexRoute,
-  MainAlbumsIndexRoute: MainAlbumsIndexRoute,
-  MainMoviesIndexRoute: MainMoviesIndexRoute,
-  MainSeriesIndexRoute: MainSeriesIndexRoute,
+  MainAuthRouteRoute: MainAuthRouteRouteWithChildren,
+  MainHomeRouteRoute: MainHomeRouteRouteWithChildren,
 }
 
 const MainRouteRouteWithChildren = MainRouteRoute._addFileChildren(
@@ -232,8 +279,8 @@ const MainRouteRouteWithChildren = MainRouteRoute._addFileChildren(
 )
 
 const rootRouteChildren: RootRouteChildren = {
-  AuthRouteRoute: AuthRouteRouteWithChildren,
   MainRouteRoute: MainRouteRouteWithChildren,
+  GetStartedIndexRoute: GetStartedIndexRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
 }
 export const routeTree = rootRouteImport

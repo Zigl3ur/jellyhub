@@ -1,7 +1,8 @@
 import { Outlet, createFileRoute, redirect } from "@tanstack/react-router";
 import { getSession } from "@/functions/auth.functions";
+import Logo from "@/components/logo";
 
-export const Route = createFileRoute("/_auth")({
+export const Route = createFileRoute("/_main/_auth")({
   beforeLoad: async () => {
     const session = await getSession();
 
@@ -9,5 +10,10 @@ export const Route = createFileRoute("/_auth")({
 
     return { session };
   },
-  component: () => <Outlet />,
+  component: () => (
+    <div className="flex items-center flex-col justify-center h-dvh gap-8">
+      <Logo />
+      <Outlet />
+    </div>
+  ),
 });

@@ -1,17 +1,16 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { getAllServersMovies } from "@/functions/jellyfin.functions";
+import { getAllServersAlbums } from "@/functions/jellyfin.functions";
 
-export const Route = createFileRoute("/_main/movies/")({
-  component: MoviesPage,
+export const Route = createFileRoute("/_main/_home/albums/")({
+  component: AlbumsPage,
   pendingComponent: LoadingComponent,
   pendingMs: 0,
 });
 
-async function MoviesPage() {
-  const list = await getAllServersMovies();
+async function AlbumsPage() {
+  const list = await getAllServersAlbums();
 
-  const movies = list.data || [];
-
+  const albums = list.data || [];
   return null;
 }
 

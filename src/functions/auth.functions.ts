@@ -1,12 +1,13 @@
 import { createServerFn } from "@tanstack/react-start";
 import { getRequestHeaders } from "@tanstack/react-start/server";
+import { ctxMiddleware } from "./middlewares";
 import { auth } from "@/lib/auth";
 
 export const isSignupAllowed = createServerFn({ method: "GET" }).handler(
   () => process.env.ALLOW_SIGNUP === "true",
 );
 
-export const getUser = createServerFn().handler(async () => {
+export const getUser = createServerFn({ method: "GET" }).handler(async () => {
   const session = await auth.api.getSession({
     headers: getRequestHeaders(),
   });
@@ -40,3 +41,15 @@ export const ensureSession = createServerFn({ method: "GET" }).handler(
     return session;
   },
 );
+
+export const hasAdminUser = createServerFn({ method: "GET" })
+  .middleware([ctxMiddleware])
+  .handler(async ({ context: ctx }) => {
+    const adminUser = await ctx.db.query.user.findFirst({
+      where: {
+        role: "admin",
+      },
+    });
+
+    return !!adminUser;
+  });
