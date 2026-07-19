@@ -1,14 +1,28 @@
-"use server";
-
-import {
-  itemJellyfin,
-  callersResponse,
-  tokenData,
-  rawItemJellyfin,
-  itemTypes,
-  State,
-} from "@/types/jellyfin-api.types";
+import { Jellyfin } from "@jellyfin/sdk";
 import { TicksToDuration } from "./utils";
+import type {
+  State,
+  callersResponse,
+  itemJellyfin,
+  itemTypes,
+  rawItemJellyfin,
+  tokenData,
+} from "@/types/jellyfin-api.types";
+
+const jellyhubClient = new Jellyfin({
+  clientInfo: {
+    name: "jellyhub-client",
+    version: Bun.env.npm_package_version as string,
+  },
+  deviceInfo: {
+    name: "jellyhub",
+    id: "935496e7-847a-4376-a71c-7bdf2615d21d",
+  },
+});
+
+export function getJellyfinApiClient(url: string) {
+  return jellyhubClient.createApi(url);
+}
 
 /**
  * Function to get the auth token from a jellyfin server
@@ -20,7 +34,7 @@ import { TicksToDuration } from "./utils";
 export async function getToken(
   server_url: string,
   username: string,
-  password: string
+  password: string,
 ): Promise<callersResponse<tokenData>> {
   try {
     const response = await fetch(`${server_url}/Users/AuthenticateByName`, {
@@ -74,7 +88,7 @@ export async function getToken(
  */
 export async function checkConn(
   server_url: string,
-  token: string
+  token: string,
 ): Promise<callersResponse<State>> {
   try {
     const response = await fetch(`${server_url}/Users/Me`, {
@@ -105,7 +119,7 @@ export async function checkConn(
 export async function getLibraryItems(
   server_url: string,
   token: string,
-  itemsType: itemTypes
+  itemsType: itemTypes,
 ): Promise<callersResponse<Array<itemJellyfin>>> {
   try {
     const response = await fetch(
@@ -116,7 +130,7 @@ export async function getLibraryItems(
           "Content-type": "application/json",
           "X-Emby-Authorization": `MediaBrowser Token=${token}`,
         },
-      }
+      },
     );
 
     if (response.status === 200) {
@@ -142,7 +156,7 @@ export async function getLibraryItems(
                 ? "/default.svg"
                 : `${server_url}/Items/${item.Id}/Images/Primary?tag=${item.ImageTags.Primary}`,
           };
-        }
+        },
       );
 
       return { success: true, data: listItems };
@@ -172,7 +186,7 @@ export async function getLibraryItems(
  */
 export async function getAllItems(
   server_url: string,
-  token: string
+  token: string,
 ): Promise<
   callersResponse<{
     movies: Array<itemJellyfin>;

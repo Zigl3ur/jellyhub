@@ -113,7 +113,7 @@ function RegisterPage() {
             const invalid = !field.state.meta.isValid;
 
             return (
-              <FieldRoot name="password" invalid={invalid}>
+              <FieldRoot name={field.name} invalid={invalid}>
                 <FieldLabel>Password</FieldLabel>
                 <Input
                   name={field.name}
@@ -145,7 +145,7 @@ function RegisterPage() {
             const invalid = !field.state.meta.isValid;
 
             return (
-              <FieldRoot name="confirmPassword" invalid={invalid}>
+              <FieldRoot name={field.name} invalid={invalid}>
                 <FieldLabel>Confirm Password</FieldLabel>
                 <Input
                   name={field.name}

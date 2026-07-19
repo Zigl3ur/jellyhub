@@ -2,8 +2,8 @@ import { z } from "zod/v4";
 
 export const addServerSchema = z.object({
   address: z.url({ message: "Please enter a valid URL" }),
-  username: z.string().min(1, { message: "Username is required" }),
-  password: z.string().min(1, { message: "Password is required" }),
+  username: z.string().min(1, { message: "Provide a server username" }),
+  password: z.string().min(1, { message: "Provide a server password" }),
 });
 
 export type addServerSchemaType = z.output<typeof addServerSchema>;
@@ -14,19 +14,19 @@ export const editUserSchema = z
       z
         .string()
         .min(3, { message: "Username must be at least 3 characters long" })
-        .max(15, { message: "Username cant exceed 15 characters" })
+        .max(15, { message: "Username cant exceed 15 characters" }),
     ),
     password: z.optional(
       z
         .string()
         .min(6, { message: "Pasword must be at least 6 characters long" })
-        .max(50, { message: "Pasword cant exceed 50 characters" })
+        .max(50, { message: "Pasword cant exceed 50 characters" }),
     ),
     confirmPassword: z.optional(
       z
         .string()
         .min(6, { message: "Pasword must be at least 6 characters long" })
-        .max(50, { message: "Pasword cant exceed 50 characters" })
+        .max(50, { message: "Pasword cant exceed 50 characters" }),
     ),
   })
   .check((ctx) => {

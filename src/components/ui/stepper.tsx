@@ -50,8 +50,12 @@ export function Stepper({ value, onValueChange, children }: StepperProps) {
   );
 }
 
-export function StepperNav({ children }: PropsWithChildren) {
-  return <div className="flex w-full">{children}</div>;
+interface StepperNavProps extends PropsWithChildren {
+  className?: string;
+}
+
+export function StepperNav({ className, children }: StepperNavProps) {
+  return <div className={cn("flex w-full", className)}>{children}</div>;
 }
 
 interface StepperItemProps extends PropsWithChildren {
@@ -121,5 +125,7 @@ interface StepperContentProps extends PropsWithChildren {
 export function StepperContent({ value, children }: StepperContentProps) {
   const { currentStep } = useStepperContext();
 
-  return value === currentStep ? <div className="space-y-4">{children}</div> : null;
+  return value === currentStep ? (
+    <div className="space-y-4">{children}</div>
+  ) : null;
 }

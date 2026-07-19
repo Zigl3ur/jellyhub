@@ -1,10 +1,44 @@
 import { createServerFn } from "@tanstack/react-start";
+import { getSystemApi, getUserApi } from "@jellyfin/sdk/lib/utils/api";
 import { getUser } from "./auth.functions";
 import type { ServerActionReturn } from "@/types/actions.types";
 import type { itemJellyfin } from "@/types/jellyfin-api.types";
-import { getAllItems, getLibraryItems } from "@/lib/api.jellyfin";
+import {
+  getAllItems,
+  getJellyfinApiClient,
+  getLibraryItems,
+} from "@/lib/api.jellyfin";
 import { filterItems } from "@/lib/utils";
 import db from "@/lib/db";
+
+export const getServerInfo = createServerFn({ method: "GET" })
+  .validator((data: { url: string }) => data)
+  .handler(async ({ data }) => {
+    const api = getJellyfinApiClient(data.url);
+
+    const info = await getSystemApi(api).getPublicSystemInfo();
+
+    return info.data;
+  });
+
+export const getServerToken = createServerFn({ method: "GET" })
+  .validator(
+    (data: { address: string; username: string; password: string }) => data,
+  )
+  .handler(async ({ data }) => {
+    const api = getJellyfinApiClient(data.address);
+
+    const auth = await getUserApi(api).authenticateUserByName({
+      authenticateUserByName: {
+        Username: data.username,
+        Pw: data.password,
+      },
+    });
+
+    if (auth.status !== 200) throw new Error("Failed to authenticate user");
+
+    return { ...auth.data };
+  });
 
 /**
  * action to fetch all items from registered and reachable servers

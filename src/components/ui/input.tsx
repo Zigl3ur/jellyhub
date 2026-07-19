@@ -12,12 +12,12 @@ export function Input({ children, className, ...props }: BaseInput.Props) {
       )}
     >
       <BaseInput
+        {...props}
         data-slot="input"
         className={cn(
           "w-full min-w-0 placeholder:text-muted-foreground/50 py-0.5 px-2 outline-none ",
           className,
         )}
-        {...props}
       />
       {children}
     </div>

@@ -7,7 +7,7 @@ export const Route = createFileRoute("/_main/_home/")({
   pendingMs: 0,
 });
 
-export default async function Home() {
+async function Home() {
   const list = await getAllServersItems();
 
   // easier to mess with undefined property

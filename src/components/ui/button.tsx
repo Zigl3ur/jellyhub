@@ -39,9 +39,9 @@ export default function Button({
 }: ButtonProps) {
   return (
     <BaseButton
+      {...props}
       data-slot="button"
       className={cn(baseClassName, sizes[size], variants[variant], className)}
-      {...props}
     >
       {children}
     </BaseButton>
