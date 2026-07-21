@@ -21,7 +21,7 @@ export function DeleteAlertDialog({
   const handleDelete = async () => {
     setLoading(true);
 
-    deleteServerAction(checkedRows)
+    await deleteServerAction({ data: checkedRows })
       .then((result) => {
         if (result.success) {
           toast.success("Success", { description: result.message });

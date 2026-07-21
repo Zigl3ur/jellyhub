@@ -8,7 +8,7 @@ interface ButtonProps extends BaseButton.Props {
 }
 
 const baseClassName =
-  "inline-flex items-center gap-2 outline-none focus-visible:ring-2 justify-center enabled:hover:cursor-pointer active:translate-y-px active:opacity-70 transition-all duration-200 disabled:cursor-not-allowed disabled:opacity-50 rounded leading-none whitespace-nowrap font-normal select-none focus-visible:outline-2 focus-visible:-outline-offset-1 disabled:hover:cursor-not-allowed";
+  "group/button inline-flex items-center gap-1.5 outline-none focus-visible:ring-2 disabled:pointer-events-none justify-center hover:cursor-pointer active:translate-y-px active:opacity-70 transition-all duration-200 disabled:cursor-not-allowed disabled:opacity-50 rounded leading-none whitespace-nowrap font-normal select-none focus-visible:outline-2 focus-visible:-outline-offset-1 disabled:hover:cursor-not-allowed";
 
 const sizes: Record<NonNullable<ButtonProps["size"]>, string> = {
   "icon-sm": "size-4",
@@ -19,15 +19,14 @@ const sizes: Record<NonNullable<ButtonProps["size"]>, string> = {
 };
 
 const variants: Record<NonNullable<ButtonProps["variant"]>, string> = {
-  default: "bg-foreground text-background enabled:hover:bg-foreground/90",
-  accent: "bg-accent text-foreground enabled:hover:bg-accent/90",
-  destructive:
-    "bg-destructive text-background enabled:hover:bg-destructive/90 focus-visible:outline-destructive",
+  default: "bg-foreground text-background hover:bg-foreground/90",
+  accent: "bg-accent text-foreground hover:bg-accent/90",
+  destructive: "bg-destructive hover:bg-destructive/90 focus-visible:ring-ring",
   outline:
-    "border border-input bg-input/60 enabled:hover:bg-input/80 focus:ring-ring/40",
+    "border border-input bg-input/60 hover:bg-input/80 focus:ring-ring/40",
   secondary:
-    "bg-secondary text-secondary-foreground enabled:hover:bg-secondary/80 focus-visible:outline-secondary",
-  ghost: "enabled:hover:bg-accent/50 focus-visible:ring-ring/40",
+    "bg-secondary text-secondary-foreground hover:bg-secondary/80 focus-visible:outline-secondary",
+  ghost: "hover:bg-accent/50 focus-visible:ring-ring/40",
 };
 
 export default function Button({

@@ -1,26 +1,24 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
-import { revalidateLogic, useForm } from "@tanstack/react-form";
+import { useState } from "react";
 import {
   IconArrowRight,
-  IconCheck,
-  IconCross,
   IconEye,
   IconEyeOff,
-  IconPlus,
+  IconPencil,
   IconTrash,
   IconUserCog,
   IconX,
 } from "@tabler/icons-react";
-import { useMutation, useQuery } from "@tanstack/react-query";
-import type { PropsWithChildren } from "react";
+import { useMutation } from "@tanstack/react-query";
 import type {
   loginSchemaType,
   registerSchemaType,
 } from "@/schemas/auth.schema";
-import type { addServerSchemaType } from "@/schemas/settings.schema";
-import { Input, InputAddon } from "@/components/ui/input";
-import { registerSchema } from "@/schemas/auth.schema";
+import type {
+  addServerSchemaType,
+  endSetupSchemaType,
+} from "@/schemas/settings.schema";
+import type { ServerStatus as ServerStatusType } from "@/types";
 import { hasAdminUser } from "@/functions/auth.functions";
 import Logo from "@/components/logo";
 import {
@@ -31,18 +29,24 @@ import {
   StepperSeparator,
   StepperTrigger,
 } from "@/components/ui/stepper";
-import { FieldError, FieldLabel, FieldRoot } from "@/components/ui/field";
 import Button from "@/components/ui/button";
 import Badge from "@/components/ui/badge";
 import { getServerToken } from "@/functions/jellyfin.functions";
-import { addServerSchema } from "@/schemas/settings.schema";
+import {
+  AddServersForm,
+  CreateAdminUserForm,
+  CreateUsersForm,
+  ServerStatus,
+  defaultValuesAdmin,
+} from "@/components/get-started";
+import { endSetup } from "@/functions/settings.functions";
 import LoaderIcon from "@/components/ui/loader-icon";
 
 type Server = {
   username: string;
   token: string;
-  url: string;
-  status: "checking" | "up" | "down";
+  address: string;
+  status: ServerStatusType;
 };
 
 export const Route = createFileRoute("/get-started/")({
@@ -58,12 +62,15 @@ export const Route = createFileRoute("/get-started/")({
 const steps = [1, 2, 3, 4];
 
 function GetStartedPage() {
-  const [currentStep, setCurrentStep] = useState(3);
+  const [currentStep, setCurrentStep] = useState(1);
   const nextStep = () => setCurrentStep((prev) => prev + 1);
 
   const [users, setUsers] = useState<Array<loginSchemaType & { role: string }>>(
     [],
   );
+  const [selectedUser, setSelectedUser] = useState<
+    registerSchemaType | undefined
+  >(undefined);
   const admin = users.find((u) => u.role === "admin");
   const adminUser: registerSchemaType = admin
     ? {
@@ -78,12 +85,12 @@ function GetStartedPage() {
   const getServerTokenMutation = useMutation({
     mutationFn: (data: addServerSchemaType) => getServerToken({ data }),
     onSuccess: (data, args) => {
-      const server = servers.find((s) => s.url === args.address) as Server;
+      const server = servers.find((s) => s.address === args.address) as Server;
 
       setServers((prev) => [
-        ...prev.filter((s) => s.url !== args.address),
+        ...prev.filter((s) => s.address !== args.address),
         {
-          url: server.url,
+          address: server.address,
           username: server.username,
           token: data.AccessToken as string,
           status: "up",
@@ -91,11 +98,11 @@ function GetStartedPage() {
       ]);
     },
     onError: (_, args) => {
-      const server = servers.find((s) => s.url === args.address) as Server;
+      const server = servers.find((s) => s.address === args.address) as Server;
       setServers((prev) => [
-        ...prev.filter((s) => s.url !== args.address),
+        ...prev.filter((s) => s.address !== args.address),
         {
-          url: server.url,
+          address: server.address,
           username: server.username,
           token: "",
           status: "down",
@@ -104,8 +111,19 @@ function GetStartedPage() {
     },
   });
 
+  const [showSummaryAdminPass, setShowSummaryAdminPass] = useState(false);
+
+  const [finishSetUpLoading, setFinisSetupLoading] = useState(false);
+  const [finishSetUpError, setFinisSetupError] = useState(false);
+  const finishSetupMutation = useMutation({
+    mutationFn: (data: endSetupSchemaType) => endSetup({ data }),
+    onMutate: () => setFinisSetupLoading(true),
+    onError: () => setFinisSetupError(true),
+    onSettled: () => setFinisSetupLoading(false),
+  });
+
   return (
-    <div className="flex items-center flex-col justify-center h-dvh gap-8">
+    <div className="flex items-center flex-col justify-center min-h-svh gap-8 p-4">
       <Logo />
       <div className="max-w-sm w-full p-6 rounded-xl space-y-8 bg-accent-foreground">
         <h3 className="font-serif italic text-3xl font-semibold text-foreground">
@@ -118,7 +136,11 @@ function GetStartedPage() {
         >
           <StepperNav>
             {steps.map((step) => (
-              <StepperItem key={step} value={step}>
+              <StepperItem
+                key={step}
+                value={step}
+                disabled={(step > 1 && !admin) || finishSetUpLoading}
+              >
                 <StepperTrigger />
                 {steps.length !== step && <StepperSeparator />}
               </StepperItem>
@@ -142,37 +164,61 @@ function GetStartedPage() {
             />
           </StepperContent>
           <StepperContent value={2}>
-            <h4 className="text-xl font-semibold">Create Users</h4>
-
-            <div className="space-y-2 border border-input bg-input/20 p-3 rounded">
+            <div>
+              <h4 className="text-xl font-semibold">Create Users</h4>
+              <p className="text-muted-foreground">
+                Add users that will be able to access Jellyhub
+              </p>
+            </div>
+            <div className="space-y-3 border border-input bg-input/20 p-3 rounded">
               <h5 className="font-light text-sm">Configured Users</h5>
               <div className="flex flex-wrap gap-2">
-                {users.map((u) => (
-                  <Badge key={u.username}>
-                    {u.username}
-                    {u.role === "admin" ? (
-                      <IconUserCog className="shrink-0 size-4" />
-                    ) : (
-                      <Button
-                        size="icon-sm"
-                        variant="ghost"
-                        onClick={() =>
-                          setUsers((prev) =>
-                            prev.filter((user) => user.username !== u.username),
-                          )
-                        }
-                      >
-                        <IconX className="shrink-0 size-3" />
-                      </Button>
-                    )}
-                  </Badge>
-                ))}
+                {users.length > 0 ? (
+                  users.map((u) => (
+                    <Badge
+                      key={u.username}
+                      onClick={() => {
+                        if (u.role === "admin") return;
+                        setSelectedUser({
+                          username: u.username,
+                          password: u.password,
+                          confirmPassword: u.password,
+                        });
+                      }}
+                    >
+                      {u.username}
+                      {u.role === "admin" ? (
+                        <IconUserCog className="shrink-0 size-4" />
+                      ) : (
+                        <Button
+                          size="icon-sm"
+                          variant="ghost"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setUsers((prev) =>
+                              prev.filter(
+                                (user) => user.username !== u.username,
+                              ),
+                            );
+                            setSelectedUser(undefined);
+                          }}
+                        >
+                          <IconX className="shrink-0 size-3" />
+                        </Button>
+                      )}
+                    </Badge>
+                  ))
+                ) : (
+                  <p className="text-sm opacity-90">No users configured</p>
+                )}
               </div>
             </div>
             <CreateUsersForm
+              value={selectedUser}
               onSubmit={(value) => {
                 if (!users.map((u) => u.username).includes(value.username)) {
                   setUsers((prev) => [...prev, { ...value, role: "user" }]);
+                  setSelectedUser(undefined);
                 }
               }}
             >
@@ -182,41 +228,49 @@ function GetStartedPage() {
             </CreateUsersForm>
           </StepperContent>
           <StepperContent value={3}>
+            <div>
+              <h4 className="text-xl font-semibold">Add Jellyfin Servers</h4>
+              <p className="text-muted-foreground">
+                Configure Jellyfin servers for your account
+              </p>
+            </div>
             <h4 className="text-xl font-semibold">Add Jellyfin Servers</h4>
             <div className="space-y-3 border border-input bg-input/20 p-3 rounded">
-              <h5 className="font-light text-sm">Configured Servers</h5>
-
-              <div className="flex flex-col divide-input divide-y max-h-50 overflow-y-auto">
-                {servers.map((s) => (
-                  <div
-                    key={s.url}
-                    className="flex items-center w-full justify-between first:pb-2 text-sm py-2 last:pt-2 last:pb-0 first:pt-0"
-                  >
-                    <div className="flex gap-2 items-center">
-                      <h6>{s.url}</h6>
-                      <span className="overflow-hidden">
-                        {s.status === "checking" ? (
-                          <LoaderIcon />
-                        ) : s.status === "up" ? (
-                          <IconCheck className="size-4.5 text-success" />
-                        ) : (
-                          <IconX className="size-4.5 text-destructive" />
-                        )}
-                      </span>
-                    </div>
-                    <Button
-                      variant="destructive"
-                      size="icon"
-                      onClick={() =>
-                        setServers((prev) =>
-                          prev.filter((p) => p.url !== s.url),
-                        )
-                      }
-                    >
-                      <IconTrash />
-                    </Button>
-                  </div>
-                ))}
+              <h4 className="font-light text-sm">Configured Servers</h4>
+              <div className="flex flex-col gap-2 max-h-50 overflow-y-auto">
+                {servers.length > 0 ? (
+                  servers.map((s, idx) => (
+                    <>
+                      <div
+                        key={s.address}
+                        className="flex items-center w-full justify-between text-sm"
+                      >
+                        <div className="flex gap-2 items-center">
+                          <h6>{s.address}</h6>
+                          <span className="overflow-hidden">
+                            <ServerStatus status={s.status} />
+                          </span>
+                        </div>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() =>
+                            setServers((prev) =>
+                              prev.filter((p) => p.address !== s.address),
+                            )
+                          }
+                        >
+                          <IconTrash className="group-hover/button:text-destructive transtion-colors duration-200" />
+                        </Button>
+                      </div>
+                      {idx + 1 < servers.length && (
+                        <span className="h-px bg-input" />
+                      )}
+                    </>
+                  ))
+                ) : (
+                  <p className="text-sm opacity-90">No servers configured</p>
+                )}
               </div>
             </div>
 
@@ -225,7 +279,7 @@ function GetStartedPage() {
                 setServers((prev) => [
                   ...prev,
                   {
-                    url: value.address,
+                    address: value.address,
                     username: value.username,
                     status: "checking",
                     token: "",
@@ -240,422 +294,134 @@ function GetStartedPage() {
               </Button>
             </AddServersForm>
           </StepperContent>
-          <StepperContent value={4}></StepperContent>
+          <StepperContent value={4}>
+            {finishSetUpLoading ? (
+              <div className="flex items-center justify-center">
+                <LoaderIcon />
+                Loading
+              </div>
+            ) : (
+              <>
+                <div>
+                  <h4 className="text-xl font-semibold">Summary</h4>
+                  <p className="text-muted-foreground">Review your settings</p>
+                </div>
+                <div className="border border-input rounded">
+                  <div className="px-3 py-2 bg-accent/20 flex justify-between items-center">
+                    <h6 className="text-sm">Admin User</h6>
+                    <Button
+                      size="icon"
+                      variant="outline"
+                      onClick={() => setCurrentStep(1)}
+                    >
+                      <IconPencil className="shrink-0 size-4" />
+                    </Button>
+                  </div>
+                  <div className="px-3 py-2 flex flex-col gap-3 rounded-t-lg border-t bg-input/20 border-input @container">
+                    <div className="flex justify-between @[200px]:items-center @[200px]:flex-row flex-col">
+                      <p className="text-muted-foreground">Username</p>
+                      <p>{adminUser.username}</p>
+                    </div>
+                    <div className="flex justify-between @[200px]:items-center @[200px]:flex-row flex-col">
+                      <p className="text-muted-foreground">Pasword</p>
+                      <div className="flex gap-1.5 items-center">
+                        <p className="max-w-20 truncate">
+                          {showSummaryAdminPass
+                            ? adminUser.username
+                            : Array.from({
+                                length: adminUser.username.length,
+                              }).map((_) => "•")}
+                        </p>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() =>
+                            setShowSummaryAdminPass((prev) => !prev)
+                          }
+                        >
+                          {showSummaryAdminPass ? <IconEyeOff /> : <IconEye />}
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="border border-input rounded">
+                  <div className="px-3 py-2 bg-accent/20 flex justify-between items-center">
+                    <h6 className="text-sm">Users</h6>
+
+                    <Button
+                      size="icon"
+                      variant="outline"
+                      onClick={() => setCurrentStep(2)}
+                    >
+                      <IconPencil className="shrink-0 size-4" />
+                    </Button>
+                  </div>
+                  <div className="px-3 py-2 rounded-t-lg border-t bg-input/20 border-input flex flex-wrap gap-2">
+                    {users.length > 0 ? (
+                      users
+                        .filter((u) => u.role === "user")
+                        .map((u) => <Badge> {u.username}</Badge>)
+                    ) : (
+                      <p className="text-sm opacity-90">No users configured</p>
+                    )}
+                  </div>
+                </div>
+                <div className="border border-input rounded">
+                  <div className="px-3 py-2 bg-accent/20 flex justify-between items-center">
+                    <h6 className="text-sm">Jellyfin Servers</h6>
+                    <Button
+                      size="icon"
+                      variant="outline"
+                      onClick={() => setCurrentStep(3)}
+                    >
+                      <IconPencil className="shrink-0 size-4" />
+                    </Button>
+                  </div>
+
+                  <div className="px-3 py-2 flex flex-col rounded-t-lg border-t bg-input/20 border-input">
+                    {servers.length > 0 ? (
+                      servers.map((s, idx) => (
+                        <>
+                          <div className="flex items-center justify-between text-sm py-2">
+                            <h6>{s.address}</h6>
+                            <span className="overflow-hidden mr-1">
+                              <ServerStatus status={s.status} />
+                            </span>
+                          </div>
+                          {idx + 1 < servers.length && (
+                            <span className="h-px bg-input" />
+                          )}
+                        </>
+                      ))
+                    ) : (
+                      <p className="text-sm opacity-90">
+                        No servers configured
+                      </p>
+                    )}
+                  </div>
+                </div>
+                <div className="flex justify-end">
+                  <Button
+                    onClick={() =>
+                      finishSetupMutation.mutate({
+                        admin: {
+                          username: adminUser.username,
+                          password: adminUser.password,
+                        },
+                        users,
+                        servers,
+                      })
+                    }
+                  >
+                    Finish
+                  </Button>
+                </div>
+              </>
+            )}
+          </StepperContent>
         </Stepper>
       </div>
     </div>
-  );
-}
-
-const defaultValuesAdmin: registerSchemaType = {
-  username: "admin",
-  password: "",
-  confirmPassword: "",
-};
-
-interface CreateAdminUserFormProps {
-  defaultValues: registerSchemaType;
-  onSubmit: (values: registerSchemaType) => void;
-}
-
-function CreateAdminUserForm({
-  defaultValues,
-  onSubmit,
-}: CreateAdminUserFormProps) {
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-
-  const createAdminUserForm = useForm({
-    defaultValues,
-    validationLogic: revalidateLogic({
-      mode: "submit",
-      modeAfterSubmission: "change",
-    }),
-    validators: {
-      onDynamic: registerSchema,
-    },
-    onSubmit: ({ value }) => {
-      onSubmit(value);
-      createAdminUserForm.reset();
-    },
-  });
-
-  return (
-    <form
-      className="space-y-4"
-      onSubmit={(e) => {
-        e.preventDefault();
-        createAdminUserForm.handleSubmit();
-      }}
-    >
-      <createAdminUserForm.Field
-        name="username"
-        children={(field) => {
-          const error = field.state.meta.errors[0];
-          const invalid = !field.state.meta.isValid;
-
-          return (
-            <FieldRoot name={field.name} invalid={invalid}>
-              <FieldLabel>Username</FieldLabel>
-
-              <Input
-                name={field.name}
-                placeholder="Admin"
-                value={field.state.value}
-                onBlur={field.handleBlur}
-                onChange={(e) => field.handleChange(e.target.value)}
-              />
-
-              <FieldError match={invalid}>{error?.message}</FieldError>
-            </FieldRoot>
-          );
-        }}
-      />
-      <createAdminUserForm.Field
-        name="password"
-        children={(field) => {
-          const error = field.state.meta.errors[0];
-          const invalid = !field.state.meta.isValid;
-
-          return (
-            <FieldRoot name={field.name} invalid={invalid}>
-              <FieldLabel>Password</FieldLabel>
-              <Input
-                name={field.name}
-                type={showPassword ? "text" : "password"}
-                placeholder="Password"
-                value={field.state.value}
-                onBlur={field.handleBlur}
-                onChange={(e) => field.handleChange(e.target.value)}
-              >
-                <InputAddon side="right">
-                  <Button
-                    type="button"
-                    size="icon"
-                    variant="ghost"
-                    onClick={() => setShowPassword((prev) => !prev)}
-                  >
-                    {showPassword ? <IconEyeOff /> : <IconEye />}
-                  </Button>
-                </InputAddon>
-              </Input>
-              <FieldError match={invalid}>{error?.message}</FieldError>
-            </FieldRoot>
-          );
-        }}
-      />
-      <createAdminUserForm.Field
-        name="confirmPassword"
-        children={(field) => {
-          const error = field.state.meta.errors[0];
-          const invalid = !field.state.meta.isValid;
-
-          return (
-            <FieldRoot name={field.name} invalid={invalid}>
-              <FieldLabel>Confirm Password</FieldLabel>
-              <Input
-                name={field.name}
-                type={showConfirmPassword ? "text" : "password"}
-                placeholder="Confirm Password"
-                value={field.state.value}
-                onBlur={field.handleBlur}
-                onChange={(e) => field.handleChange(e.target.value)}
-              >
-                <InputAddon side="right">
-                  <Button
-                    type="button"
-                    size="icon"
-                    variant="ghost"
-                    onClick={() => setShowConfirmPassword((prev) => !prev)}
-                  >
-                    {showConfirmPassword ? <IconEyeOff /> : <IconEye />}
-                  </Button>
-                </InputAddon>
-              </Input>
-              <FieldError match={invalid}>{error?.message}</FieldError>
-            </FieldRoot>
-          );
-        }}
-      />
-      <div className="flex justify-end">
-        <createAdminUserForm.Subscribe
-          selector={(state) => state.canSubmit}
-          children={(canSubmit) => (
-            <Button type="submit" disabled={!canSubmit}>
-              Next <IconArrowRight className="size-4" />
-            </Button>
-          )}
-        />
-      </div>
-    </form>
-  );
-}
-
-const defaultValuesUser: registerSchemaType = {
-  username: "",
-  password: "",
-  confirmPassword: "",
-};
-
-interface CreateUsersFormProps extends PropsWithChildren {
-  onSubmit: (values: loginSchemaType) => void;
-}
-
-function CreateUsersForm({ onSubmit, children }: CreateUsersFormProps) {
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-
-  const createUserForm = useForm({
-    defaultValues: defaultValuesUser,
-    validationLogic: revalidateLogic({
-      mode: "submit",
-      modeAfterSubmission: "change",
-    }),
-    validators: {
-      onDynamic: registerSchema,
-    },
-    onSubmit: ({ value }) => {
-      onSubmit(value);
-      createUserForm.reset();
-    },
-  });
-
-  return (
-    <form
-      className="space-y-4"
-      onSubmit={(e) => {
-        e.preventDefault();
-        createUserForm.handleSubmit();
-      }}
-    >
-      <createUserForm.Field
-        name="username"
-        children={(field) => {
-          const error = field.state.meta.errors[0];
-          const invalid = !field.state.meta.isValid;
-
-          return (
-            <FieldRoot name={field.name} invalid={invalid}>
-              <FieldLabel>Username</FieldLabel>
-
-              <Input
-                name={field.name}
-                placeholder="User 1"
-                value={field.state.value}
-                onBlur={field.handleBlur}
-                onChange={(e) => field.handleChange(e.target.value)}
-              />
-
-              <FieldError match={invalid}>{error?.message}</FieldError>
-            </FieldRoot>
-          );
-        }}
-      />
-      <createUserForm.Field
-        name="password"
-        children={(field) => {
-          const error = field.state.meta.errors[0];
-          const invalid = !field.state.meta.isValid;
-
-          return (
-            <FieldRoot name={field.name} invalid={invalid}>
-              <FieldLabel>Password</FieldLabel>
-              <Input
-                name={field.name}
-                type={showPassword ? "text" : "password"}
-                placeholder="Password"
-                value={field.state.value}
-                onBlur={field.handleBlur}
-                onChange={(e) => field.handleChange(e.target.value)}
-              >
-                <InputAddon side="right">
-                  <Button
-                    type="button"
-                    size="icon"
-                    variant="ghost"
-                    onClick={() => setShowPassword((prev) => !prev)}
-                  >
-                    {showPassword ? <IconEyeOff /> : <IconEye />}
-                  </Button>
-                </InputAddon>
-              </Input>
-              <FieldError match={invalid}>{error?.message}</FieldError>
-            </FieldRoot>
-          );
-        }}
-      />
-      <createUserForm.Field
-        name="confirmPassword"
-        children={(field) => {
-          const error = field.state.meta.errors[0];
-          const invalid = !field.state.meta.isValid;
-
-          return (
-            <FieldRoot name={field.name} invalid={invalid}>
-              <FieldLabel>Confirm Password</FieldLabel>
-              <Input
-                name={field.name}
-                type={showConfirmPassword ? "text" : "password"}
-                placeholder="Confirm Password"
-                value={field.state.value}
-                onBlur={field.handleBlur}
-                onChange={(e) => field.handleChange(e.target.value)}
-              >
-                <InputAddon side="right">
-                  <Button
-                    type="button"
-                    size="icon"
-                    variant="ghost"
-                    onClick={() => setShowConfirmPassword((prev) => !prev)}
-                  >
-                    {showConfirmPassword ? <IconEyeOff /> : <IconEye />}
-                  </Button>
-                </InputAddon>
-              </Input>
-              <FieldError match={invalid}>{error?.message}</FieldError>
-            </FieldRoot>
-          );
-        }}
-      />
-      <div className="flex justify-end gap-2">
-        <createUserForm.Subscribe
-          selector={(state) => state.canSubmit}
-          children={(canSubmit) => (
-            <Button type="submit" disabled={!canSubmit}>
-              Add <IconPlus className="size-4" />
-            </Button>
-          )}
-        />
-        {children}
-      </div>
-    </form>
-  );
-}
-
-const defaultValuesServer: addServerSchemaType = {
-  address: "",
-  username: "",
-  password: "",
-};
-
-interface AddServersFormProps extends PropsWithChildren {
-  onSubmit: (values: addServerSchemaType) => void;
-}
-
-function AddServersForm({ onSubmit, children }: AddServersFormProps) {
-  const [showPassword, setShowPassword] = useState(false);
-
-  const addServerForm = useForm({
-    defaultValues: defaultValuesServer,
-    validationLogic: revalidateLogic({
-      mode: "submit",
-      modeAfterSubmission: "change",
-    }),
-    validators: {
-      onDynamic: addServerSchema,
-    },
-    onSubmit: ({ value }) => {
-      onSubmit(value);
-      addServerForm.reset();
-    },
-  });
-
-  return (
-    <form
-      className="space-y-4"
-      onSubmit={(e) => {
-        e.preventDefault();
-        addServerForm.handleSubmit();
-      }}
-    >
-      <addServerForm.Field
-        name="address"
-        children={(field) => {
-          const error = field.state.meta.errors[0];
-          const invalid = !field.state.meta.isValid;
-
-          return (
-            <FieldRoot name={field.name} invalid={invalid}>
-              <FieldLabel>Server Address</FieldLabel>
-
-              <Input
-                name={field.name}
-                placeholder="https://my.jellyfin.com"
-                value={field.state.value}
-                onBlur={field.handleBlur}
-                onChange={(e) => field.handleChange(e.target.value)}
-              />
-
-              <FieldError match={invalid}>{error?.message}</FieldError>
-            </FieldRoot>
-          );
-        }}
-      />
-      <addServerForm.Field
-        name="username"
-        children={(field) => {
-          const error = field.state.meta.errors[0];
-          const invalid = !field.state.meta.isValid;
-
-          return (
-            <FieldRoot name={field.name} invalid={invalid}>
-              <FieldLabel>Username</FieldLabel>
-              <Input
-                name={field.name}
-                placeholder="Server username"
-                value={field.state.value}
-                onBlur={field.handleBlur}
-                onChange={(e) => field.handleChange(e.target.value)}
-              />
-              <FieldError match={invalid}>{error?.message}</FieldError>
-            </FieldRoot>
-          );
-        }}
-      />
-      <addServerForm.Field
-        name="password"
-        children={(field) => {
-          const error = field.state.meta.errors[0];
-          const invalid = !field.state.meta.isValid;
-
-          return (
-            <FieldRoot name={field.name} invalid={invalid}>
-              <FieldLabel>Password</FieldLabel>
-              <Input
-                name={field.name}
-                type={showPassword ? "text" : "password"}
-                placeholder="Server password"
-                value={field.state.value}
-                onBlur={field.handleBlur}
-                onChange={(e) => field.handleChange(e.target.value)}
-              >
-                <InputAddon side="right">
-                  <Button
-                    type="button"
-                    size="icon"
-                    variant="ghost"
-                    onClick={() => setShowPassword((prev) => !prev)}
-                  >
-                    {showPassword ? <IconEyeOff /> : <IconEye />}
-                  </Button>
-                </InputAddon>
-              </Input>
-              <FieldError match={invalid}>{error?.message}</FieldError>
-            </FieldRoot>
-          );
-        }}
-      />
-      <div className="flex justify-end gap-2">
-        <addServerForm.Subscribe
-          selector={(state) => state.canSubmit}
-          children={(canSubmit) => (
-            <Button type="submit" disabled={!canSubmit}>
-              Add <IconPlus className="size-4" />
-            </Button>
-          )}
-        />
-        {children}
-      </div>
-    </form>
   );
 }

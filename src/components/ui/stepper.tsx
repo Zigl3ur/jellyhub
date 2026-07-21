@@ -21,7 +21,14 @@ function useStepperContext() {
   return context;
 }
 
-const StepperItemContext = createContext<number | undefined>(undefined);
+interface StepperItemContextProps {
+  value: number;
+  disabled?: boolean;
+}
+
+const StepperItemContext = createContext<StepperItemContextProps | undefined>(
+  undefined,
+);
 
 function useStepperItemContext() {
   const context = useContext(StepperItemContext);
@@ -60,15 +67,16 @@ export function StepperNav({ className, children }: StepperNavProps) {
 
 interface StepperItemProps extends PropsWithChildren {
   value: number;
+  disabled?: boolean;
 }
 
-export function StepperItem({ value, children }: StepperItemProps) {
+export function StepperItem({ value, disabled, children }: StepperItemProps) {
   const { currentStep } = useStepperContext();
 
   return (
-    <StepperItemContext.Provider value={value}>
+    <StepperItemContext.Provider value={{ value, disabled }}>
       <div
-        className="flex items-center not-last:flex-1 group/item"
+        className="flex items-center not-last:flex-1 group/stepper-item"
         data-completed={value < currentStep}
       >
         {children}
@@ -79,21 +87,19 @@ export function StepperItem({ value, children }: StepperItemProps) {
 
 export function StepperTrigger() {
   const { currentStep, setCurrentStep } = useStepperContext();
-  const value = useStepperItemContext();
+  const { value, disabled } = useStepperItemContext();
 
   const isCompleted = value < currentStep;
   const isActive = value === currentStep;
+  const isDisabled = disabled !== undefined ? disabled : value > currentStep;
 
   return (
     <Button
       key={value}
       size="icon"
-      data-completed={isCompleted}
       className="peer border-none"
-      onClick={() => {
-        if (isCompleted) setCurrentStep(value);
-      }}
-      disabled={value > currentStep}
+      onClick={() => setCurrentStep(value)}
+      disabled={isDisabled}
       variant="outline"
     >
       {isCompleted ? (
@@ -114,7 +120,7 @@ export function StepperTrigger() {
 
 export function StepperSeparator() {
   return (
-    <span className="h-0.5 flex-1 transition-colors duration-200 bg-input mx-px group-data-[completed=true]/item:bg-white/50" />
+    <span className="h-0.5 flex-1 transition-colors duration-200 bg-input mx-px group-data-[completed=true]/stepper-item:bg-white/50" />
   );
 }
 

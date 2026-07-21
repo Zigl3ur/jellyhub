@@ -22,7 +22,7 @@ export default function ResetPasswd() {
     const { password, confirmPassword } = values;
 
     setLoading(true);
-    await resetPasswordAction(password, confirmPassword)
+    await resetPasswordAction({ data: { password, confirmPassword } })
       .then((result) => {
         if (result.error) {
           toast.error("Error", {

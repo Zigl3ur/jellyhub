@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { LoaderCircle, Plus } from "lucide-react";
 import { toast } from "sonner";
+import { useForm } from "@tanstack/react-form";
 import { Button } from "../../ui/button";
 import {
   Form,
@@ -27,7 +28,6 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import PasswordField from "@/components/auth/forms/fields/password-field";
-import { useForm } from "@tanstack/react-form";
 
 interface AddServerDialogProps {
   onAdd: () => void;
@@ -50,7 +50,7 @@ export function AddServerDialog({ onAdd }: AddServerDialogProps) {
 
     setLoading(true);
 
-    addServerAction(address, username, password)
+    await addServerAction({ data: { address, username, password } })
       .then((result) => {
         if (result.error)
           toast.error("Error", {

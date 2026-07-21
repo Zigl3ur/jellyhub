@@ -1,4 +1,4 @@
-import { z } from "zod/v4";
+import { z } from "zod";
 
 export const addServerSchema = z.object({
   address: z.url({ message: "Please enter a valid URL" }),
@@ -73,3 +73,37 @@ export const resetPasswdScema = z
   });
 
 export type resetPasswdType = z.output<typeof resetPasswdScema>;
+
+export const endSetupSchema = z.object({
+  admin: z.object({
+    username: z
+      .string()
+      .min(3, { error: "Admin username must be at least 3 characters long" })
+      .max(15, { error: "Admin username cant exceed 15 characters" }),
+    password: z
+      .string()
+      .min(6, { error: "Admin password must be at least 6 characters long" })
+      .max(50, { error: "Admin password cant exceed 50 characters" }),
+  }),
+  users: z.array(
+    z.object({
+      username: z
+        .string()
+        .min(3, { error: "User username must be at least 3 characters long" })
+        .max(15, { error: "User username cant exceed 15 characters" }),
+      password: z
+        .string()
+        .min(6, { error: "User password must be at least 6 characters long" })
+        .max(50, { error: "User password cant exceed 50 characters" }),
+    }),
+  ),
+  servers: z.array(
+    z.object({
+      address: z.url({ error: "Please enter a valid URL" }),
+      username: z.string().min(1, { error: "Provide a server username" }),
+      token: z.string().min(1, { error: "Provide a server token" }),
+    }),
+  ),
+});
+
+export type endSetupSchemaType = z.output<typeof endSetupSchema>;

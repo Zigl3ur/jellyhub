@@ -11,7 +11,7 @@ export const Route = createFileRoute("/_main/_auth")({
     return { session };
   },
   component: () => (
-    <div className="flex items-center flex-col justify-center h-dvh gap-8">
+    <div className="flex items-center flex-col justify-center min-h-svh gap-8 p-4">
       <Logo />
       <Outlet />
     </div>
