@@ -69,6 +69,7 @@ function GetStartedPage() {
   const [users, setUsers] = useState<Array<loginSchemaType & { role: string }>>(
     [],
   );
+  const usersWithoutAdmin = users.filter((u) => u.role === "user");
   const [selectedUser, setSelectedUser] = useState<
     registerSchemaType | undefined
   >(undefined);
@@ -115,11 +116,14 @@ function GetStartedPage() {
   const [showSummaryAdminPass, setShowSummaryAdminPass] = useState(false);
 
   const [finishSetUpLoading, setFinisSetupLoading] = useState(false);
-  const [finishSetUpError, setFinisSetupError] = useState(false);
+  const [finishSetUpError, setFinisSetupError] = useState<string | null>(null);
   const finishSetupMutation = useMutation({
     mutationFn: (data: endSetupSchemaType) => endSetup({ data }),
-    onMutate: () => setFinisSetupLoading(true),
-    onError: () => setFinisSetupError(true),
+    onMutate: () => {
+      setFinisSetupLoading(true);
+      setFinisSetupError(null);
+    },
+    onError: (err) => setFinisSetupError(err.message),
     onSettled: () => setFinisSetupLoading(false),
   });
 
@@ -311,7 +315,7 @@ function GetStartedPage() {
                   <Alert
                     type="destructive"
                     title="Error while setup"
-                    message="Failed to setup your Jellyhub, please retry."
+                    message={`Failed to setup your Jellyhub, please retry. Got ${finishSetUpError}`}
                   />
                 )}
                 <div className="border border-input rounded">
@@ -335,7 +339,7 @@ function GetStartedPage() {
                       <div className="flex gap-1.5 items-center">
                         <p className="max-w-20 truncate">
                           {showSummaryAdminPass
-                            ? adminUser.username
+                            ? adminUser.password
                             : Array.from({
                                 length: adminUser.username.length,
                               }).map((_) => "•")}
@@ -366,10 +370,8 @@ function GetStartedPage() {
                     </Button>
                   </div>
                   <div className="px-3 py-2 rounded-t-lg border-t bg-input/20 border-input flex flex-wrap gap-2">
-                    {users.length > 0 ? (
-                      users
-                        .filter((u) => u.role === "user")
-                        .map((u) => <Badge> {u.username}</Badge>)
+                    {usersWithoutAdmin.length > 0 ? (
+                      usersWithoutAdmin.map((u) => <Badge> {u.username}</Badge>)
                     ) : (
                       <p className="text-sm opacity-90">No users configured</p>
                     )}
@@ -417,7 +419,7 @@ function GetStartedPage() {
                           username: adminUser.username,
                           password: adminUser.password,
                         },
-                        users,
+                        users: usersWithoutAdmin,
                         servers,
                       })
                     }

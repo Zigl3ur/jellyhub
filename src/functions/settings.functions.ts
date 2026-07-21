@@ -42,40 +42,47 @@ export const endSetup = createServerFn({ method: "POST" })
           name: admin.username,
           password: admin.password,
           role: "admin",
+          data: {
+            username: admin.username,
+          },
         },
       });
     } catch {
       throw new Error("Failed to add admin user");
     }
 
-    try {
-      await Promise.all(
-        users.map(async (user) => {
-          await context.auth.api.createUser({
-            body: {
-              email: `${user.username}@jellyhub.com`,
-              name: user.username,
-              password: user.password,
-              role: "user",
-            },
-          });
-        }),
-      );
-    } catch {
-      throw new Error("Failed to add user(s)");
+    if (users.length > 0) {
+      try {
+        await Promise.all(
+          users.map(async (user) => {
+            await context.auth.api.createUser({
+              body: {
+                email: `${user.username}@jellyhub.com`,
+                name: user.username,
+                password: user.password,
+                role: "user",
+              },
+            });
+          }),
+        );
+      } catch {
+        throw new Error("Failed to add user(s)");
+      }
     }
 
-    try {
-      await context.db.insert(jellydataSchema).values(
-        servers.map((server) => ({
-          userId: admin.username,
-          serverUrl: server.address,
-          serverUsername: server.username,
-          serverToken: server.token,
-        })),
-      );
-    } catch {
-      throw new Error("Failed to add jellyfin server(s)");
+    if (servers.length > 0) {
+      try {
+        await context.db.insert(jellydataSchema).values(
+          servers.map((server) => ({
+            userId: admin.username,
+            serverUrl: server.address,
+            serverUsername: server.username,
+            serverToken: server.token,
+          })),
+        );
+      } catch {
+        throw new Error("Failed to add jellyfin server(s)");
+      }
     }
 
     throw redirect({ to: "/" });
