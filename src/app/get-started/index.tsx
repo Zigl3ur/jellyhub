@@ -41,6 +41,7 @@ import {
 } from "@/components/get-started";
 import { endSetup } from "@/functions/settings.functions";
 import LoaderIcon from "@/components/ui/loader-icon";
+import { Alert } from "@/components/ui/alert";
 
 type Server = {
   username: string;
@@ -296,9 +297,9 @@ function GetStartedPage() {
           </StepperContent>
           <StepperContent value={4}>
             {finishSetUpLoading ? (
-              <div className="flex items-center justify-center">
-                <LoaderIcon />
-                Loading
+              <div className="flex flex-col gap-4 h-50 items-center justify-center">
+                <LoaderIcon className="size-6" />
+                <h4 className="text-xl">Setting up your Jellyhub...</h4>
               </div>
             ) : (
               <>
@@ -306,6 +307,13 @@ function GetStartedPage() {
                   <h4 className="text-xl font-semibold">Summary</h4>
                   <p className="text-muted-foreground">Review your settings</p>
                 </div>
+                {finishSetUpError && (
+                  <Alert
+                    type="destructive"
+                    title="Error while setup"
+                    message="Failed to setup your Jellyhub, please retry."
+                  />
+                )}
                 <div className="border border-input rounded">
                   <div className="px-3 py-2 bg-accent/20 flex justify-between items-center">
                     <h6 className="text-sm">Admin User</h6>
