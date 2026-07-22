@@ -1,0 +1,1 @@
+ALTER TABLE `jellydata` DROP COLUMN `server_id`;

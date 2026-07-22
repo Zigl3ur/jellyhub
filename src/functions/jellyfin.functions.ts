@@ -1,10 +1,11 @@
 import { createServerFn } from "@tanstack/react-start";
-import { getSystemApi, getUserApi } from "@jellyfin/sdk/lib/utils/api";
+import { getSystemApi } from "@jellyfin/sdk/lib/utils/api";
 import { getUser } from "./auth.functions";
 import type { ServerActionReturn } from "@/types/actions.types";
 import type { itemJellyfin } from "@/types/jellyfin-api.types";
 import {
-  getAllItems,
+  authJellyfinUser,
+  checkJellyfinConn,
   getJellyfinApiClient,
   getLibraryItems,
 } from "@/lib/api.jellyfin";
@@ -28,16 +29,22 @@ export const getServerToken = createServerFn({ method: "GET" })
   .handler(async ({ data }) => {
     const api = getJellyfinApiClient(data.address);
 
-    const auth = await getUserApi(api).authenticateUserByName({
-      authenticateUserByName: {
-        Username: data.username,
-        Pw: data.password,
-      },
-    });
+    const auth = await authJellyfinUser(api, data.username, data.password);
 
     if (auth.status !== 200) throw new Error("Failed to authenticate user");
+    console.log(auth.data);
 
-    return { ...auth.data };
+    return auth.data;
+  });
+
+export const checkServerConn = createServerFn({ method: "GET" })
+  .validator((data: { address: string; token: string }) => data)
+  .handler(async ({ data }) => {
+    const api = getJellyfinApiClient(data.address, data.token);
+
+    const status = await checkJellyfinConn(api);
+
+    return { status: status ? "up" : "down" };
   });
 
 /**

@@ -1,10 +1,13 @@
 import { cn } from "@sglara/cn";
+import { useRender } from "@base-ui/react/use-render";
+import { mergeProps } from "@base-ui/react/merge-props";
 import type { PropsWithChildren } from "react";
 
-interface BadgeProps extends PropsWithChildren {
+interface BadgeProps extends PropsWithChildren<
+  useRender.ComponentProps<"div">
+> {
   className?: string;
   variant?: "default" | "destructive";
-  onClick?: () => void;
 }
 
 const variants: Record<NonNullable<BadgeProps["variant"]>, string> = {
@@ -13,21 +16,25 @@ const variants: Record<NonNullable<BadgeProps["variant"]>, string> = {
 };
 
 export default function Badge({
-  variant = "default",
+  render,
   className,
-  onClick,
-  children,
+  variant = "default",
+  ...props
 }: BadgeProps) {
-  return (
-    <div
-      onClick={onClick}
-      className={cn(
-        "rounded w-fit flex gap-1 items-center px-2 py-px text-sm",
-        variants[variant],
-        className,
-      )}
-    >
-      {children}
-    </div>
-  );
+  const element = useRender({
+    defaultTagName: "div",
+    render,
+    props: mergeProps<"div">(
+      {
+        className: cn(
+          "rounded w-fit flex gap-1 items-center px-2 py-px text-sm",
+          variants[variant],
+          className,
+        ),
+      },
+      props,
+    ),
+  });
+
+  return element;
 }

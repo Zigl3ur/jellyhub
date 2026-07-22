@@ -1,5 +1,5 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
-import { useState } from "react";
+import { Fragment, useState } from "react";
 import {
   IconArrowRight,
   IconEye,
@@ -182,36 +182,43 @@ function GetStartedPage() {
                   users.map((u) => (
                     <Badge
                       key={u.username}
-                      onClick={() => {
-                        if (u.role === "admin") return;
-                        setSelectedUser({
-                          username: u.username,
-                          password: u.password,
-                          confirmPassword: u.password,
-                        });
-                      }}
-                    >
-                      {u.username}
-                      {u.role === "admin" ? (
-                        <IconUserCog className="shrink-0 size-4" />
-                      ) : (
-                        <Button
-                          size="icon-sm"
-                          variant="ghost"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setUsers((prev) =>
-                              prev.filter(
-                                (user) => user.username !== u.username,
-                              ),
-                            );
-                            setSelectedUser(undefined);
+                      render={
+                        <button
+                          className={
+                            u.role !== "admin" ? "hover:cursor-pointer" : ""
+                          }
+                          onClick={() => {
+                            if (u.role === "admin") return;
+                            setSelectedUser({
+                              username: u.username,
+                              password: u.password,
+                              confirmPassword: u.password,
+                            });
                           }}
                         >
-                          <IconX className="shrink-0 size-3" />
-                        </Button>
-                      )}
-                    </Badge>
+                          {u.username}
+                          {u.role === "admin" ? (
+                            <IconUserCog className="shrink-0 size-4" />
+                          ) : (
+                            <Button
+                              size="icon-sm"
+                              variant="ghost"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setUsers((prev) =>
+                                  prev.filter(
+                                    (user) => user.username !== u.username,
+                                  ),
+                                );
+                                setSelectedUser(undefined);
+                              }}
+                            >
+                              <IconX className="shrink-0 size-3" />
+                            </Button>
+                          )}
+                        </button>
+                      }
+                    />
                   ))
                 ) : (
                   <p className="text-sm opacity-90">No users configured</p>
@@ -245,7 +252,7 @@ function GetStartedPage() {
               <div className="flex flex-col gap-2 max-h-50 overflow-y-auto">
                 {servers.length > 0 ? (
                   servers.map((s, idx) => (
-                    <>
+                    <Fragment key={idx}>
                       <div
                         key={s.address}
                         className="flex items-center w-full justify-between text-sm"
@@ -271,7 +278,7 @@ function GetStartedPage() {
                       {idx + 1 < servers.length && (
                         <span className="h-px bg-input" />
                       )}
-                    </>
+                    </Fragment>
                   ))
                 ) : (
                   <p className="text-sm opacity-90">No servers configured</p>
@@ -371,7 +378,9 @@ function GetStartedPage() {
                   </div>
                   <div className="px-3 py-2 rounded-t-lg border-t bg-input/20 border-input flex flex-wrap gap-2">
                     {usersWithoutAdmin.length > 0 ? (
-                      usersWithoutAdmin.map((u) => <Badge> {u.username}</Badge>)
+                      usersWithoutAdmin.map((u) => (
+                        <Badge key={u.username}>{u.username}</Badge>
+                      ))
                     ) : (
                       <p className="text-sm opacity-90">No users configured</p>
                     )}
@@ -392,7 +401,7 @@ function GetStartedPage() {
                   <div className="px-3 py-2 flex flex-col rounded-t-lg border-t bg-input/20 border-input">
                     {servers.length > 0 ? (
                       servers.map((s, idx) => (
-                        <>
+                        <Fragment key={idx}>
                           <div className="flex items-center justify-between text-sm py-2">
                             <h6>{s.address}</h6>
                             <span className="overflow-hidden mr-1">
@@ -402,7 +411,7 @@ function GetStartedPage() {
                           {idx + 1 < servers.length && (
                             <span className="h-px bg-input" />
                           )}
-                        </>
+                        </Fragment>
                       ))
                     ) : (
                       <p className="text-sm opacity-90">

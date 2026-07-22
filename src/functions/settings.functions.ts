@@ -35,8 +35,10 @@ export const endSetup = createServerFn({ method: "POST" })
 
     const { admin, users, servers } = data;
 
+    let adminUser;
+
     try {
-      await context.auth.api.createUser({
+      adminUser = await context.auth.api.createUser({
         body: {
           email: `${admin.username}@jellyhub.com`,
           name: admin.username,
@@ -74,7 +76,7 @@ export const endSetup = createServerFn({ method: "POST" })
       try {
         await context.db.insert(jellydataSchema).values(
           servers.map((server) => ({
-            userId: admin.username,
+            userId: adminUser.user.id,
             serverUrl: server.address,
             serverUsername: server.username,
             serverToken: server.token,
