@@ -1,5 +1,5 @@
 import { customType } from "drizzle-orm/sqlite-core";
-import { decrypt, encrypt } from "@/lib/utils";
+import { decrypt, encrypt } from "@/utils";
 
 export const encryptedText = customType<{ data: string; driverData: string }>({
   dataType() {

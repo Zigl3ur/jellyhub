@@ -101,7 +101,7 @@ export const endSetupSchema = z.object({
     z.object({
       address: z.url({ error: "Please enter a valid URL" }),
       username: z.string().min(1, { error: "Provide a server username" }),
-      token: z.string().min(1, { error: "Provide a server token" }),
+      token: z.string({ error: "Provide a server token" }),
     }),
   ),
 });

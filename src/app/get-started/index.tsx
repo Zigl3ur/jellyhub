@@ -246,7 +246,6 @@ function GetStartedPage() {
                 Configure Jellyfin servers for your account
               </p>
             </div>
-            <h4 className="text-xl font-semibold">Add Jellyfin Servers</h4>
             <div className="space-y-3 border border-input bg-input/20 p-3 rounded">
               <h4 className="font-light text-sm">Configured Servers</h4>
               <div className="flex flex-col gap-2 max-h-50 overflow-y-auto">
@@ -266,11 +265,12 @@ function GetStartedPage() {
                         <Button
                           variant="ghost"
                           size="icon"
-                          onClick={() =>
+                          disabled={s.status === "checking"}
+                          onClick={() => {
                             setServers((prev) =>
                               prev.filter((p) => p.address !== s.address),
-                            )
-                          }
+                            );
+                          }}
                         >
                           <IconTrash className="group-hover/button:text-destructive transtion-colors duration-200" />
                         </Button>

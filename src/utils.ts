@@ -2,16 +2,11 @@ import { createCipheriv, createDecipheriv, randomBytes } from "node:crypto";
 import { createServerOnlyFn } from "@tanstack/react-start";
 import type { itemJellyfin } from "@/types/jellyfin-api.types";
 
-/**
- * encrypt the given token
- * @param token the token to encrypt
- * @returns the encrypted token
- */
 export const encrypt = createServerOnlyFn((value: string): string => {
-  const ENCRYPTION_KEY = Buffer.from(process.env.SECRET_KEY as string, "hex");
+  const secretKey = Buffer.from(process.env.SECRET_KEY as string, "base64");
 
   const iv = randomBytes(16);
-  const cipher = createCipheriv("aes-256-gcm", ENCRYPTION_KEY, iv);
+  const cipher = createCipheriv("aes-256-gcm", secretKey, iv);
   const encrypted = Buffer.concat([
     cipher.update(value, "utf8"),
     cipher.final(),
@@ -20,16 +15,11 @@ export const encrypt = createServerOnlyFn((value: string): string => {
   return `${iv.toString("hex")}:${tag.toString("hex")}:${encrypted.toString("hex")}`;
 });
 
-/**
- * decrypt the given data
- * @param encrypted the data to decrypt
- * @returns the decrypted data
- */
 export const decrypt = createServerOnlyFn((raw: string): string => {
-  const ENCRYPTION_KEY = Buffer.from(process.env.ENCRYPTION_KEY!, "hex");
+  const secretKey = Buffer.from(process.env.SECRET_KEY as string, "base64");
 
   const [iv, tag, encrypted] = raw.split(":").map((s) => Buffer.from(s, "hex"));
-  const decipher = createDecipheriv("aes-256-gcm", ENCRYPTION_KEY, iv);
+  const decipher = createDecipheriv("aes-256-gcm", secretKey, iv);
   decipher.setAuthTag(tag);
   return Buffer.concat([decipher.update(encrypted), decipher.final()]).toString(
     "utf8",

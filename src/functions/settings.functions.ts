@@ -4,13 +4,12 @@ import { getRequestHeaders } from "@tanstack/react-start/server";
 import { and, eq, inArray } from "drizzle-orm";
 import { redirect } from "@tanstack/react-router";
 import { getUser, hasAdminUser } from "./auth.functions";
-import { ctxMiddleware } from "./middlewares";
+import { authMiddleware, ctxMiddleware } from "./middlewares";
 import type {
   ServerActionReturn,
   jellydataDisplayed,
   userDataType,
 } from "@/types/actions.types";
-import { checkConn, getToken } from "@/lib/api.jellyfin";
 import { auth } from "@/lib/auth";
 import { loginSchema } from "@/schemas/auth.schema";
 import {
@@ -88,6 +87,23 @@ export const endSetup = createServerFn({ method: "POST" })
     }
 
     throw redirect({ to: "/" });
+  });
+
+export const getJellyData = createServerFn({ method: "GET" })
+  .middleware([authMiddleware])
+  .handler(async ({ context }) => {
+    const serverList = await context.db.query.jellydata.findMany({
+      where: {
+        userId: context.session.user.id,
+      },
+      columns: {
+        serverUrl: true,
+        serverUsername: true,
+        serverToken: true,
+      },
+    });
+
+    return { data: serverList };
   });
 
 /**
@@ -326,128 +342,5 @@ export const getUsersList = createServerFn({ method: "GET" }).handler(
     });
 
     return { success: true, data: users };
-  },
-);
-
-/**
- * Server action to add a jellyfin server.
- * @returns jellyfin server list of the account or nothing if not authenticated
- */
-export const addServerAction = createServerFn({ method: "POST" })
-  .validator(addServerSchema)
-  .handler(async ({ data: server }): Promise<ServerActionReturn> => {
-    const user = await getUser();
-    const { success, data, error } = await getToken(
-      server.address,
-      server.username,
-      server.password,
-    );
-
-    if (!success || !data) {
-      return {
-        success: false,
-        error: error || "An error occured, check the URL / credentials",
-      };
-    }
-
-    try {
-      await db.insert(jellydataSchema).values({
-        userId: user.id,
-        serverUrl: data.server_url,
-        serverUsername: data.server_username,
-        serverToken: data.token,
-      });
-
-      return {
-        success: true,
-        message: "Successfully added jellyfin server !",
-      };
-    } catch {
-      return {
-        success: false,
-        error: "Failed to add jellyfin server",
-      };
-    }
-  });
-/**
- * Server action to delete one or more jellyfin servers of the logged user.
- * @returns jellyfin server list of the account or nothing if not authenticated
- */
-export const deleteServerAction = createServerFn({ method: "POST" })
-  .validator(
-    z.array(
-      z.object({
-        address: z.string(),
-        username: z.string(),
-      }),
-    ),
-  )
-  .handler(async ({ data }): Promise<ServerActionReturn> => {
-    const user = await getUser();
-
-    try {
-      await db.delete(jellydataSchema).where(
-        and(
-          eq(jellydataSchema.userId, user.id),
-          inArray(
-            jellydataSchema.serverUrl,
-            data.map((server) => server.address),
-          ),
-          inArray(
-            jellydataSchema.serverUsername,
-            data.map((server) => server.username),
-          ),
-        ),
-      );
-      return {
-        success: true,
-        message: `Successfully deleted server${data.length > 1 ? "s" : ""}`,
-      };
-    } catch (err) {
-      if (err instanceof Error)
-        return {
-          success: false,
-          error: err.message,
-        };
-      return {
-        success: false,
-        error: "An Unknow Error Occured",
-      };
-    }
-  });
-
-/**
- * Server action to get the list of the jellyfin servers of the logged user.
- * @returns jellyfin server of the account
- */
-export const getJellyfinServers = createServerFn({ method: "GET" }).handler(
-  async (): Promise<ServerActionReturn<Array<jellydataDisplayed>>> => {
-    const user = await getUser();
-
-    const serverList = await db.query.jellydata.findMany({
-      where: {
-        userId: user.id,
-      },
-      columns: {
-        serverUrl: true,
-        serverUsername: true,
-        serverToken: true,
-      },
-    });
-
-    const serverListWithStatus = await Promise.all(
-      serverList.map(async (server) => {
-        const { serverToken, ...serverReturn } = server;
-        return {
-          ...serverReturn,
-          status: (await checkConn(server.serverUrl, serverToken)).data,
-        };
-      }),
-    );
-
-    return {
-      success: true,
-      data: serverListWithStatus,
-    };
   },
 );

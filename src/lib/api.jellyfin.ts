@@ -1,22 +1,12 @@
 import "@tanstack/react-start/server-only";
 
 import { Jellyfin } from "@jellyfin/sdk";
-import {
-  getItemsApi,
-  getLibraryApi,
-  getUserApi,
-} from "@jellyfin/sdk/lib/utils/api";
+import { getItemsApi, getUserApi } from "@jellyfin/sdk/lib/utils/api";
 import { BaseItemKind } from "@jellyfin/sdk/lib/generated-client/models";
-import { TicksToDuration } from "./utils";
+import axios from "axios";
 import type { Api } from "@jellyfin/sdk";
-import type {
-  State,
-  callersResponse,
-  itemJellyfin,
-  itemTypes,
-  rawItemJellyfin,
-} from "@/types/jellyfin-api.types";
-import type { ServerStatus } from "@/types";
+import type { itemTypes } from "@/types/jellyfin-api.types";
+import type { ItemsOpts } from "@/types";
 
 const jellyhubClient = new Jellyfin({
   clientInfo: {
@@ -30,7 +20,8 @@ const jellyhubClient = new Jellyfin({
 });
 
 export function getJellyfinApiClient(url: string, token?: string) {
-  return jellyhubClient.createApi(url, token);
+  const instance = axios.create({ timeout: 5_000 });
+  return jellyhubClient.createApi(url, token, instance);
 }
 
 export async function authJellyfinUser(
@@ -47,31 +38,43 @@ export async function authJellyfinUser(
 }
 
 export async function checkJellyfinConn(api: Api) {
-  const status = await getUserApi(api).getCurrentUser();
+  try {
+    const status = await getUserApi(api).getCurrentUser({ timeout: 3000 });
 
-  return status.status === 200;
+    return status.status === 200;
+  } catch (error) {
+    return false;
+  }
 }
 
-export async function getLibraryItems(
-  api: Api,
-  userId: string,
-  itemsType: Array<itemTypes>,
-) {
-  const itemsToInclude: Array<BaseItemKind> = itemsType.map((item) => {
-    switch (item) {
+export async function getLibraryItems(api: Api, opts: ItemsOpts) {
+  const { types, parentId, artists, genres, person, studios, years } = opts;
+
+  const typesToInclude: Array<BaseItemKind> = types.map((type) => {
+    switch (type) {
       case "Movie":
         return BaseItemKind.Movie;
       case "Series":
         return BaseItemKind.Series;
+      case "Season":
+        return BaseItemKind.Season;
       case "MusicAlbum":
         return BaseItemKind.MusicAlbum;
+      case "Audio":
+        return BaseItemKind.Audio;
     }
   });
 
   return await getItemsApi(api).getItems({
-    userId,
     recursive: true,
-    includeItemTypes: itemsToInclude,
+    includeItemTypes: typesToInclude,
+    parentId,
+    fields: ["Overview", "Genres", "People", "Studios"],
+    artists,
+    genres,
+    person,
+    studios,
+    years,
   });
 }
 
@@ -120,3 +123,9 @@ export async function getLibraryItems(
 //     };
 //   }
 // }
+
+function BuildImageUrl(serverUrl: string, itemId: string, imageTag?: string) {
+  return imageTag
+    ? `${serverUrl}/Items/${itemId}/Images/Primary?tag=${imageTag}`
+    : "/default.svg";
+}

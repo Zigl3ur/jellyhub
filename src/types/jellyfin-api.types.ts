@@ -9,7 +9,7 @@ export type callersResponse<T> = {
 };
 
 /** type of an item fetched from a jellyfin server */
-export type itemTypes = "Movie" | "Series" | "MusicAlbum";
+export type itemTypes = "Movie" | "Series" | "MusicAlbum" | "Season";
 
 /** type of the connection state to a jellyfin server */
 export type State = "Up" | "Down" | "Checking";
