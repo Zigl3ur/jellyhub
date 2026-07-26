@@ -1,7 +1,7 @@
 import { Link, createFileRoute, useRouter } from "@tanstack/react-router";
 import { revalidateLogic, useForm } from "@tanstack/react-form";
-import { IconEye, IconEyeOff } from "@tabler/icons-react";
 import { useState } from "react";
+import { Eye, EyeOff } from "lucide-react";
 import type { loginSchemaType } from "@/schemas/auth.schema";
 import { isSignupAllowed } from "@/functions/auth.functions";
 import { authClient } from "@/lib/auth-client";
@@ -123,7 +123,7 @@ function LoginPage() {
                       variant="ghost"
                       onClick={() => setShowPassword((prev) => !prev)}
                     >
-                      {showPassword ? <IconEyeOff /> : <IconEye />}
+                      {showPassword ? <EyeOff /> : <Eye />}
                     </Button>
                   </InputAddon>
                 </Input>

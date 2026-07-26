@@ -1,15 +1,15 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { Fragment, useState } from "react";
-import {
-  IconArrowRight,
-  IconEye,
-  IconEyeOff,
-  IconPencil,
-  IconTrash,
-  IconUserCog,
-  IconX,
-} from "@tabler/icons-react";
 import { useMutation } from "@tanstack/react-query";
+import {
+  ArrowRight,
+  Eye,
+  EyeOff,
+  Pencil,
+  Trash2,
+  UserCog,
+  X,
+} from "lucide-react";
 import type {
   loginSchemaType,
   registerSchemaType,
@@ -198,7 +198,7 @@ function GetStartedPage() {
                         >
                           {u.username}
                           {u.role === "admin" ? (
-                            <IconUserCog className="shrink-0 size-4" />
+                            <UserCog className="shrink-0 size-4" />
                           ) : (
                             <Button
                               size="icon-sm"
@@ -213,7 +213,7 @@ function GetStartedPage() {
                                 setSelectedUser(undefined);
                               }}
                             >
-                              <IconX className="shrink-0 size-3" />
+                              <X className="shrink-0 size-3" />
                             </Button>
                           )}
                         </button>
@@ -235,7 +235,7 @@ function GetStartedPage() {
               }}
             >
               <Button onClick={nextStep}>
-                Next <IconArrowRight className="size-4" />
+                Next <ArrowRight className="size-4" />
               </Button>
             </CreateUsersForm>
           </StepperContent>
@@ -272,7 +272,7 @@ function GetStartedPage() {
                             );
                           }}
                         >
-                          <IconTrash className="group-hover/button:text-destructive transtion-colors duration-200" />
+                          <Trash2 className="group-hover/button:text-destructive transtion-colors duration-200" />
                         </Button>
                       </div>
                       {idx + 1 < servers.length && (
@@ -302,7 +302,7 @@ function GetStartedPage() {
               }}
             >
               <Button onClick={nextStep}>
-                Next <IconArrowRight className="size-4" />
+                Next <ArrowRight className="size-4" />
               </Button>
             </AddServersForm>
           </StepperContent>
@@ -333,7 +333,7 @@ function GetStartedPage() {
                       variant="outline"
                       onClick={() => setCurrentStep(1)}
                     >
-                      <IconPencil className="shrink-0 size-4" />
+                      <Pencil className="shrink-0 size-4" />
                     </Button>
                   </div>
                   <div className="px-3 py-2 flex flex-col gap-3 rounded-t-lg border-t bg-input/20 border-input @container">
@@ -358,7 +358,7 @@ function GetStartedPage() {
                             setShowSummaryAdminPass((prev) => !prev)
                           }
                         >
-                          {showSummaryAdminPass ? <IconEyeOff /> : <IconEye />}
+                          {showSummaryAdminPass ? <EyeOff /> : <Eye />}
                         </Button>
                       </div>
                     </div>
@@ -373,7 +373,7 @@ function GetStartedPage() {
                       variant="outline"
                       onClick={() => setCurrentStep(2)}
                     >
-                      <IconPencil className="shrink-0 size-4" />
+                      <Pencil className="shrink-0 size-4" />
                     </Button>
                   </div>
                   <div className="px-3 py-2 rounded-t-lg border-t bg-input/20 border-input flex flex-wrap gap-2">
@@ -394,7 +394,7 @@ function GetStartedPage() {
                       variant="outline"
                       onClick={() => setCurrentStep(3)}
                     >
-                      <IconPencil className="shrink-0 size-4" />
+                      <Pencil className="shrink-0 size-4" />
                     </Button>
                   </div>
 

@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { getServerItems } from "@/functions/jellyfin.functions";
 import { getJellyData } from "@/functions/settings.functions";
+import LoaderIcon from "@/components/ui/loader-icon";
 
 export const Route = createFileRoute("/_main/_home/")({
   loader: async () => {
@@ -14,7 +15,8 @@ export const Route = createFileRoute("/_main/_home/")({
           address: data[0].serverUrl,
           token: data[0].serverToken,
           opts: {
-            types: ["Series"],
+            types: ["Season"],
+            parentId: "5710cacf293f8dcf06f83f5ac13e1fbb",
           },
         },
       });
@@ -36,6 +38,7 @@ function Home() {
   return (
     <div className="max-w-[2000px] mx-auto">
       <pre>{JSON.stringify(data?.Items, null, 2)}</pre>
+      <LoaderIcon />
     </div>
   );
 }

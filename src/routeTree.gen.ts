@@ -20,6 +20,7 @@ import { Route as MainAuthRegisterIndexRouteImport } from './app/_main/_auth/reg
 import { Route as MainHomeAlbumsIndexRouteImport } from './app/_main/_home/albums/index'
 import { Route as MainHomeMoviesIndexRouteImport } from './app/_main/_home/movies/index'
 import { Route as MainHomeSeriesIndexRouteImport } from './app/_main/_home/series/index'
+import { Route as MainHomeSettingsIndexRouteImport } from './app/_main/_home/settings/index'
 
 const MainRouteRoute = MainRouteRouteImport.update({
   id: '/_main',
@@ -73,6 +74,11 @@ const MainHomeSeriesIndexRoute = MainHomeSeriesIndexRouteImport.update({
   path: '/series/',
   getParentRoute: () => MainHomeRouteRoute,
 } as any)
+const MainHomeSettingsIndexRoute = MainHomeSettingsIndexRouteImport.update({
+  id: '/settings/',
+  path: '/settings/',
+  getParentRoute: () => MainHomeRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof MainHomeIndexRoute
@@ -83,6 +89,7 @@ export interface FileRoutesByFullPath {
   '/albums/': typeof MainHomeAlbumsIndexRoute
   '/movies/': typeof MainHomeMoviesIndexRoute
   '/series/': typeof MainHomeSeriesIndexRoute
+  '/settings/': typeof MainHomeSettingsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof MainHomeIndexRoute
@@ -93,6 +100,7 @@ export interface FileRoutesByTo {
   '/albums': typeof MainHomeAlbumsIndexRoute
   '/movies': typeof MainHomeMoviesIndexRoute
   '/series': typeof MainHomeSeriesIndexRoute
+  '/settings': typeof MainHomeSettingsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -107,6 +115,7 @@ export interface FileRoutesById {
   '/_main/_home/albums/': typeof MainHomeAlbumsIndexRoute
   '/_main/_home/movies/': typeof MainHomeMoviesIndexRoute
   '/_main/_home/series/': typeof MainHomeSeriesIndexRoute
+  '/_main/_home/settings/': typeof MainHomeSettingsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -119,6 +128,7 @@ export interface FileRouteTypes {
     | '/albums/'
     | '/movies/'
     | '/series/'
+    | '/settings/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -129,6 +139,7 @@ export interface FileRouteTypes {
     | '/albums'
     | '/movies'
     | '/series'
+    | '/settings'
   id:
     | '__root__'
     | '/_main'
@@ -142,6 +153,7 @@ export interface FileRouteTypes {
     | '/_main/_home/albums/'
     | '/_main/_home/movies/'
     | '/_main/_home/series/'
+    | '/_main/_home/settings/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -229,6 +241,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MainHomeSeriesIndexRouteImport
       parentRoute: typeof MainHomeRouteRoute
     }
+    '/_main/_home/settings/': {
+      id: '/_main/_home/settings/'
+      path: '/settings'
+      fullPath: '/settings/'
+      preLoaderRoute: typeof MainHomeSettingsIndexRouteImport
+      parentRoute: typeof MainHomeRouteRoute
+    }
   }
 }
 
@@ -251,6 +270,7 @@ interface MainHomeRouteRouteChildren {
   MainHomeAlbumsIndexRoute: typeof MainHomeAlbumsIndexRoute
   MainHomeMoviesIndexRoute: typeof MainHomeMoviesIndexRoute
   MainHomeSeriesIndexRoute: typeof MainHomeSeriesIndexRoute
+  MainHomeSettingsIndexRoute: typeof MainHomeSettingsIndexRoute
 }
 
 const MainHomeRouteRouteChildren: MainHomeRouteRouteChildren = {
@@ -258,6 +278,7 @@ const MainHomeRouteRouteChildren: MainHomeRouteRouteChildren = {
   MainHomeAlbumsIndexRoute: MainHomeAlbumsIndexRoute,
   MainHomeMoviesIndexRoute: MainHomeMoviesIndexRoute,
   MainHomeSeriesIndexRoute: MainHomeSeriesIndexRoute,
+  MainHomeSettingsIndexRoute: MainHomeSettingsIndexRoute,
 }
 
 const MainHomeRouteRouteWithChildren = MainHomeRouteRoute._addFileChildren(

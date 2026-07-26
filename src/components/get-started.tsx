@@ -1,13 +1,6 @@
-import {
-  IconArrowRight,
-  IconCheck,
-  IconEye,
-  IconEyeOff,
-  IconPlus,
-  IconX,
-} from "@tabler/icons-react";
 import { revalidateLogic, useForm } from "@tanstack/react-form";
 import { useState } from "react";
+import { ArrowRight, Check, Eye, EyeOff, Plus, X } from "lucide-react";
 import { Input, InputAddon } from "./ui/input";
 import { FieldError, FieldLabel, FieldRoot } from "./ui/field";
 import Button from "./ui/button";
@@ -110,7 +103,7 @@ export function CreateAdminUserForm({
                     variant="ghost"
                     onClick={() => setShowPassword((prev) => !prev)}
                   >
-                    {showPassword ? <IconEyeOff /> : <IconEye />}
+                    {showPassword ? <EyeOff /> : <Eye />}
                   </Button>
                 </InputAddon>
               </Input>
@@ -143,7 +136,7 @@ export function CreateAdminUserForm({
                     variant="ghost"
                     onClick={() => setShowConfirmPassword((prev) => !prev)}
                   >
-                    {showConfirmPassword ? <IconEyeOff /> : <IconEye />}
+                    {showConfirmPassword ? <EyeOff /> : <Eye />}
                   </Button>
                 </InputAddon>
               </Input>
@@ -157,7 +150,7 @@ export function CreateAdminUserForm({
           selector={(state) => state.canSubmit}
           children={(canSubmit) => (
             <Button type="submit" disabled={!canSubmit}>
-              Next <IconArrowRight className="size-4" />
+              Next <ArrowRight className="size-4" />
             </Button>
           )}
         />
@@ -255,7 +248,7 @@ export function CreateUsersForm({
                     variant="ghost"
                     onClick={() => setShowPassword((prev) => !prev)}
                   >
-                    {showPassword ? <IconEyeOff /> : <IconEye />}
+                    {showPassword ? <EyeOff /> : <Eye />}
                   </Button>
                 </InputAddon>
               </Input>
@@ -288,7 +281,7 @@ export function CreateUsersForm({
                     variant="ghost"
                     onClick={() => setShowConfirmPassword((prev) => !prev)}
                   >
-                    {showConfirmPassword ? <IconEyeOff /> : <IconEye />}
+                    {showConfirmPassword ? <EyeOff /> : <Eye />}
                   </Button>
                 </InputAddon>
               </Input>
@@ -302,7 +295,7 @@ export function CreateUsersForm({
           selector={(state) => state.canSubmit}
           children={(canSubmit) => (
             <Button type="submit" disabled={!canSubmit}>
-              Add <IconPlus className="size-4" />
+              Add <Plus className="size-4" />
             </Button>
           )}
         />
@@ -416,7 +409,7 @@ export function AddServersForm({ onSubmit, children }: AddServersFormProps) {
                     variant="ghost"
                     onClick={() => setShowPassword((prev) => !prev)}
                   >
-                    {showPassword ? <IconEyeOff /> : <IconEye />}
+                    {showPassword ? <EyeOff /> : <Eye />}
                   </Button>
                 </InputAddon>
               </Input>
@@ -430,7 +423,7 @@ export function AddServersForm({ onSubmit, children }: AddServersFormProps) {
           selector={(state) => state.canSubmit}
           children={(canSubmit) => (
             <Button type="submit" disabled={!canSubmit}>
-              Add <IconPlus className="size-4" />
+              Add <Plus className="size-4" />
             </Button>
           )}
         />
@@ -448,8 +441,8 @@ export function ServerStatus({ status }: ServerStatusProps) {
   return status === "checking" ? (
     <LoaderIcon />
   ) : status === "up" ? (
-    <IconCheck className="size-4.5 text-success" />
+    <Check className="size-4.5 text-success" />
   ) : (
-    <IconX className="size-4.5 text-destructive" />
+    <X className="size-4.5 text-destructive" />
   );
 }

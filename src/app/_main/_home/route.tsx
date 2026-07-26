@@ -1,5 +1,6 @@
 import { Outlet, createFileRoute, redirect } from "@tanstack/react-router";
-import { getSession, hasAdminUser } from "@/functions/auth.functions";
+import { getSession } from "@/functions/auth.functions";
+import Header from "@/components/header";
 
 export const Route = createFileRoute("/_main/_home")({
   beforeLoad: async () => {
@@ -14,7 +15,8 @@ export const Route = createFileRoute("/_main/_home")({
 
 function MainLayout() {
   return (
-    <main className="py-2 pr-2 pl-2 md:pl-0">
+    <main className="p-2">
+      <Header />
       <Outlet />
     </main>
   );
