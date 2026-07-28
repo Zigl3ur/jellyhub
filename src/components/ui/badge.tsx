@@ -7,12 +7,13 @@ interface BadgeProps extends PropsWithChildren<
   useRender.ComponentProps<"div">
 > {
   className?: string;
-  variant?: "default" | "destructive";
+  variant?: "default" | "destructive" | "success";
 }
 
 const variants: Record<NonNullable<BadgeProps["variant"]>, string> = {
   default: "border border-input bg-background/10",
-  destructive: "",
+  destructive: "bg-destructive/40",
+  success: "bg-success/40 border border-success/50",
 };
 
 export default function Badge({

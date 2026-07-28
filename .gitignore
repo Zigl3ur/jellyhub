@@ -1,5 +1,7 @@
 node_modules/
 .tanstack/
+dist/
+.output/
 
 .env
 .env.*.local

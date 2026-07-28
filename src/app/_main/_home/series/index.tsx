@@ -3,12 +3,12 @@ import { Input } from "@/components/ui/input";
 import { getAllServersSeries } from "@/functions/jellyfin.functions";
 
 export const Route = createFileRoute("/_main/_home/series/")({
-  component: SeriesPage,
+  component: RouteComponent,
   pendingComponent: LoadingComponent,
   pendingMs: 0,
 });
 
-async function SeriesPage() {
+async function RouteComponent() {
   const list = await getAllServersSeries();
 
   const series = list.data || [];

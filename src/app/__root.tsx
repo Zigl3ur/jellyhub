@@ -42,7 +42,7 @@ function RootLayout() {
       <head>
         <HeadContent />
       </head>
-      <body className="root">
+      <body className="root max-w-7xl mx-auto">
         <Outlet />
         <Scripts />
       </body>

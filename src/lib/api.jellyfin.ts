@@ -2,10 +2,12 @@ import "@tanstack/react-start/server-only";
 
 import { Jellyfin } from "@jellyfin/sdk";
 import { getItemsApi, getUserApi } from "@jellyfin/sdk/lib/utils/api";
-import { BaseItemKind, ItemFields } from "@jellyfin/sdk/lib/generated-client/models";
+import {
+  BaseItemKind,
+  ItemFields,
+} from "@jellyfin/sdk/lib/generated-client/models";
 import axios from "axios";
 import type { Api } from "@jellyfin/sdk";
-import type { itemTypes } from "@/types/jellyfin-api.types";
 import type { ItemsOpts } from "@/types";
 
 const jellyhubClient = new Jellyfin({
@@ -69,7 +71,13 @@ export async function getLibraryItems(api: Api, opts: ItemsOpts) {
     recursive: true,
     includeItemTypes: typesToInclude,
     parentId,
-    fields: [ItemFields.Overview, ItemFields.Overview, ItemFields.People, ItemFields.SeriesStudio, ItemFields.Studios],
+    fields: [
+      ItemFields.Overview,
+      ItemFields.Overview,
+      ItemFields.People,
+      ItemFields.SeriesStudio,
+      ItemFields.Studios,
+    ],
     artists,
     genres,
     person,

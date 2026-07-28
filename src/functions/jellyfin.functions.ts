@@ -1,7 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
 import { getSystemApi } from "@jellyfin/sdk/lib/utils/api";
-import { authMiddleware } from "./middlewares";
-import type { itemTypes } from "@/types/jellyfin-api.types";
 import type { ItemsOpts } from "@/types";
 import {
   authJellyfinUser,
@@ -22,10 +20,10 @@ export const getServerInfo = createServerFn({ method: "GET" })
 
 export const getServerToken = createServerFn({ method: "GET" })
   .validator(
-    (data: { address: string; username: string; password: string }) => data,
+    (data: { url: string; username: string; password: string }) => data,
   )
   .handler(async ({ data }) => {
-    const api = getJellyfinApiClient(data.address);
+    const api = getJellyfinApiClient(data.url);
 
     const auth = await authJellyfinUser(api, data.username, data.password);
 
@@ -35,9 +33,9 @@ export const getServerToken = createServerFn({ method: "GET" })
   });
 
 export const checkServerConn = createServerFn({ method: "GET" })
-  .validator((data: { address: string; token: string }) => data)
+  .validator((data: { url: string; token: string }) => data)
   .handler(async ({ data }) => {
-    const api = getJellyfinApiClient(data.address, data.token);
+    const api = getJellyfinApiClient(data.url, data.token);
 
     const status = await checkJellyfinConn(api);
 
@@ -45,11 +43,9 @@ export const checkServerConn = createServerFn({ method: "GET" })
   });
 
 export const getServerItems = createServerFn({ method: "GET" })
-  .validator(
-    (data: { address: string; token: string; opts: ItemsOpts }) => data,
-  )
+  .validator((data: { url: string; token: string; opts: ItemsOpts }) => data)
   .handler(async ({ data }) => {
-    const api = getJellyfinApiClient(data.address, data.token);
+    const api = getJellyfinApiClient(data.url, data.token);
 
     const items = await getLibraryItems(api, data.opts);
 

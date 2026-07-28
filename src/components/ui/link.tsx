@@ -1,21 +1,34 @@
 import { cn } from "@sglara/cn";
 import { Link as RouterLink } from "@tanstack/react-router";
+import { SquareArrowOutUpRight } from "lucide-react";
 import type { LinkProps as RouterLinkProps } from "@tanstack/react-router";
 
 interface LinkProps extends RouterLinkProps {
   className?: string;
+  variant?: "default" | "outline" | "link";
 }
 
-export default function Link({ className, children, ...props }: LinkProps) {
+const variants: Record<NonNullable<LinkProps["variant"]>, string> = {
+  default: "",
+  outline:
+    "px-1.5 flex gap-1 items-center py-1 select-none data-[status='active']:bg-primary rounded-lg transition-colors duration-200 data-[status='active']:text-accent-foreground not-data-[status='active']:hover:bg-accent",
+  link: "text-blue-500 hover:opacity-75 transition-opacity duration-200 inline-flex items-center gap-1 leading-none",
+};
+
+export default function Link({
+  className,
+  variant = "default",
+  children,
+  ...props
+}: LinkProps) {
   return (
-    <RouterLink
-      {...props}
-      className={cn(
-        "px-1.5 flex gap-1 items-center py-1 data-[status='active']:bg-primary rounded-lg transition-colors duration-200 data-[status='active']:text-accent-foreground not-data-[status='active']:hover:bg-accent",
-        className,
-      )}
-    >
-      {children}
+    <RouterLink {...props} className={cn(variants[variant], className)}>
+      <>
+        {children}
+        {variant === "link" && (
+          <SquareArrowOutUpRight className="size-3.25 shrink-0" />
+        )}
+      </>
     </RouterLink>
   );
 }

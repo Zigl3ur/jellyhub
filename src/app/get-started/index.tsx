@@ -56,13 +56,13 @@ export const Route = createFileRoute("/get-started/")({
 
     if (alreadyHasAdmin) throw redirect({ to: "/" });
   },
-  component: GetStartedPage,
+  component: RouteComponent,
   head: () => ({ meta: [{ title: "Get Started - JellyHub" }] }),
 });
 
 const steps = [1, 2, 3, 4];
 
-function GetStartedPage() {
+function RouteComponent() {
   const [currentStep, setCurrentStep] = useState(1);
   const nextStep = () => setCurrentStep((prev) => prev + 1);
 

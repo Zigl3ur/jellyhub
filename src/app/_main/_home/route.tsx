@@ -10,12 +10,12 @@ export const Route = createFileRoute("/_main/_home")({
 
     return { session };
   },
-  component: MainLayout,
+  component: RouteComponent,
 });
 
-function MainLayout() {
+function RouteComponent() {
   return (
-    <main className="p-2">
+    <main className="py-2 px-4 space-y-14">
       <Header />
       <Outlet />
     </main>

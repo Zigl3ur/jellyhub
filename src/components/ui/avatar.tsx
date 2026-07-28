@@ -10,7 +10,7 @@ export function AvatarRoot({
     <Avatar.Root
       {...props}
       className={cn(
-        "inline-flex size-8 items-center justify-center border border-background overflow-hidden rounded bg-accent-foreground align-middle text-sm leading-none font-normal text-foreground select-none",
+        "inline-flex size-8 items-center justify-center border border-muted overflow-hidden rounded bg-accent-foreground align-middle text-sm leading-none font-normal text-foreground select-none",
         className,
       )}
     >

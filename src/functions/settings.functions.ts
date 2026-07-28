@@ -1,19 +1,14 @@
 import { z } from "zod/v4";
 import { createServerFn } from "@tanstack/react-start";
 import { getRequestHeaders } from "@tanstack/react-start/server";
-import { and, eq, inArray } from "drizzle-orm";
+import { inArray } from "drizzle-orm";
 import { redirect } from "@tanstack/react-router";
 import { getUser, hasAdminUser } from "./auth.functions";
 import { authMiddleware, ctxMiddleware } from "./middlewares";
-import type {
-  ServerActionReturn,
-  jellydataDisplayed,
-  userDataType,
-} from "@/types/actions.types";
+import type { ServerActionReturn, userDataType } from "@/types/actions.types";
 import { auth } from "@/lib/auth";
 import { loginSchema } from "@/schemas/auth.schema";
 import {
-  addServerSchema,
   editUserSchema,
   endSetupSchema,
   resetPasswdScema,

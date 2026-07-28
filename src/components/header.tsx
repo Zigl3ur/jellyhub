@@ -1,7 +1,6 @@
 import { Clapperboard, Cog, DiscAlbum, House, LogOut, Tv2 } from "lucide-react";
 import { useNavigate } from "@tanstack/react-router";
 import { AvatarFallback, AvatarImg, AvatarRoot } from "./ui/avatar";
-import Logo from "./logo";
 import type { LinkProps } from "@tanstack/react-router";
 import type { ReactElement } from "react";
 import Link from "@/components/ui/link";
@@ -48,11 +47,7 @@ function AppNav() {
   return (
     <nav className="flex gap-2 p-1.5 bg-accent-foreground rounded-lg items-center">
       {destinations.map((d) => (
-        <Link
-          key={d.to}
-          to={d.to}
-          className="px-1.5 flex gap-2 items-center py-1 data-[status='active']:bg-primary rounded-lg transition-colors duration-200 data-[status='active']:text-accent-foreground not-data-[status='active']:hover:bg-accent"
-        >
+        <Link key={d.to} to={d.to} variant="outline">
           {d.icon}
           {d.label}
         </Link>
@@ -77,7 +72,7 @@ function UserNav() {
 
   return (
     <nav className="flex gap-2 p-1.5 bg-accent-foreground rounded-lg">
-      <Link to="/settings" className="flex gap-2 items-center text-sm">
+      <Link to="/settings" variant="outline">
         <Cog className="size-4.5" strokeWidth={1.5} />
       </Link>
       <button

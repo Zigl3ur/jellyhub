@@ -18,7 +18,7 @@ export const Route = createFileRoute("/_main/_auth/login/")({
 
     return { canSignup };
   },
-  component: LoginPage,
+  component: RouteComponent,
   head: () => ({ meta: [{ title: "Login - JellyHub" }] }),
 });
 
@@ -27,7 +27,7 @@ const defaultValues: loginSchemaType = {
   password: "",
 };
 
-function LoginPage() {
+function RouteComponent() {
   const { canSignup } = Route.useLoaderData();
   const router = useRouter();
 

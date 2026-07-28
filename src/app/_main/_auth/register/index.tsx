@@ -23,7 +23,7 @@ export const Route = createFileRoute("/_main/_auth/register/")({
 
     if (!canSignup) throw redirect({ to: "/login" });
   },
-  component: RegisterPage,
+  component: RouteComponent,
   head: () => ({ meta: [{ title: "Register - JellyHub" }] }),
 });
 
@@ -33,7 +33,7 @@ const defaultValues: registerSchemaType = {
   confirmPassword: "",
 };
 
-function RegisterPage() {
+function RouteComponent() {
   const router = useRouter();
 
   const [showPassword, setShowPassword] = useState(false);

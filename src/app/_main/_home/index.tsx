@@ -6,7 +6,6 @@ import LoaderIcon from "@/components/ui/loader-icon";
 export const Route = createFileRoute("/_main/_home/")({
   loader: async () => {
     const { data } = await getJellyData();
-    console.log(data);
 
     let dataitems;
     try {
@@ -27,19 +26,19 @@ export const Route = createFileRoute("/_main/_home/")({
 
     return { data: dataitems };
   },
-  component: Home,
+  component: RouteComponent,
   pendingComponent: LoadingComponent,
   pendingMs: 0,
 });
 
-function Home() {
+function RouteComponent() {
   const { data } = Route.useLoaderData();
 
   return (
-    <div className="max-w-[2000px] mx-auto">
+    <>
       <pre>{JSON.stringify(data?.Items, null, 2)}</pre>
       <LoaderIcon />
-    </div>
+    </>
   );
 }
 

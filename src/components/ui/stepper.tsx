@@ -16,7 +16,7 @@ const StepperContext = createContext<StepperContextProps | undefined>(
 function useStepperContext() {
   const context = useContext(StepperContext);
   if (!context) {
-    throw new Error("useStepperContext must be used within a StepperProvider");
+    throw new Error("useStepperContext must be used within a StepperContext");
   }
   return context;
 }
