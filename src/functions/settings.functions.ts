@@ -71,7 +71,7 @@ export const endSetup = createServerFn({ method: "POST" })
         await context.db.insert(jellydataSchema).values(
           servers.map((server) => ({
             userId: adminUser.user.id,
-            serverUrl: server.address,
+            serverUrl: server.url,
             serverUsername: server.username,
             serverToken: server.token,
           })),

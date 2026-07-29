@@ -56,7 +56,7 @@ export function MenuItem({
       className={cn(
         buttonClassName,
         buttonVariants[variant],
-        "h-7.5 px-1.5 py-1 w-full justify-start active:translate-none",
+        "h-7.5 px-1.5 py-1 w-full text-sm justify-start active:translate-none",
         className,
       )}
     >

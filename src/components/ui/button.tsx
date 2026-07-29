@@ -20,8 +20,8 @@ export const buttonSizes: Record<NonNullable<ButtonProps["size"]>, string> = {
   "icon-sm": "size-4",
   icon: "size-6 p-1",
   sm: "h-6 px-2",
-  md: "h-8 px-3",
-  lg: "h-10 px-4",
+  md: "h-8 px-2",
+  lg: "h-10 px-2",
 };
 
 export const buttonVariants: Record<

@@ -3,7 +3,7 @@ import { useNavigate } from "@tanstack/react-router";
 import { AvatarFallback, AvatarImg, AvatarRoot } from "./ui/avatar";
 import type { LinkProps } from "@tanstack/react-router";
 import type { ReactElement } from "react";
-import Link from "@/components/ui/link";
+import { Link } from "@/components/ui/link";
 import { authClient } from "@/lib/auth-client";
 
 export default function Header() {

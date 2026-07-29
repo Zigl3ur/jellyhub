@@ -5,7 +5,7 @@ export default function NoItemFound() {
     <div className="flex flex-col items-center text-center py-16">
       <span>No items found.</span>
       <span>Please add at least one server / Check servers status </span>
-      <Link to="/settings" className="hover:underline italic text-cyan-600">
+      <Link to="/settings" className="italic">
         Go to Settings
       </Link>
     </div>

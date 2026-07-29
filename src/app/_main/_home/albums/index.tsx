@@ -1,5 +1,4 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { getAllServersAlbums } from "@/functions/jellyfin.functions";
 
 export const Route = createFileRoute("/_main/_home/albums/")({
   component: RouteComponent,
@@ -7,10 +6,7 @@ export const Route = createFileRoute("/_main/_home/albums/")({
   pendingMs: 0,
 });
 
-async function RouteComponent() {
-  const list = await getAllServersAlbums();
-
-  const albums = list.data || [];
+function RouteComponent() {
   return null;
 }
 

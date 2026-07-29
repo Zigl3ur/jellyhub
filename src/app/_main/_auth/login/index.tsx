@@ -1,4 +1,4 @@
-import { Link, createFileRoute, useRouter } from "@tanstack/react-router";
+import { createFileRoute, useRouter } from "@tanstack/react-router";
 import { revalidateLogic, useForm } from "@tanstack/react-form";
 import { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
@@ -11,6 +11,7 @@ import Button from "@/components/ui/button";
 import { Input, InputAddon } from "@/components/ui/input";
 import { Alert } from "@/components/ui/alert";
 import LoaderIcon from "@/components/ui/loader-icon";
+import { Link } from "@/components/ui/link";
 
 export const Route = createFileRoute("/_main/_auth/login/")({
   loader: async () => {
@@ -155,10 +156,7 @@ function RouteComponent() {
         </div>
         {canSignup && (
           <div className="text-center text-sm">
-            Doesn&apos;t have an account ?{" "}
-            <Link to="/register" className="hover:underline text-blue-500">
-              Register
-            </Link>
+            Doesn&apos;t have an account ? <Link to="/register">Register</Link>
           </div>
         )}
       </form>

@@ -1,7 +1,7 @@
 import { Await, createFileRoute } from "@tanstack/react-router";
 import { Plus } from "lucide-react";
 import { getJellyData } from "@/functions/settings.functions";
-import ServerCard from "@/components/server-card";
+import ServerCard from "@/components/server/server-card";
 import Button from "@/components/ui/button";
 
 export const Route = createFileRoute("/_main/_home/settings/")({

@@ -1,6 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Input } from "@/components/ui/input";
-import { getAllServersSeries } from "@/functions/jellyfin.functions";
 
 export const Route = createFileRoute("/_main/_home/series/")({
   component: RouteComponent,
@@ -8,11 +7,7 @@ export const Route = createFileRoute("/_main/_home/series/")({
   pendingMs: 0,
 });
 
-async function RouteComponent() {
-  const list = await getAllServersSeries();
-
-  const series = list.data || [];
-
+function RouteComponent() {
   return null;
 }
 

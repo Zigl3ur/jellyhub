@@ -1,10 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
 import { EllipsisVertical, Pen, RefreshCw, Trash2 } from "lucide-react";
-import Skeleton from "./ui/skeleton";
-import { Card, CardContent, CardHeader } from "./ui/card";
-import Button from "./ui/button";
-import Badge from "./ui/badge";
-import { JellyfinIcon } from "./ui/jellyfin-icon";
+import Skeleton from "../ui/skeleton";
+import { Card, CardContent, CardHeader } from "../ui/card";
+import Button from "../ui/button";
+import Badge from "../ui/badge";
+import { JellyfinIcon } from "../ui/jellyfin-icon";
 import {
   Menu,
   MenuContent,
@@ -13,9 +13,9 @@ import {
   MenuItem,
   MenuSeparator,
   MenuTrigger,
-} from "./ui/menu";
+} from "../ui/menu";
 import type { getJellyData } from "@/functions/settings.functions";
-import Link from "@/components/ui/link";
+import { ExternalLink } from "@/components/ui/link";
 import { checkServerConn, getServerInfo } from "@/functions/jellyfin.functions";
 
 interface ServerCardProps {
@@ -60,9 +60,14 @@ export default function ServerCard({ server }: ServerCardProps) {
       <CardContent className="gap-2.5">
         <div className="flex items-center justify-between">
           Url
-          <Link href={server.serverUrl} target="_blank" variant="link">
+          <ExternalLink
+            variant="link"
+            href={server.serverUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             {server.serverUrl.split("://")[1]}
-          </Link>
+          </ExternalLink>
         </div>
 
         <span className="h-px w-full bg-muted" />
@@ -104,11 +109,11 @@ function ServerActions() {
         <MenuGroup>
           <MenuGroupLabel>Actions</MenuGroupLabel>
           <MenuItem>
-            <RefreshCw className="size-4" />
-            Refresh Token
+            <Pen className="size-4" /> Edit
           </MenuItem>
           <MenuItem>
-            <Pen className="size-4" /> Edit
+            <RefreshCw className="size-4" />
+            Refresh Token
           </MenuItem>
         </MenuGroup>
         <MenuSeparator />

@@ -33,7 +33,6 @@ import Button from "@/components/ui/button";
 import Badge from "@/components/ui/badge";
 import { getServerToken } from "@/functions/jellyfin.functions";
 import {
-  AddServersForm,
   CreateAdminUserForm,
   CreateUsersForm,
   ServerStatus,
@@ -42,11 +41,12 @@ import {
 import { endSetup } from "@/functions/settings.functions";
 import LoaderIcon from "@/components/ui/loader-icon";
 import { Alert } from "@/components/ui/alert";
+import { AddServersForm } from "@/components/server/add-server-form";
 
 type Server = {
   username: string;
   token: string;
-  address: string;
+  url: string;
   status: ServerStatusType;
 };
 
@@ -87,12 +87,12 @@ function RouteComponent() {
   const getServerTokenMutation = useMutation({
     mutationFn: (data: addServerSchemaType) => getServerToken({ data }),
     onSuccess: (data, args) => {
-      const server = servers.find((s) => s.address === args.address) as Server;
+      const server = servers.find((s) => s.url === args.url) as Server;
 
       setServers((prev) => [
-        ...prev.filter((s) => s.address !== args.address),
+        ...prev.filter((s) => s.url !== args.url),
         {
-          address: server.address,
+          url: server.url,
           username: server.username,
           token: data.AccessToken as string,
           status: "up",
@@ -100,11 +100,11 @@ function RouteComponent() {
       ]);
     },
     onError: (_, args) => {
-      const server = servers.find((s) => s.address === args.address) as Server;
+      const server = servers.find((s) => s.url === args.url) as Server;
       setServers((prev) => [
-        ...prev.filter((s) => s.address !== args.address),
+        ...prev.filter((s) => s.url !== args.url),
         {
-          address: server.address,
+          url: server.url,
           username: server.username,
           token: "",
           status: "down",
@@ -253,11 +253,11 @@ function RouteComponent() {
                   servers.map((s, idx) => (
                     <Fragment key={idx}>
                       <div
-                        key={s.address}
+                        key={s.url}
                         className="flex items-center w-full justify-between text-sm"
                       >
                         <div className="flex gap-2 items-center">
-                          <h6>{s.address}</h6>
+                          <h6>{s.url}</h6>
                           <span className="overflow-hidden">
                             <ServerStatus status={s.status} />
                           </span>
@@ -268,7 +268,7 @@ function RouteComponent() {
                           disabled={s.status === "checking"}
                           onClick={() => {
                             setServers((prev) =>
-                              prev.filter((p) => p.address !== s.address),
+                              prev.filter((p) => p.url !== s.url),
                             );
                           }}
                         >
@@ -291,7 +291,7 @@ function RouteComponent() {
                 setServers((prev) => [
                   ...prev,
                   {
-                    address: value.address,
+                    url: value.url,
                     username: value.username,
                     status: "checking",
                     token: "",
@@ -403,7 +403,7 @@ function RouteComponent() {
                       servers.map((s, idx) => (
                         <Fragment key={idx}>
                           <div className="flex items-center justify-between text-sm py-2">
-                            <h6>{s.address}</h6>
+                            <h6>{s.url}</h6>
                             <span className="overflow-hidden mr-1">
                               <ServerStatus status={s.status} />
                             </span>

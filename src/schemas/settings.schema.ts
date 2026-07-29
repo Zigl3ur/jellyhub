@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const addServerSchema = z.object({
-  address: z.url({ message: "Please enter a valid URL" }),
+  url: z.url({ message: "Please enter a valid URL" }),
   username: z.string().min(1, { message: "Provide a server username" }),
   password: z.string().min(1, { message: "Provide a server password" }),
 });
@@ -99,7 +99,7 @@ export const endSetupSchema = z.object({
   ),
   servers: z.array(
     z.object({
-      address: z.url({ error: "Please enter a valid URL" }),
+      url: z.url({ error: "Please enter a valid URL" }),
       username: z.string().min(1, { error: "Provide a server username" }),
       token: z.string({ error: "Provide a server token" }),
     }),
