@@ -1,6 +1,6 @@
 import { cn } from "@sglara/cn";
-import { IconCheck } from "@tabler/icons-react";
 import { createContext, useContext } from "react";
+import { Check } from "lucide-react";
 import Button from "./button";
 import type { PropsWithChildren } from "react";
 
@@ -103,7 +103,7 @@ export function StepperTrigger() {
       variant="outline"
     >
       {isCompleted ? (
-        <IconCheck className="shrink-0 size-3.5" />
+        <Check className="shrink-0 size-3.5" />
       ) : (
         <span
           className={cn(

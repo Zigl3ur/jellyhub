@@ -1,12 +1,12 @@
 import { cn } from "@sglara/cn";
-import { IconLoader2 } from "@tabler/icons-react";
+import { LoaderCircle } from "lucide-react";
 
 export default function LoaderIcon({
   className,
   ...props
 }: React.SVGProps<SVGSVGElement>) {
   return (
-    <IconLoader2
+    <LoaderCircle
       {...props}
       className={cn("animate-spin size-4.5", className)}
     />

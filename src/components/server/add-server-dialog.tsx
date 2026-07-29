@@ -14,11 +14,13 @@ import Button from "../ui/button";
 export default function AddServerDialog() {
   return (
     <Dialog>
-      <DialogTrigger>
-        <Button>
-          <Plus /> Add Server
-        </Button>
-      </DialogTrigger>
+      <DialogTrigger
+        render={
+          <Button>
+            <Plus /> Add Server
+          </Button>
+        }
+      />
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Add a Jellyfin Server</DialogTitle>
@@ -26,9 +28,7 @@ export default function AddServerDialog() {
             Configure a new Jellyfin server to aggregate medias from it.
           </DialogDescription>
         </DialogHeader>
-        <DialogFooter>
-          <DialogClose />
-        </DialogFooter>
+        <DialogFooter></DialogFooter>
       </DialogContent>
     </Dialog>
   );
