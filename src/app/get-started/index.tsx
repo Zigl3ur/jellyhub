@@ -33,6 +33,7 @@ import Button from "@/components/ui/button";
 import Badge from "@/components/ui/badge";
 import { getServerToken } from "@/functions/jellyfin.functions";
 import {
+  AddServersForm,
   CreateAdminUserForm,
   CreateUsersForm,
   ServerStatus,
@@ -41,7 +42,6 @@ import {
 import { endSetup } from "@/functions/settings.functions";
 import LoaderIcon from "@/components/ui/loader-icon";
 import { Alert } from "@/components/ui/alert";
-import { AddServersForm } from "@/components/server/add-server-form";
 
 type Server = {
   username: string;
