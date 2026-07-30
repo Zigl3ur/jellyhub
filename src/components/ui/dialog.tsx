@@ -77,7 +77,7 @@ export function DialogDescription({
 }
 
 export function DialogHeader({ className, children }: DialogFooterProps) {
-  return <div className={className}>{children}</div>;
+  return <div className={cn("mb-2", className)}>{children}</div>;
 }
 
 interface DialogFooterProps extends PropsWithChildren {
@@ -88,7 +88,7 @@ export function DialogFooter({ className, children }: DialogFooterProps) {
   return (
     <div
       className={cn(
-        "border-t -mx-4 -mb-2 border-muted rounded-t px-4 py-2 bg-accent/45",
+        "border-t -mx-4 -mb-2 border-muted rounded-t px-4 py-3 bg-accent/45",
         className,
       )}
     >

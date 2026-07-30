@@ -1,15 +1,24 @@
 import { Await, createFileRoute } from "@tanstack/react-router";
+import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
+import { Suspense } from "react";
 import { getJellyData } from "@/functions/settings.functions";
 import ServerCard from "@/components/server/server-card";
 import AddServerDialog from "@/components/server/add-server-dialog";
 
+const jellyDataQuery = queryOptions({
+  queryFn: getJellyData,
+  queryKey: ["jellydata"],
+});
+
 export const Route = createFileRoute("/_main/_home/settings/")({
-  loader: () => ({ servers: getJellyData() }),
+  loader: async ({ context }) => {
+    await context.queryClient.ensureQueryData(jellyDataQuery);
+  },
   component: RouteComponent,
 });
 
 function RouteComponent() {
-  const { servers } = Route.useLoaderData();
+  const { data } = useSuspenseQuery(jellyDataQuery);
 
   return (
     <div className="space-y-4">
@@ -18,11 +27,9 @@ function RouteComponent() {
         <AddServerDialog />
       </div>
       <div className="flex flex-wrap gap-2">
-        <Await promise={servers} fallback={"Loading..."}>
-          {({ data }) =>
-            data.map((s) => <ServerCard key={s.serverUrl} server={s} />)
-          }
-        </Await>
+        {data.servers.map((s) => (
+          <ServerCard key={s.serverUrl} server={s} />
+        ))}
       </div>
     </div>
   );

@@ -1,4 +1,7 @@
-import { Plus } from "lucide-react";
+import { Eye, EyeOff, Plus } from "lucide-react";
+import { revalidateLogic, useForm } from "@tanstack/react-form";
+import { useState } from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   Dialog,
   DialogClose,
@@ -10,14 +13,54 @@ import {
   DialogTrigger,
 } from "../ui/dialog";
 import Button from "../ui/button";
+import { FieldError, FieldLabel, FieldRoot } from "../ui/field";
+import { Input, InputAddon } from "../ui/input";
+import { Alert } from "../ui/alert";
+import type { addServerSchemaType } from "@/schemas/settings.schema";
+import { addServerSchema } from "@/schemas/settings.schema";
+import { addJellyfinServer } from "@/functions/settings.functions";
+
+const defaultValues: addServerSchemaType = {
+  url: "",
+  username: "",
+  password: "",
+};
 
 export default function AddServerDialog() {
+  const queryClient = useQueryClient();
+  const [open, setOpen] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [showPassword, setShowPassword] = useState(false);
+
+  const createServerMutation = useMutation({
+    mutationFn: (data: addServerSchemaType) => addJellyfinServer({ data }),
+    onSuccess: async () => {
+      setOpen(false);
+      form.reset();
+      setError(null);
+      await queryClient.invalidateQueries({ queryKey: ["jellydata"] });
+    },
+    onError: (err) => setError(err.message),
+  });
+
+  const form = useForm({
+    defaultValues,
+    validationLogic: revalidateLogic({
+      mode: "submit",
+      modeAfterSubmission: "change",
+    }),
+    validators: {
+      onDynamic: addServerSchema,
+    },
+    onSubmit: ({ value }) => createServerMutation.mutate(value),
+  });
+
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger
         render={
           <Button>
-            <Plus /> Add Server
+            <Plus className="size-5" /> Add Server
           </Button>
         }
       />
@@ -28,7 +71,111 @@ export default function AddServerDialog() {
             Configure a new Jellyfin server to aggregate medias from it.
           </DialogDescription>
         </DialogHeader>
-        <DialogFooter></DialogFooter>
+
+        <form
+          className="space-y-4"
+          onSubmit={(e) => {
+            e.preventDefault();
+            form.handleSubmit();
+          }}
+        >
+          {error && (
+            <Alert
+              type="destructive"
+              title="Failed to add Jellyfin Server"
+              message={error}
+            />
+          )}
+          <form.Field
+            name="url"
+            children={(field) => {
+              const error = field.state.meta.errors[0];
+              const invalid = !field.state.meta.isValid;
+
+              return (
+                <FieldRoot name={field.name} invalid={invalid}>
+                  <FieldLabel>Server Address</FieldLabel>
+
+                  <Input
+                    name={field.name}
+                    placeholder="https://my.jellyfin.com"
+                    value={field.state.value}
+                    onBlur={field.handleBlur}
+                    onChange={(e) => field.handleChange(e.target.value)}
+                  />
+
+                  <FieldError match={invalid}>{error?.message}</FieldError>
+                </FieldRoot>
+              );
+            }}
+          />
+          <form.Field
+            name="username"
+            children={(field) => {
+              const error = field.state.meta.errors[0];
+              const invalid = !field.state.meta.isValid;
+
+              return (
+                <FieldRoot name={field.name} invalid={invalid}>
+                  <FieldLabel>Username</FieldLabel>
+                  <Input
+                    name={field.name}
+                    placeholder="Server username"
+                    value={field.state.value}
+                    onBlur={field.handleBlur}
+                    onChange={(e) => field.handleChange(e.target.value)}
+                  />
+                  <FieldError match={invalid}>{error?.message}</FieldError>
+                </FieldRoot>
+              );
+            }}
+          />
+          <form.Field
+            name="password"
+            children={(field) => {
+              const error = field.state.meta.errors[0];
+              const invalid = !field.state.meta.isValid;
+
+              return (
+                <FieldRoot name={field.name} invalid={invalid}>
+                  <FieldLabel>Password</FieldLabel>
+                  <Input
+                    name={field.name}
+                    type={showPassword ? "text" : "password"}
+                    placeholder="Server password"
+                    value={field.state.value}
+                    onBlur={field.handleBlur}
+                    onChange={(e) => field.handleChange(e.target.value)}
+                  >
+                    <InputAddon side="right">
+                      <Button
+                        type="button"
+                        size="icon"
+                        variant="ghost"
+                        onClick={() => setShowPassword((prev) => !prev)}
+                      >
+                        {showPassword ? <EyeOff /> : <Eye />}
+                      </Button>
+                    </InputAddon>
+                  </Input>
+                  <FieldError match={invalid}>{error?.message}</FieldError>
+                </FieldRoot>
+              );
+            }}
+          />
+
+          <DialogFooter className="flex justify-end items-center gap-2">
+            <DialogClose render={<Button variant="outline">Cancel</Button>} />
+            <form.Subscribe
+              selector={(state) => state.canSubmit}
+              children={(canSubmit) => (
+                <Button type="submit" disabled={!canSubmit}>
+                  Add
+                </Button>
+              )}
+            />
+          </DialogFooter>
+        </form>
       </DialogContent>
     </Dialog>
   );

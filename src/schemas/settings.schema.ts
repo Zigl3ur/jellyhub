@@ -1,9 +1,9 @@
 import { z } from "zod";
 
 export const addServerSchema = z.object({
-  url: z.url({ message: "Please enter a valid URL" }),
-  username: z.string().min(1, { message: "Provide a server username" }),
-  password: z.string().min(1, { message: "Provide a server password" }),
+  url: z.url({ error: "Please enter a valid URL" }),
+  username: z.string().min(1, { error: "Provide a server username" }),
+  password: z.string().min(1, { error: "Provide a server password" }),
 });
 
 export type addServerSchemaType = z.output<typeof addServerSchema>;
@@ -13,20 +13,20 @@ export const editUserSchema = z
     username: z.optional(
       z
         .string()
-        .min(3, { message: "Username must be at least 3 characters long" })
-        .max(15, { message: "Username cant exceed 15 characters" }),
+        .min(3, { error: "Username must be at least 3 characters long" })
+        .max(15, { error: "Username cant exceed 15 characters" }),
     ),
     password: z.optional(
       z
         .string()
-        .min(6, { message: "Pasword must be at least 6 characters long" })
-        .max(50, { message: "Pasword cant exceed 50 characters" }),
+        .min(6, { error: "Password must be at least 6 characters long" })
+        .max(50, { error: "Password cant exceed 50 characters" }),
     ),
     confirmPassword: z.optional(
       z
         .string()
-        .min(6, { message: "Pasword must be at least 6 characters long" })
-        .max(50, { message: "Pasword cant exceed 50 characters" }),
+        .min(6, { error: "Password must be at least 6 characters long" })
+        .max(50, { error: "Password cant exceed 50 characters" }),
     ),
   })
   .check((ctx) => {
@@ -54,12 +54,12 @@ export const resetPasswdScema = z
   .object({
     password: z
       .string()
-      .min(6, { message: "Pasword must be at least 6 characters long" })
-      .max(50, { message: "Pasword cant exceed 50 characters" }),
+      .min(6, { error: "Password must be at least 6 characters long" })
+      .max(50, { error: "Password cant exceed 50 characters" }),
     confirmPassword: z
       .string()
-      .min(6, { message: "Pasword must be at least 6 characters long" })
-      .max(50, { message: "Pasword cant exceed 50 characters" }),
+      .min(6, { error: "Password must be at least 6 characters long" })
+      .max(50, { error: "Password cant exceed 50 characters" }),
   })
   .check((ctx) => {
     if (ctx.value.password !== ctx.value.confirmPassword) {

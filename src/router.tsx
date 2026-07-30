@@ -5,6 +5,7 @@ import { routeTree } from "./routeTree.gen";
 
 export function getRouter() {
   const queryClient = new QueryClient();
+
   const router = createRouter({
     routeTree,
     context: { queryClient },
@@ -15,4 +16,8 @@ export function getRouter() {
   setupRouterSsrQueryIntegration({ router, queryClient });
 
   return router;
+}
+
+export interface RouterContext {
+  queryClient: QueryClient;
 }

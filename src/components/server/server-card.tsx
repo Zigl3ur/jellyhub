@@ -19,7 +19,7 @@ import { ExternalLink } from "@/components/ui/link";
 import { checkServerConn, getServerInfo } from "@/functions/jellyfin.functions";
 
 interface ServerCardProps {
-  server: Awaited<ReturnType<typeof getJellyData>>["data"][number];
+  server: Awaited<ReturnType<typeof getJellyData>>["servers"][number];
 }
 
 export default function ServerCard({ server }: ServerCardProps) {

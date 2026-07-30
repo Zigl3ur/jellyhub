@@ -5,14 +5,14 @@ import LoaderIcon from "@/components/ui/loader-icon";
 
 export const Route = createFileRoute("/_main/_home/")({
   loader: async () => {
-    const { data } = await getJellyData();
+    const { servers } = await getJellyData();
 
     let dataitems;
     try {
       dataitems = await getServerItems({
         data: {
-          address: data[0].serverUrl,
-          token: data[0].serverToken,
+          url: servers[0].serverUrl,
+          token: servers[0].serverToken,
           opts: {
             types: ["Season"],
             parentId: "5710cacf293f8dcf06f83f5ac13e1fbb",

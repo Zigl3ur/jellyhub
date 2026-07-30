@@ -18,6 +18,7 @@ import {
   jellydata as jellydataSchema,
   user as userSchema,
 } from "@/lib/db/schema";
+import { authJellyfinUser, getJellyfinApiClient } from "@/lib/api.jellyfin";
 
 export const endSetup = createServerFn({ method: "POST" })
   .middleware([ctxMiddleware])
@@ -98,7 +99,40 @@ export const getJellyData = createServerFn({ method: "GET" })
       },
     });
 
-    return { data: serverList };
+    return { servers: serverList };
+  });
+
+export const addJellyfinServer = createServerFn({ method: "POST" })
+  .middleware([authMiddleware])
+  .validator(
+    (data: { url: string; username: string; password: string }) => data,
+  )
+  .handler(async ({ context, data }) => {
+    const { url, username, password } = data;
+
+    const apiClient = getJellyfinApiClient(url);
+    const authData = await authJellyfinUser(apiClient, username, password);
+
+    if (authData.status !== 200) {
+      throw new Error("Failed to authenticate against jellyfin server");
+    }
+
+    const token = authData.data.AccessToken;
+
+    if (!token) {
+      throw new Error("Failed to retrieve access token from jellyfin server");
+    }
+
+    try {
+      await context.db.insert(jellydataSchema).values({
+        userId: context.session.user.id,
+        serverUrl: url,
+        serverUsername: username,
+        serverToken: token,
+      });
+    } catch {
+      throw new Error("Failed to add jellyfin server");
+    }
   });
 
 /**
