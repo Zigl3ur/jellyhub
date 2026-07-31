@@ -107,3 +107,9 @@ export const endSetupSchema = z.object({
 });
 
 export type endSetupSchemaType = z.output<typeof endSetupSchema>;
+
+export const apiJellyfinSchema = z.object({
+  url: z.url({ error: "Please enter a valid URL" }),
+});
+
+export type apiJellyfinSchemaType = z.output<typeof apiJellyfinSchema>;

@@ -12,11 +12,11 @@ import Badge from "../ui/badge";
 import LoaderIcon from "../ui/loader-icon";
 import { Alert } from "../ui/alert";
 import type { Dialog as BaseDialog } from "@base-ui/react";
-import type { Server } from "@/types";
+import type { JellyfinServer } from "@/types";
 import { deleteJellyfinServer } from "@/functions/settings.functions";
 
 interface RemoveServerDialogProps extends BaseDialog.Root.Props {
-  server: Server & { name?: string | null };
+  server: JellyfinServer & { serverName?: string | null };
   onSuccess?: () => void;
 }
 
@@ -51,9 +51,9 @@ export default function RemoveServerDialog({
         <span>
           You are about to permanently remove the configured Jellyfin server
           with{" "}
-          {server.name && (
+          {server.serverName && (
             <>
-              the name <Badge>{server.name}</Badge> and{" "}
+              the name <Badge>{server.serverName}</Badge> and{" "}
             </>
           )}
           the url <Badge>{server.serverUrl}</Badge>.

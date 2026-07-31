@@ -104,7 +104,7 @@ export const jellydata = sqliteTable(
       .references(() => user.id, { onDelete: "cascade" }),
     serverUrl: text("server_url").notNull().unique(),
     serverUsername: text("server_username").notNull(),
-    serverToken: encryptedText("server_token").notNull(),
+    serverToken: encryptedText("server_token"),
     createdAt: integer("created_at", { mode: "timestamp_ms" }).$default(
       () => new Date(),
     ),

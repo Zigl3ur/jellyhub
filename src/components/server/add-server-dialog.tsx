@@ -55,7 +55,13 @@ export default function AddServerDialog() {
   });
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog
+      open={open}
+      onOpenChange={(state) => {
+        setOpen(state);
+        if (!state) form.reset();
+      }}
+    >
       <DialogTrigger
         render={
           <Button>

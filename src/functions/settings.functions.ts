@@ -1,15 +1,17 @@
-import { z } from "zod/v4";
+import { z } from "zod";
 import { createServerFn } from "@tanstack/react-start";
 import { getRequestHeaders } from "@tanstack/react-start/server";
 import { and, eq, inArray } from "drizzle-orm";
 import { redirect } from "@tanstack/react-router";
 import { getUser, hasAdminUser } from "./auth.functions";
 import { authMiddleware, ctxMiddleware } from "./middlewares";
+import { getServerToken } from "./jellyfin.functions";
 import type { ServerActionReturn, userDataType } from "@/types/actions.types";
 import { auth } from "@/lib/auth";
 import { loginSchema } from "@/schemas/auth.schema";
 import {
   addServerSchema,
+  apiJellyfinSchema,
   editUserSchema,
   endSetupSchema,
   resetPasswdScema,
@@ -19,7 +21,11 @@ import {
   jellydata as jellydataSchema,
   user as userSchema,
 } from "@/lib/db/schema";
-import { authJellyfinUser, getJellyfinApiClient } from "@/lib/api.jellyfin";
+import {
+  authJellyfinUser,
+  getJellyfinApiClient,
+  logoutJellyfinUser,
+} from "@/lib/api.jellyfin";
 
 export const endSetup = createServerFn({ method: "POST" })
   .middleware([ctxMiddleware])
@@ -146,9 +152,13 @@ export const addJellyfinServer = createServerFn({ method: "POST" })
 
 export const deleteJellyfinServer = createServerFn({ method: "POST" })
   .middleware([authMiddleware])
-  .validator(z.object({ url: z.string() }))
+  .validator(apiJellyfinSchema)
   .handler(async ({ context, data }) => {
-    const { url } = data;
+    const token = await getServerToken(data.url);
+
+    const api = getJellyfinApiClient(data.url, token);
+
+    if (token) await logoutJellyfinUser(api);
 
     try {
       await context.db
@@ -156,7 +166,7 @@ export const deleteJellyfinServer = createServerFn({ method: "POST" })
         .where(
           and(
             eq(jellydataSchema.userId, context.session.user.id),
-            eq(jellydataSchema.serverUrl, url),
+            eq(jellydataSchema.serverUrl, data.url),
           ),
         );
     } catch {

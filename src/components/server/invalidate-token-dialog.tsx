@@ -1,0 +1,75 @@
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import Button from "../ui/button";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "../ui/dialog";
+import { Alert } from "../ui/alert";
+import LoaderIcon from "../ui/loader-icon";
+import type { JellyfinServer } from "@/types";
+import type { Dialog as BaseDialog } from "@base-ui/react";
+import { invalidateServerToken } from "@/functions/jellyfin.functions";
+
+interface InvalidateTokenDialogProps extends BaseDialog.Root.Props {
+  server: JellyfinServer;
+  onSuccess?: () => void;
+}
+
+export default function InvalidateTokenDialog({
+  server,
+  onSuccess,
+  ...props
+}: InvalidateTokenDialogProps) {
+  const queryClient = useQueryClient();
+
+  const { mutate, isPending, isError, error } = useMutation({
+    mutationFn: (data: { url: string }) => invalidateServerToken({ data }),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({
+        queryKey: [server.serverUrl, "state"],
+      });
+      onSuccess?.();
+    },
+  });
+
+  return (
+    <Dialog {...props}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Invalidate Server Token</DialogTitle>
+        </DialogHeader>
+        {isError && (
+          <Alert
+            type="destructive"
+            title="Failed to rerol server token"
+            message={error.message}
+          />
+        )}
+        <DialogFooter className="flex justify-end items-center gap-2">
+          <DialogClose render={<Button variant="outline">Cancel</Button>} />
+          <Button
+            variant="destructive"
+            disabled={isPending}
+            onClick={() =>
+              mutate({
+                url: server.serverUrl,
+              })
+            }
+          >
+            {isPending ? (
+              <>
+                <LoaderIcon /> Invalidating
+              </>
+            ) : (
+              "Invalidate"
+            )}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}

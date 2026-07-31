@@ -1,7 +1,11 @@
 import "@tanstack/react-start/server-only";
 
 import { Jellyfin } from "@jellyfin/sdk";
-import { getItemsApi, getUserApi } from "@jellyfin/sdk/lib/utils/api";
+import {
+  getItemsApi,
+  getSessionApi,
+  getUserApi,
+} from "@jellyfin/sdk/lib/utils/api";
 import {
   BaseItemKind,
   ItemFields,
@@ -46,6 +50,14 @@ export async function authJellyfinUser(
     }
 
     throw new Error("Failed to authenticate user");
+  }
+}
+
+export async function logoutJellyfinUser(api: Api) {
+  try {
+    await getSessionApi(api).reportSessionEnded();
+  } catch {
+    throw new Error("Failed to logout user");
   }
 }
 

@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { EllipsisVertical, Pen, RefreshCw, Trash2 } from "lucide-react";
+import { EllipsisVertical, LogOut, Pen, RefreshCw, Trash2 } from "lucide-react";
 import { useState } from "react";
 import Skeleton from "../ui/skeleton";
 import { Card, CardContent, CardHeader } from "../ui/card";
@@ -16,12 +16,14 @@ import {
   MenuTrigger,
 } from "../ui/menu";
 import RemoveServerDialog from "./remove-server-dialog";
-import type { Server } from "@/types";
+import RefreshTokenDialog from "./refresh-token-dialog";
+import InvalidateTokenDialog from "./invalidate-token-dialog";
+import type { JellyfinServer } from "@/types";
 import { ExternalLink } from "@/components/ui/link";
 import { checkServerConn, getServerInfo } from "@/functions/jellyfin.functions";
 
 interface ServerCardProps {
-  server: Server;
+  server: JellyfinServer;
 }
 
 export default function ServerCard({ server }: ServerCardProps) {
@@ -33,7 +35,7 @@ export default function ServerCard({ server }: ServerCardProps) {
   const { data: statusData, isFetching: isFetchingStatusData } = useQuery({
     queryFn: () =>
       checkServerConn({
-        data: { url: server.serverUrl, token: server.serverToken },
+        data: { url: server.serverUrl },
       }),
     queryKey: [server.serverUrl, "state"],
     refetchInterval: 15_000,
@@ -57,7 +59,9 @@ export default function ServerCard({ server }: ServerCardProps) {
             <div className="bg-destructive size-2 shrink-0 rounded-full" />
           )}
         </div>
-        <ServerActions server={{ ...server, name: serverData?.ServerName }} />
+        <ServerActions
+          server={{ ...server, serverName: serverData?.ServerName }}
+        />
       </CardHeader>
       <CardContent className="gap-2.5">
         <div className="flex items-center justify-between">
@@ -94,11 +98,13 @@ export default function ServerCard({ server }: ServerCardProps) {
 }
 
 interface ServerActionsProps {
-  server: Server & { name?: string | null };
+  server: JellyfinServer & { serverName?: string | null };
 }
 
 function ServerActions({ server }: ServerActionsProps) {
   const [deleteOpen, setDeleteOpen] = useState(false);
+  const [refreshOpen, setRefreshOpen] = useState(false);
+  const [invalidateOpen, setInvalidateOpen] = useState(false);
 
   return (
     <>
@@ -120,9 +126,13 @@ function ServerActions({ server }: ServerActionsProps) {
             <MenuItem>
               <Pen className="size-4" /> Edit
             </MenuItem>
-            <MenuItem>
+            <MenuItem onClick={() => setRefreshOpen(true)}>
               <RefreshCw className="size-4" />
               Refresh Token
+            </MenuItem>
+            <MenuItem onClick={() => setInvalidateOpen(true)}>
+              <LogOut className="size-4" />
+              Invalidate Token
             </MenuItem>
           </MenuGroup>
           <MenuSeparator />
@@ -134,6 +144,20 @@ function ServerActions({ server }: ServerActionsProps) {
           </MenuItem>
         </MenuContent>
       </Menu>
+
+      <RefreshTokenDialog
+        open={refreshOpen}
+        onOpenChange={setRefreshOpen}
+        server={server}
+        onSuccess={() => setRefreshOpen(false)}
+      />
+
+      <InvalidateTokenDialog
+        open={invalidateOpen}
+        onOpenChange={setInvalidateOpen}
+        server={server}
+        onSuccess={() => setInvalidateOpen(false)}
+      />
 
       <RemoveServerDialog
         open={deleteOpen}

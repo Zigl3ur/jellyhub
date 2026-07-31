@@ -14,6 +14,6 @@ export type ItemsOpts = {
   years?: Array<number>;
 };
 
-export type Server = Awaited<
+export type JellyfinServer = Awaited<
   ReturnType<typeof getJellyData>
 >["servers"][number];
