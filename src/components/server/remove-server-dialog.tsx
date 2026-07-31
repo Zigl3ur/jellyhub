@@ -23,11 +23,12 @@ interface RemoveServerDialogProps extends BaseDialog.Root.Props {
 export default function RemoveServerDialog({
   server,
   onSuccess,
+  onOpenChange,
   ...props
 }: RemoveServerDialogProps) {
   const queryClient = useQueryClient();
 
-  const { mutate, isPending, isError, error } = useMutation({
+  const { mutate, isPending, isError, error, reset } = useMutation({
     mutationFn: (data: { url: string }) => deleteJellyfinServer({ data }),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ["jellydata"] });
@@ -36,7 +37,13 @@ export default function RemoveServerDialog({
   });
 
   return (
-    <Dialog {...props}>
+    <Dialog
+      {...props}
+      onOpenChange={(state, event) => {
+        onOpenChange?.(state, event);
+        if (!state) reset();
+      }}
+    >
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Remove Server</DialogTitle>

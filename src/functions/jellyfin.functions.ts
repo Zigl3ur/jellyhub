@@ -91,17 +91,15 @@ export const refreshServerToken = createServerFn({ method: "GET" })
     const { url, username, password } = data;
 
     const token = await getServerToken(url);
-
     const api = getJellyfinApiClient(url, token);
-    const newAuth = await authJellyfinUser(api, username, password);
 
     if (token) await logoutJellyfinUser(api);
 
+    const newAuth = await authJellyfinUser(api, username, password);
+
     await context.db
       .update(jellydata)
-      .set({
-        serverToken: newAuth.AccessToken,
-      })
+      .set({ serverToken: newAuth.AccessToken })
       .where(
         and(
           eq(jellydata.userId, context.session.user.id),
@@ -114,7 +112,6 @@ export const checkServerConn = createServerFn({ method: "GET" })
   .validator(apiJellyfinSchema)
   .handler(async ({ data }) => {
     const token = await getServerToken(data.url);
-
     const api = getJellyfinApiClient(data.url, token);
 
     const status = await checkJellyfinConn(api);

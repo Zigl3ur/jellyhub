@@ -38,7 +38,7 @@ export default function RefreshTokenDialog({
 }: RefreshTokenDialogProps) {
   const queryClient = useQueryClient();
 
-  const { mutate, isPending, isError, error } = useMutation({
+  const { mutate, isPending, isError, error, reset } = useMutation({
     mutationFn: (data: { url: string; username: string; password: string }) =>
       refreshServerToken({ data }),
     onSuccess: async () => {
@@ -76,7 +76,10 @@ export default function RefreshTokenDialog({
       {...props}
       onOpenChange={(state, event) => {
         onOpenChange?.(state, event);
-        if (!state) form.reset();
+        if (!state) {
+          reset();
+          form.reset();
+        }
       }}
     >
       <DialogContent>
@@ -90,10 +93,10 @@ export default function RefreshTokenDialog({
             message={error.message}
           />
         )}
-        <p>
+        <div>
           Provide the password for the user{" "}
           <Badge>{server.serverUsername}</Badge>
-        </p>
+        </div>
         <form
           className="space-y-4"
           onSubmit={(e) => {

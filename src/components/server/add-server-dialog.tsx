@@ -33,7 +33,7 @@ export default function AddServerDialog() {
   const [open, setOpen] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
-  const { mutate, isPending, isError, error } = useMutation({
+  const { mutate, isPending, isError, error, reset } = useMutation({
     mutationFn: (data: addServerSchemaType) => addJellyfinServer({ data }),
     onSuccess: async () => {
       setOpen(false);
@@ -59,7 +59,10 @@ export default function AddServerDialog() {
       open={open}
       onOpenChange={(state) => {
         setOpen(state);
-        if (!state) form.reset();
+        if (!state) {
+          reset;
+          form.reset();
+        }
       }}
     >
       <DialogTrigger

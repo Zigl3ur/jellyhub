@@ -22,11 +22,12 @@ interface InvalidateTokenDialogProps extends BaseDialog.Root.Props {
 export default function InvalidateTokenDialog({
   server,
   onSuccess,
+  onOpenChange,
   ...props
 }: InvalidateTokenDialogProps) {
   const queryClient = useQueryClient();
 
-  const { mutate, isPending, isError, error } = useMutation({
+  const { mutate, isPending, isError, error, reset } = useMutation({
     mutationFn: (data: { url: string }) => invalidateServerToken({ data }),
     onSuccess: async () => {
       await queryClient.invalidateQueries({
@@ -37,7 +38,13 @@ export default function InvalidateTokenDialog({
   });
 
   return (
-    <Dialog {...props}>
+    <Dialog
+      {...props}
+      onOpenChange={(state, event) => {
+        onOpenChange?.(state, event);
+        if (!state) reset();
+      }}
+    >
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Invalidate Server Token</DialogTitle>
