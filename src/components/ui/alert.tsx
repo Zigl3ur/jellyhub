@@ -3,10 +3,10 @@ import { cn } from "@sglara/cn";
 interface AlertProps {
   message: string;
   title?: string;
-  type: "destructive" | "default";
+  type?: "destructive" | "default";
 }
 
-const variant: Record<AlertProps["type"], string> = {
+const variant: Record<NonNullable<AlertProps["type"]>, string> = {
   default: "",
   destructive:
     "bg-destructive/30 text-destructive-foreground border border-destructive/50",

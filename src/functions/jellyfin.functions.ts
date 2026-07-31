@@ -25,11 +25,7 @@ export const getServerToken = createServerFn({ method: "GET" })
   .handler(async ({ data }) => {
     const api = getJellyfinApiClient(data.url);
 
-    const auth = await authJellyfinUser(api, data.username, data.password);
-
-    if (auth.status !== 200) throw new Error("Failed to authenticate user");
-
-    return auth.data;
+    return await authJellyfinUser(api, data.username, data.password);
   });
 
 export const checkServerConn = createServerFn({ method: "GET" })

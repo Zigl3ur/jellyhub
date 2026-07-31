@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { EllipsisVertical, Pen, RefreshCw, Trash2 } from "lucide-react";
+import { useState } from "react";
 import Skeleton from "../ui/skeleton";
 import { Card, CardContent, CardHeader } from "../ui/card";
 import Button from "../ui/button";
@@ -14,12 +15,13 @@ import {
   MenuSeparator,
   MenuTrigger,
 } from "../ui/menu";
-import type { getJellyData } from "@/functions/settings.functions";
+import RemoveServerDialog from "./remove-server-dialog";
+import type { Server } from "@/types";
 import { ExternalLink } from "@/components/ui/link";
 import { checkServerConn, getServerInfo } from "@/functions/jellyfin.functions";
 
 interface ServerCardProps {
-  server: Awaited<ReturnType<typeof getJellyData>>["servers"][number];
+  server: Server;
 }
 
 export default function ServerCard({ server }: ServerCardProps) {
@@ -38,7 +40,7 @@ export default function ServerCard({ server }: ServerCardProps) {
   });
 
   return (
-    <Card className="max-w-85 w-full">
+    <Card className="w-full">
       <CardHeader className="justify-between">
         <div className="flex items-center gap-2">
           <JellyfinIcon className="size-5.5 shrink-0" />
@@ -55,7 +57,7 @@ export default function ServerCard({ server }: ServerCardProps) {
             <div className="bg-destructive size-2 shrink-0 rounded-full" />
           )}
         </div>
-        <ServerActions />
+        <ServerActions server={{ ...server, name: serverData?.ServerName }} />
       </CardHeader>
       <CardContent className="gap-2.5">
         <div className="flex items-center justify-between">
@@ -91,36 +93,54 @@ export default function ServerCard({ server }: ServerCardProps) {
   );
 }
 
-function ServerActions() {
+interface ServerActionsProps {
+  server: Server & { name?: string | null };
+}
+
+function ServerActions({ server }: ServerActionsProps) {
+  const [deleteOpen, setDeleteOpen] = useState(false);
+
   return (
-    <Menu>
-      <MenuTrigger
-        render={
-          <Button
-            variant="outline"
-            size="icon"
-            className="data-popup-open:bg-accent/50"
+    <>
+      <Menu>
+        <MenuTrigger
+          render={
+            <Button
+              variant="outline"
+              size="icon"
+              className="data-popup-open:bg-accent/50"
+            >
+              <EllipsisVertical />
+            </Button>
+          }
+        />
+        <MenuContent positionerProps={{ align: "start", sideOffset: 4 }}>
+          <MenuGroup>
+            <MenuGroupLabel>Actions</MenuGroupLabel>
+            <MenuItem>
+              <Pen className="size-4" /> Edit
+            </MenuItem>
+            <MenuItem>
+              <RefreshCw className="size-4" />
+              Refresh Token
+            </MenuItem>
+          </MenuGroup>
+          <MenuSeparator />
+          <MenuItem
+            variant="destructive-ghost"
+            onClick={() => setDeleteOpen(true)}
           >
-            <EllipsisVertical />
-          </Button>
-        }
+            <Trash2 className="size-4" /> Delete Server
+          </MenuItem>
+        </MenuContent>
+      </Menu>
+
+      <RemoveServerDialog
+        open={deleteOpen}
+        onOpenChange={setDeleteOpen}
+        server={server}
+        onSuccess={() => setDeleteOpen(false)}
       />
-      <MenuContent positionerProps={{ align: "start", sideOffset: 4 }}>
-        <MenuGroup>
-          <MenuGroupLabel>Actions</MenuGroupLabel>
-          <MenuItem>
-            <Pen className="size-4" /> Edit
-          </MenuItem>
-          <MenuItem>
-            <RefreshCw className="size-4" />
-            Refresh Token
-          </MenuItem>
-        </MenuGroup>
-        <MenuSeparator />
-        <MenuItem variant="destructive-ghost">
-          <Trash2 className="size-4" /> Delete Server
-        </MenuItem>
-      </MenuContent>
-    </Menu>
+    </>
   );
 }

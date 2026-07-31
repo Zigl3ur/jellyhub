@@ -16,6 +16,7 @@ import Button from "../ui/button";
 import { FieldError, FieldLabel, FieldRoot } from "../ui/field";
 import { Input, InputAddon } from "../ui/input";
 import { Alert } from "../ui/alert";
+import LoaderIcon from "../ui/loader-icon";
 import type { addServerSchemaType } from "@/schemas/settings.schema";
 import { addServerSchema } from "@/schemas/settings.schema";
 import { addJellyfinServer } from "@/functions/settings.functions";
@@ -28,19 +29,17 @@ const defaultValues: addServerSchemaType = {
 
 export default function AddServerDialog() {
   const queryClient = useQueryClient();
+
   const [open, setOpen] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
 
-  const createServerMutation = useMutation({
+  const { mutate, isPending, isError, error } = useMutation({
     mutationFn: (data: addServerSchemaType) => addJellyfinServer({ data }),
     onSuccess: async () => {
       setOpen(false);
       form.reset();
-      setError(null);
       await queryClient.invalidateQueries({ queryKey: ["jellydata"] });
     },
-    onError: (err) => setError(err.message),
   });
 
   const form = useForm({
@@ -52,7 +51,7 @@ export default function AddServerDialog() {
     validators: {
       onDynamic: addServerSchema,
     },
-    onSubmit: ({ value }) => createServerMutation.mutate(value),
+    onSubmit: ({ value }) => mutate(value),
   });
 
   return (
@@ -71,6 +70,13 @@ export default function AddServerDialog() {
             Configure a new Jellyfin server to aggregate medias from it.
           </DialogDescription>
         </DialogHeader>
+        {isError && (
+          <Alert
+            type="destructive"
+            title="Failed to add server"
+            message={error.message}
+          />
+        )}
 
         <form
           className="space-y-4"
@@ -79,13 +85,6 @@ export default function AddServerDialog() {
             form.handleSubmit();
           }}
         >
-          {error && (
-            <Alert
-              type="destructive"
-              title="Failed to add Jellyfin Server"
-              message={error}
-            />
-          )}
           <form.Field
             name="url"
             children={(field) => {
@@ -167,10 +166,16 @@ export default function AddServerDialog() {
           <DialogFooter className="flex justify-end items-center gap-2">
             <DialogClose render={<Button variant="outline">Cancel</Button>} />
             <form.Subscribe
-              selector={(state) => state.canSubmit}
-              children={(canSubmit) => (
-                <Button type="submit" disabled={!canSubmit}>
-                  Add
+              selector={(state) => [state.canSubmit]}
+              children={([canSubmit]) => (
+                <Button type="submit" disabled={!canSubmit || isPending}>
+                  {isPending ? (
+                    <>
+                      <LoaderIcon /> Adding
+                    </>
+                  ) : (
+                    "Add"
+                  )}
                 </Button>
               )}
             />

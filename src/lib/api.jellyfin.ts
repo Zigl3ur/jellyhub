@@ -6,7 +6,7 @@ import {
   BaseItemKind,
   ItemFields,
 } from "@jellyfin/sdk/lib/generated-client/models";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import type { Api } from "@jellyfin/sdk";
 import type { ItemsOpts } from "@/types";
 
@@ -31,12 +31,22 @@ export async function authJellyfinUser(
   username: string,
   password: string,
 ) {
-  return await getUserApi(api).authenticateUserByName({
-    authenticateUserByName: {
-      Username: username,
-      Pw: password,
-    },
-  });
+  try {
+    const auth = await getUserApi(api).authenticateUserByName({
+      authenticateUserByName: {
+        Username: username,
+        Pw: password,
+      },
+    });
+
+    return auth.data;
+  } catch (error) {
+    if (error instanceof AxiosError && error.response?.status === 401) {
+      throw new Error("Invalid username or password");
+    }
+
+    throw new Error("Failed to authenticate user");
+  }
 }
 
 export async function checkJellyfinConn(api: Api) {
@@ -44,7 +54,7 @@ export async function checkJellyfinConn(api: Api) {
     const status = await getUserApi(api).getCurrentUser({ timeout: 3000 });
 
     return status.status === 200;
-  } catch (error) {
+  } catch {
     return false;
   }
 }

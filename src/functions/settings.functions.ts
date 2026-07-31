@@ -1,7 +1,7 @@
 import { z } from "zod/v4";
 import { createServerFn } from "@tanstack/react-start";
 import { getRequestHeaders } from "@tanstack/react-start/server";
-import { inArray } from "drizzle-orm";
+import { and, eq, inArray } from "drizzle-orm";
 import { redirect } from "@tanstack/react-router";
 import { getUser, hasAdminUser } from "./auth.functions";
 import { authMiddleware, ctxMiddleware } from "./middlewares";
@@ -9,6 +9,7 @@ import type { ServerActionReturn, userDataType } from "@/types/actions.types";
 import { auth } from "@/lib/auth";
 import { loginSchema } from "@/schemas/auth.schema";
 import {
+  addServerSchema,
   editUserSchema,
   endSetupSchema,
   resetPasswdScema,
@@ -104,34 +105,62 @@ export const getJellyData = createServerFn({ method: "GET" })
 
 export const addJellyfinServer = createServerFn({ method: "POST" })
   .middleware([authMiddleware])
-  .validator(
-    (data: { url: string; username: string; password: string }) => data,
-  )
+  .validator(addServerSchema)
   .handler(async ({ context, data }) => {
     const { url, username, password } = data;
 
     const apiClient = getJellyfinApiClient(url);
     const authData = await authJellyfinUser(apiClient, username, password);
 
-    if (authData.status !== 200) {
-      throw new Error("Failed to authenticate against jellyfin server");
-    }
-
-    const token = authData.data.AccessToken;
+    const token = authData.AccessToken;
 
     if (!token) {
       throw new Error("Failed to retrieve access token from jellyfin server");
     }
 
     try {
-      await context.db.insert(jellydataSchema).values({
-        userId: context.session.user.id,
-        serverUrl: url,
-        serverUsername: username,
-        serverToken: token,
-      });
+      const inserted = await context.db
+        .insert(jellydataSchema)
+        .values({
+          userId: context.session.user.id,
+          serverUrl: url,
+          serverUsername: username,
+          serverToken: token,
+        })
+        .onConflictDoNothing({
+          target: jellydataSchema.serverUrl,
+        })
+        .returning();
+
+      if (inserted.length === 0) {
+        throw new Error("Server already exists", { cause: "already_exists" });
+      }
+    } catch (err) {
+      if (err instanceof Error && err.cause === "already_exists") throw err;
+
+      throw new Error(
+        "An error occurred while adding the jellyfin server, try again",
+      );
+    }
+  });
+
+export const deleteJellyfinServer = createServerFn({ method: "POST" })
+  .middleware([authMiddleware])
+  .validator(z.object({ url: z.string() }))
+  .handler(async ({ context, data }) => {
+    const { url } = data;
+
+    try {
+      await context.db
+        .delete(jellydataSchema)
+        .where(
+          and(
+            eq(jellydataSchema.userId, context.session.user.id),
+            eq(jellydataSchema.serverUrl, url),
+          ),
+        );
     } catch {
-      throw new Error("Failed to add jellyfin server");
+      throw new Error("Failed to remove jellyfin server");
     }
   });
 

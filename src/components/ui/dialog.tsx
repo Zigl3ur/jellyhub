@@ -31,15 +31,17 @@ export function DialogContent({
             className,
           )}
         >
-          <BaseDialog.Close>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="absolute top-2 right-2"
-            >
-              <X />
-            </Button>
-          </BaseDialog.Close>
+          <BaseDialog.Close
+            render={
+              <Button
+                variant="ghost"
+                size="icon"
+                className="absolute top-2 right-2"
+              >
+                <X />
+              </Button>
+            }
+          />
           {children}
         </BaseDialog.Popup>
       </BaseDialog.Viewport>
@@ -55,7 +57,10 @@ export function DialogTitle({
   return (
     <BaseDialog.Title
       {...props}
-      className={cn("text-xl font-semibold", className)}
+      className={cn(
+        "text-xl font-semibold max-w-[calc(100%-1rem)] wrap-break-word",
+        className,
+      )}
     >
       {children}
     </BaseDialog.Title>
@@ -69,7 +74,7 @@ export function DialogDescription({
   return (
     <BaseDialog.Description
       {...props}
-      className={cn("text-sm opacity-45", className)}
+      className={cn("text-sm opacity-45 max-w-[calc(100%-1rem)] wrap-break-word", className)}
     >
       {children}
     </BaseDialog.Description>

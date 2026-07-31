@@ -28,7 +28,7 @@ export default function Badge({
     props: mergeProps<"div">(
       {
         className: cn(
-          "rounded w-fit flex gap-1 items-center px-2 py-px text-sm",
+          "rounded w-fit inline-flex gap-1 items-center px-2 py-px text-sm",
           variants[variant],
           className,
         ),

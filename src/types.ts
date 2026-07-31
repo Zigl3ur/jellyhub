@@ -1,3 +1,5 @@
+import type { getJellyData } from "./functions/settings.functions";
+
 export type ServerStatus = "checking" | "up" | "down";
 
 export type ItemTypes = "Movie" | "Series" | "MusicAlbum" | "Season" | "Audio";
@@ -11,3 +13,7 @@ export type ItemsOpts = {
   studios?: Array<string>;
   years?: Array<number>;
 };
+
+export type Server = Awaited<
+  ReturnType<typeof getJellyData>
+>["servers"][number];
