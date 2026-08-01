@@ -102,7 +102,6 @@ export const getJellyData = createServerFn({ method: "GET" })
       columns: {
         serverUrl: true,
         serverUsername: true,
-        serverToken: true,
       },
     });
 

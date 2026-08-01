@@ -49,7 +49,7 @@ export default function ServerCard({ server }: ServerCardProps) {
           {isFetchingServerData ? (
             <Skeleton className="h-5 w-45" />
           ) : (
-            serverData?.ServerName
+            <h6 className="line-clamp-1">{serverData?.ServerName}</h6>
           )}
           {isFetchingStatusData ? (
             <RefreshCw className="size-3 shrink-0 animate-spin" />
@@ -123,9 +123,6 @@ function ServerActions({ server }: ServerActionsProps) {
         <MenuContent positionerProps={{ align: "start", sideOffset: 4 }}>
           <MenuGroup>
             <MenuGroupLabel>Actions</MenuGroupLabel>
-            <MenuItem>
-              <Pen className="size-4" /> Edit
-            </MenuItem>
             <MenuItem onClick={() => setRefreshOpen(true)}>
               <RefreshCw className="size-4" />
               Refresh Token

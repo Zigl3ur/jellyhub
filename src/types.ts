@@ -1,4 +1,4 @@
-import type { getJellyData } from "./functions/settings.functions";
+import type { getJellyData } from "./functions/server.functions";
 
 export type ServerStatus = "checking" | "up" | "down";
 

@@ -13,7 +13,7 @@ import LoaderIcon from "../ui/loader-icon";
 import { Alert } from "../ui/alert";
 import type { Dialog as BaseDialog } from "@base-ui/react";
 import type { JellyfinServer } from "@/types";
-import { deleteJellyfinServer } from "@/functions/settings.functions";
+import { deleteJellyfinServer } from "@/functions/server.functions";
 
 interface RemoveServerDialogProps extends BaseDialog.Root.Props {
   server: JellyfinServer & { serverName?: string | null };

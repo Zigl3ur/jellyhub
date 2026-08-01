@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { getServerItems } from "@/functions/jellyfin.functions";
-import { getJellyData } from "@/functions/settings.functions";
+import { getJellyData } from "@/functions/server.functions";
 import LoaderIcon from "@/components/ui/loader-icon";
 
 export const Route = createFileRoute("/_main/_home/")({

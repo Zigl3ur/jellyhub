@@ -60,9 +60,11 @@ export const invalidateServerToken = createServerFn({ method: "GET" })
   .handler(async ({ context, data }) => {
     const token = await getServerToken(data.url);
 
-    if (!token) return;
-
     const api = getJellyfinApiClient(data.url, token);
+
+    const status = await checkJellyfinConn(api);
+
+    if (!token || !status) return;
 
     await logoutJellyfinUser(api);
 
@@ -83,19 +85,36 @@ export const refreshServerToken = createServerFn({ method: "GET" })
   .middleware([authMiddleware])
   .validator(
     apiJellyfinSchema.extend({
-      username: z.string({ error: "Provide a server username" }),
       password: z.string({ error: "Provide a server password" }),
     }),
   )
   .handler(async ({ context, data }) => {
-    const { url, username, password } = data;
+    const { url, password } = data;
 
     const token = await getServerToken(url);
     const api = getJellyfinApiClient(url, token);
+    const newApi = getJellyfinApiClient(url);
 
-    if (token) await logoutJellyfinUser(api);
+    const server = await context.db.query.jellydata.findFirst({
+      where: {
+        serverUrl: url,
+        userId: context.session.user.id,
+      },
+      columns: {
+        serverUsername: true,
+      },
+    });
 
-    const newAuth = await authJellyfinUser(api, username, password);
+    if (!server) throw new Error("Server not found");
+
+    const newAuth = await authJellyfinUser(
+      newApi,
+      server.serverUsername,
+      password,
+    );
+    const status = await checkJellyfinConn(api);
+
+    if (token && status) await logoutJellyfinUser(api);
 
     await context.db
       .update(jellydata)

@@ -39,7 +39,7 @@ export default function RefreshTokenDialog({
   const queryClient = useQueryClient();
 
   const { mutate, isPending, isError, error, reset } = useMutation({
-    mutationFn: (data: { url: string; username: string; password: string }) =>
+    mutationFn: (data: { url: string; password: string }) =>
       refreshServerToken({ data }),
     onSuccess: async () => {
       await queryClient.invalidateQueries({

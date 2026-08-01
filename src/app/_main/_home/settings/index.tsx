@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 import { HardDrive } from "lucide-react";
-import { getJellyData } from "@/functions/settings.functions";
+import { getJellyData } from "@/functions/server.functions";
 import ServerCard from "@/components/server/server-card";
 import AddServerDialog from "@/components/server/add-server-dialog";
 

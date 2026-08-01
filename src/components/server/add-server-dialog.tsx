@@ -19,7 +19,7 @@ import { Alert } from "../ui/alert";
 import LoaderIcon from "../ui/loader-icon";
 import type { addServerSchemaType } from "@/schemas/settings.schema";
 import { addServerSchema } from "@/schemas/settings.schema";
-import { addJellyfinServer } from "@/functions/settings.functions";
+import { addJellyfinServer } from "@/functions/server.functions";
 
 const defaultValues: addServerSchemaType = {
   url: "",

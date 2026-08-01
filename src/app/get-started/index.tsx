@@ -39,7 +39,7 @@ import {
   ServerStatus,
   defaultValuesAdmin,
 } from "@/components/get-started";
-import { endSetup } from "@/functions/settings.functions";
+import { endSetup } from "@/functions/server.functions";
 import LoaderIcon from "@/components/ui/loader-icon";
 import { Alert } from "@/components/ui/alert";
 

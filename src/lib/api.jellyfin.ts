@@ -46,7 +46,7 @@ export async function authJellyfinUser(
     return auth.data;
   } catch (error) {
     if (error instanceof AxiosError && error.response?.status === 401) {
-      throw new Error("Invalid username or password");
+      throw new Error("Invalid credentials");
     }
 
     throw new Error("Failed to authenticate user");
