@@ -1,5 +1,4 @@
 import { createServerFn, createServerOnlyFn } from "@tanstack/react-start";
-import { getSystemApi } from "@jellyfin/sdk/lib/utils/api";
 import z from "zod";
 import { and, eq } from "drizzle-orm";
 import { authMiddleware } from "./middlewares";
@@ -8,6 +7,7 @@ import {
   authJellyfinUser,
   checkJellyfinConn,
   getJellyfinApiClient,
+  getJellyfinPublicInfo,
   getLibraryItems,
   logoutJellyfinUser,
 } from "@/lib/api.jellyfin";
@@ -35,13 +35,13 @@ export const getServerToken = createServerOnlyFn(async (serverUrl: string) => {
 });
 
 export const getServerInfo = createServerFn({ method: "GET" })
-  .validator((data: { url: string }) => data)
+  .validator(apiJellyfinSchema)
   .handler(async ({ data }) => {
     const api = getJellyfinApiClient(data.url);
 
-    const info = await getSystemApi(api).getPublicSystemInfo();
+    const info = await getJellyfinPublicInfo(api);
 
-    return info.data;
+    return info;
   });
 
 export const getServerAuthToken = createServerFn({ method: "GET" })
@@ -54,7 +54,7 @@ export const getServerAuthToken = createServerFn({ method: "GET" })
     return await authJellyfinUser(api, data.username, data.password);
   });
 
-export const invalidateServerToken = createServerFn({ method: "GET" })
+export const invalidateServerTokenDB = createServerFn({ method: "GET" })
   .middleware([authMiddleware])
   .validator(apiJellyfinSchema)
   .handler(async ({ context, data }) => {
@@ -79,6 +79,22 @@ export const invalidateServerToken = createServerFn({ method: "GET" })
           eq(jellydata.serverUrl, data.url),
         ),
       );
+  });
+
+export const invalidateServerToken = createServerFn({ method: "GET" })
+  .validator(
+    apiJellyfinSchema.extend({
+      token: z.string({ error: "Provide a server token" }),
+    }),
+  )
+  .handler(async ({ data }) => {
+    const api = getJellyfinApiClient(data.url, data.token);
+
+    const status = await checkJellyfinConn(api);
+
+    if (!data.token || !status) return;
+
+    await logoutJellyfinUser(api);
   });
 
 export const refreshServerToken = createServerFn({ method: "GET" })
@@ -140,7 +156,7 @@ export const checkServerConn = createServerFn({ method: "GET" })
 
 export const getServerItems = createServerFn({ method: "GET" })
   .middleware([authMiddleware])
-  .validator((data: { url: string; token: string; opts: ItemsOpts }) => data)
+  .validator((data: { url: string; opts: ItemsOpts }) => data)
   .handler(async ({ data }) => {
     const token = await getServerToken(data.url);
     const api = getJellyfinApiClient(data.url, token);

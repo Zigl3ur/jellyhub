@@ -100,6 +100,7 @@ export const endSetupSchema = z.object({
   servers: z.array(
     z.object({
       url: z.url({ error: "Please enter a valid URL" }),
+      name: z.string({ error: "Provide a server name" }),
       username: z.string().min(1, { error: "Provide a server username" }),
       token: z.string({ error: "Provide a server token" }),
     }),

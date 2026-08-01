@@ -33,6 +33,7 @@
     "@fontsource-variable/hanken-grotesk": "^5.2.8",
     "@fontsource-variable/roboto-mono": "^5.2.9",
     "@fontsource/instrument-serif": "^5.2.8",
+    "@playwright/test": "^1.62.1",
     "@tailwindcss/vite": "^4.3.2",
     "@tanstack/eslint-config": "^0.4.0",
     "@tanstack/react-router-ssr-query": "^1.167.1",

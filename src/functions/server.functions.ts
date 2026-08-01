@@ -24,6 +24,7 @@ import {
 import {
   authJellyfinUser,
   getJellyfinApiClient,
+  getJellyfinPublicInfo,
   logoutJellyfinUser,
 } from "@/lib/api.jellyfin";
 
@@ -37,10 +38,10 @@ export const endSetup = createServerFn({ method: "POST" })
 
     const { admin, users, servers } = data;
 
-    let adminUser;
+    const usersIds = [];
 
     try {
-      adminUser = await context.auth.api.createUser({
+      const adminUser = await context.auth.api.createUser({
         body: {
           email: `${admin.username}@jellyhub.com`,
           name: admin.username,
@@ -51,42 +52,48 @@ export const endSetup = createServerFn({ method: "POST" })
           },
         },
       });
-    } catch {
-      throw new Error("Failed to add admin user");
-    }
 
-    if (users.length > 0) {
-      try {
+      usersIds.push(adminUser.user.id);
+
+      if (users.length > 0) {
         await Promise.all(
-          users.map(async (user) => {
-            await context.auth.api.createUser({
+          users.map(async (u) => {
+            const user = await context.auth.api.createUser({
               body: {
-                email: `${user.username}@jellyhub.com`,
-                name: user.username,
-                password: user.password,
+                email: `${u.username}@jellyhub.com`,
+                name: u.username,
+                password: u.password,
                 role: "user",
               },
             });
+            usersIds.push(user.user.id);
           }),
         );
-      } catch {
-        throw new Error("Failed to add user(s)");
       }
-    }
 
-    if (servers.length > 0) {
-      try {
+      if (servers.length > 0) {
         await context.db.insert(jellydataSchema).values(
           servers.map((server) => ({
             userId: adminUser.user.id,
             serverUrl: server.url,
+            serverName: server.name,
             serverUsername: server.username,
             serverToken: server.token,
           })),
         );
-      } catch {
-        throw new Error("Failed to add jellyfin server(s)");
       }
+    } catch {
+      await Promise.all(
+        usersIds.map(async (id) => {
+          await context.auth.api.removeUser({
+            body: {
+              userId: id,
+            },
+          });
+        }),
+      );
+
+      throw new Error("Failed to complete setup, please try again");
     }
 
     throw redirect({ to: "/" });
@@ -101,9 +108,29 @@ export const getJellyData = createServerFn({ method: "GET" })
       },
       columns: {
         serverUrl: true,
+        serverName: true,
         serverUsername: true,
       },
     });
+
+    await Promise.allSettled(
+      serverList.map(async (server) => {
+        const api = getJellyfinApiClient(server.serverUrl);
+        const info = await getJellyfinPublicInfo(api);
+
+        if (info.ServerName && info.ServerName !== server.serverName) {
+          await context.db
+            .update(jellydataSchema)
+            .set({ serverName: info.ServerName })
+            .where(
+              and(
+                eq(jellydataSchema.userId, context.session.user.id),
+                eq(jellydataSchema.serverUrl, server.serverUrl),
+              ),
+            );
+        }
+      }),
+    );
 
     return { servers: serverList };
   });
@@ -114,8 +141,8 @@ export const addJellyfinServer = createServerFn({ method: "POST" })
   .handler(async ({ context, data }) => {
     const { url, username, password } = data;
 
-    const apiClient = getJellyfinApiClient(url);
-    const authData = await authJellyfinUser(apiClient, username, password);
+    const api = getJellyfinApiClient(url);
+    const authData = await authJellyfinUser(api, username, password);
 
     const token = authData.AccessToken;
 
@@ -123,17 +150,20 @@ export const addJellyfinServer = createServerFn({ method: "POST" })
       throw new Error("Failed to retrieve access token from jellyfin server");
     }
 
+    const info = await getJellyfinPublicInfo(api);
+
     try {
       const inserted = await context.db
         .insert(jellydataSchema)
         .values({
           userId: context.session.user.id,
           serverUrl: url,
+          serverName: info.ServerName as string,
           serverUsername: username,
           serverToken: token,
         })
         .onConflictDoNothing({
-          target: jellydataSchema.serverUrl,
+          target: [jellydataSchema.userId, jellydataSchema.serverUrl],
         })
         .returning();
 
@@ -141,6 +171,7 @@ export const addJellyfinServer = createServerFn({ method: "POST" })
         throw new Error("Server already exists", { cause: "already_exists" });
       }
     } catch (err) {
+      console.log(err);
       if (err instanceof Error && err.cause === "already_exists") throw err;
 
       throw new Error(

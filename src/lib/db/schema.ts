@@ -1,5 +1,11 @@
 import { defineRelations } from "drizzle-orm";
-import { index, integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
+import {
+  index,
+  integer,
+  sqliteTable,
+  text,
+  unique,
+} from "drizzle-orm/sqlite-core";
 import { encryptedText } from "./types";
 
 export const user = sqliteTable("user", {
@@ -102,7 +108,8 @@ export const jellydata = sqliteTable(
     userId: text("user_id")
       .notNull()
       .references(() => user.id, { onDelete: "cascade" }),
-    serverUrl: text("server_url").notNull().unique(),
+    serverUrl: text("server_url").notNull(),
+    serverName: text("server_name").notNull(),
     serverUsername: text("server_username").notNull(),
     serverToken: encryptedText("server_token"),
     createdAt: integer("created_at", { mode: "timestamp_ms" }).$default(
@@ -112,7 +119,13 @@ export const jellydata = sqliteTable(
       .$onUpdate(() => new Date())
       .notNull(),
   },
-  (table) => [index("jellydata_userId_idx").on(table.userId)],
+  (table) => [
+    index("jellydata_userId_idx").on(table.userId),
+    unique("jellydata_userId_serverUrl_unique").on(
+      table.userId,
+      table.serverUrl,
+    ),
+  ],
 );
 
 export const relations = defineRelations(

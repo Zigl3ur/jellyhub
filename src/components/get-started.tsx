@@ -1,10 +1,12 @@
 import { revalidateLogic, useForm } from "@tanstack/react-form";
 import { useState } from "react";
 import { ArrowRight, Check, Eye, EyeOff, Plus, X } from "lucide-react";
+import { useMutation } from "@tanstack/react-query";
 import { Input, InputAddon } from "./ui/input";
 import { FieldError, FieldLabel, FieldRoot } from "./ui/field";
 import Button from "./ui/button";
 import LoaderIcon from "./ui/loader-icon";
+import { Alert } from "./ui/alert";
 import type { PropsWithChildren } from "react";
 import type {
   loginSchemaType,
@@ -14,6 +16,10 @@ import type { addServerSchemaType } from "@/schemas/settings.schema";
 import type { ServerStatus } from "@/types";
 import { registerSchema } from "@/schemas/auth.schema";
 import { addServerSchema } from "@/schemas/settings.schema";
+import {
+  getServerAuthToken,
+  getServerInfo,
+} from "@/functions/jellyfin.functions";
 
 export const defaultValuesAdmin: registerSchemaType = {
   username: "admin",
@@ -312,11 +318,35 @@ const defaultValuesServer: addServerSchemaType = {
 };
 
 interface AddServersFormProps extends PropsWithChildren {
-  onSubmit: (values: addServerSchemaType) => void;
+  onMutationSuccess: (
+    token: string,
+    serverName: string,
+    args: addServerSchemaType,
+  ) => void;
 }
 
-export function AddServersForm({ onSubmit, children }: AddServersFormProps) {
+export function AddServersForm({
+  onMutationSuccess,
+  children,
+}: AddServersFormProps) {
   const [showPassword, setShowPassword] = useState(false);
+
+  const { mutate, isPending, isError, error } = useMutation({
+    mutationFn: (data: addServerSchemaType) => getServerAuthToken({ data }),
+    onMutate: async (args) => {
+      const info = await getServerInfo({ data: { url: args.url } });
+
+      return { info };
+    },
+    onSuccess: (data, args, { info }) => {
+      onMutationSuccess(
+        data.AccessToken as string,
+        info.ServerName as string,
+        args,
+      );
+      addServerForm.reset();
+    },
+  });
 
   const addServerForm = useForm({
     defaultValues: defaultValuesServer,
@@ -327,10 +357,7 @@ export function AddServersForm({ onSubmit, children }: AddServersFormProps) {
     validators: {
       onDynamic: addServerSchema,
     },
-    onSubmit: ({ value }) => {
-      onSubmit(value);
-      addServerForm.reset();
-    },
+    onSubmit: ({ value }) => mutate(value),
   });
 
   return (
@@ -341,6 +368,14 @@ export function AddServersForm({ onSubmit, children }: AddServersFormProps) {
         addServerForm.handleSubmit();
       }}
     >
+      {isError && (
+        <Alert
+          type="destructive"
+          title="Failed to add Jellyfin Server"
+          message={error.message}
+        />
+      )}
+
       <addServerForm.Field
         name="url"
         children={(field) => {
@@ -422,8 +457,17 @@ export function AddServersForm({ onSubmit, children }: AddServersFormProps) {
         <addServerForm.Subscribe
           selector={(state) => state.canSubmit}
           children={(canSubmit) => (
-            <Button type="submit" disabled={!canSubmit}>
-              Add <Plus className="size-4" />
+            <Button type="submit" disabled={!canSubmit || isPending}>
+              {isPending ? (
+                <>
+                  Adding...
+                  <LoaderIcon className="size-4" />
+                </>
+              ) : (
+                <>
+                  Add <Plus className="size-4" />
+                </>
+              )}
             </Button>
           )}
         />

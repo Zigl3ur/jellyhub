@@ -4,6 +4,7 @@ import { Jellyfin } from "@jellyfin/sdk";
 import {
   getItemsApi,
   getSessionApi,
+  getSystemApi,
   getUserApi,
 } from "@jellyfin/sdk/lib/utils/api";
 import {
@@ -26,8 +27,14 @@ const jellyhubClient = new Jellyfin({
 });
 
 export function getJellyfinApiClient(url: string, token?: string) {
-  const instance = axios.create({ timeout: 5_000 });
+  const instance = axios.create({ timeout: 4_500 });
   return jellyhubClient.createApi(url, token, instance);
+}
+
+export async function getJellyfinPublicInfo(api: Api) {
+  const info = await getSystemApi(api).getPublicSystemInfo();
+
+  return info.data;
 }
 
 export async function authJellyfinUser(
@@ -154,7 +161,11 @@ export async function getLibraryItems(api: Api, opts: ItemsOpts) {
 //   }
 // }
 
-function BuildImageUrl(serverUrl: string, itemId: string, imageTag?: string) {
+export function BuildImageUrl(
+  serverUrl: string,
+  itemId: string,
+  imageTag?: string,
+) {
   return imageTag
     ? `${serverUrl}/Items/${itemId}/Images/Primary?tag=${imageTag}`
     : "/default.svg";

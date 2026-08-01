@@ -1,24 +1,15 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { Fragment, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
-import {
-  ArrowRight,
-  Eye,
-  EyeOff,
-  Pencil,
-  Trash2,
-  UserCog,
-  X,
-} from "lucide-react";
+import { ArrowRight, Eye, EyeOff, Pencil, Trash2, X } from "lucide-react";
 import type {
   loginSchemaType,
   registerSchemaType,
 } from "@/schemas/auth.schema";
 import type {
-  addServerSchemaType,
+  apiJellyfinSchemaType,
   endSetupSchemaType,
 } from "@/schemas/settings.schema";
-import type { ServerStatus as ServerStatusType } from "@/types";
 import { hasAdminUser } from "@/functions/auth.functions";
 import Logo from "@/components/logo";
 import {
@@ -31,23 +22,23 @@ import {
 } from "@/components/ui/stepper";
 import Button from "@/components/ui/button";
 import Badge from "@/components/ui/badge";
-import { getServerToken } from "@/functions/jellyfin.functions";
 import {
   AddServersForm,
   CreateAdminUserForm,
   CreateUsersForm,
-  ServerStatus,
   defaultValuesAdmin,
 } from "@/components/get-started";
 import { endSetup } from "@/functions/server.functions";
 import LoaderIcon from "@/components/ui/loader-icon";
 import { Alert } from "@/components/ui/alert";
+import { JellyfinIcon } from "@/components/ui/jellyfin-icon";
+import { invalidateServerToken } from "@/functions/jellyfin.functions";
 
 type Server = {
   username: string;
   token: string;
   url: string;
-  status: ServerStatusType;
+  name: string;
 };
 
 export const Route = createFileRoute("/get-started/")({
@@ -84,32 +75,11 @@ function RouteComponent() {
 
   const [servers, setServers] = useState<Array<Server>>([]);
 
-  const getServerTokenMutation = useMutation({
-    mutationFn: (data: addServerSchemaType) => getServerToken({ data }),
-    onSuccess: (data, args) => {
-      const server = servers.find((s) => s.url === args.url) as Server;
-
-      setServers((prev) => [
-        ...prev.filter((s) => s.url !== args.url),
-        {
-          url: server.url,
-          username: server.username,
-          token: data.AccessToken as string,
-          status: "up",
-        },
-      ]);
-    },
-    onError: (_, args) => {
-      const server = servers.find((s) => s.url === args.url) as Server;
-      setServers((prev) => [
-        ...prev.filter((s) => s.url !== args.url),
-        {
-          url: server.url,
-          username: server.username,
-          token: "",
-          status: "down",
-        },
-      ]);
+  const invalidateServerTokenMutation = useMutation({
+    mutationFn: (data: apiJellyfinSchemaType & { token: string }) =>
+      invalidateServerToken({ data }),
+    onSuccess: (_, args) => {
+      setServers((prev) => prev.filter((p) => p.url !== args.url));
     },
   });
 
@@ -178,8 +148,8 @@ function RouteComponent() {
             <div className="space-y-3 border border-input bg-input/20 p-3 rounded">
               <h5 className="font-light text-sm">Configured Users</h5>
               <div className="flex flex-wrap gap-2">
-                {users.length > 0 ? (
-                  users.map((u) => (
+                {usersWithoutAdmin.length > 0 ? (
+                  usersWithoutAdmin.map((u) => (
                     <Badge
                       key={u.username}
                       render={
@@ -197,25 +167,22 @@ function RouteComponent() {
                           }}
                         >
                           {u.username}
-                          {u.role === "admin" ? (
-                            <UserCog className="shrink-0 size-4" />
-                          ) : (
-                            <Button
-                              size="icon-sm"
-                              variant="ghost"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                setUsers((prev) =>
-                                  prev.filter(
-                                    (user) => user.username !== u.username,
-                                  ),
-                                );
-                                setSelectedUser(undefined);
-                              }}
-                            >
-                              <X className="shrink-0 size-3" />
-                            </Button>
-                          )}
+
+                          <Button
+                            size="icon-sm"
+                            variant="ghost"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setUsers((prev) =>
+                                prev.filter(
+                                  (user) => user.username !== u.username,
+                                ),
+                              );
+                              setSelectedUser(undefined);
+                            }}
+                          >
+                            <X className="shrink-0 size-3" />
+                          </Button>
                         </button>
                       }
                     />
@@ -256,21 +223,19 @@ function RouteComponent() {
                         key={s.url}
                         className="flex items-center w-full justify-between text-sm"
                       >
-                        <div className="flex gap-2 items-center">
-                          <h6>{s.url}</h6>
-                          <span className="overflow-hidden">
-                            <ServerStatus status={s.status} />
-                          </span>
-                        </div>
+                        <span className="inline-flex gap-2 items-center">
+                          <JellyfinIcon className="shrink-0 size-4.5" />
+                          <h6>{s.name || s.url}</h6>
+                        </span>
                         <Button
-                          variant="ghost"
+                          variant="destructive-ghost"
                           size="icon"
-                          disabled={s.status === "checking"}
-                          onClick={() => {
-                            setServers((prev) =>
-                              prev.filter((p) => p.url !== s.url),
-                            );
-                          }}
+                          onClick={() =>
+                            invalidateServerTokenMutation.mutate({
+                              url: s.url,
+                              token: s.token,
+                            })
+                          }
                         >
                           <Trash2 className="group-hover/button:text-destructive transtion-colors duration-200" />
                         </Button>
@@ -287,18 +252,16 @@ function RouteComponent() {
             </div>
 
             <AddServersForm
-              onSubmit={(value) => {
+              onMutationSuccess={(token, serverName, args) => {
                 setServers((prev) => [
-                  ...prev,
+                  ...prev.filter((s) => s.url !== args.url),
                   {
-                    url: value.url,
-                    username: value.username,
-                    status: "checking",
-                    token: "",
+                    url: args.url,
+                    name: serverName,
+                    username: args.username,
+                    token,
                   },
                 ]);
-
-                getServerTokenMutation.mutate(value);
               }}
             >
               <Button onClick={nextStep}>
@@ -398,16 +361,14 @@ function RouteComponent() {
                     </Button>
                   </div>
 
-                  <div className="px-3 py-2 flex flex-col rounded-t-lg border-t bg-input/20 border-input">
+                  <div className="px-3 py-2 flex flex-col gap-2 rounded-t-lg border-t bg-input/20 border-input max-h-50 overflow-y-auto">
                     {servers.length > 0 ? (
                       servers.map((s, idx) => (
                         <Fragment key={idx}>
-                          <div className="flex items-center justify-between text-sm py-2">
-                            <h6>{s.url}</h6>
-                            <span className="overflow-hidden mr-1">
-                              <ServerStatus status={s.status} />
-                            </span>
-                          </div>
+                          <span className="inline-flex gap-2 items-center">
+                            <JellyfinIcon className="shrink-0 size-4.5" />
+                            <h6>{s.name || s.url}</h6>
+                          </span>
                           {idx + 1 < servers.length && (
                             <span className="h-px bg-input" />
                           )}

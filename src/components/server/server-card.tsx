@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { EllipsisVertical, LogOut, Pen, RefreshCw, Trash2 } from "lucide-react";
+import { EllipsisVertical, LogOut, RefreshCw, Trash2 } from "lucide-react";
 import { useState } from "react";
 import Skeleton from "../ui/skeleton";
 import { Card, CardContent, CardHeader } from "../ui/card";
@@ -27,7 +27,11 @@ interface ServerCardProps {
 }
 
 export default function ServerCard({ server }: ServerCardProps) {
-  const { data: serverData, isFetching: isFetchingServerData } = useQuery({
+  const {
+    data: serverData,
+    isFetching: isFetchingServerData,
+    isError: isErrorServerData,
+  } = useQuery({
     queryFn: () => getServerInfo({ data: { url: server.serverUrl } }),
     queryKey: [server.serverUrl, "data"],
   });
@@ -46,11 +50,7 @@ export default function ServerCard({ server }: ServerCardProps) {
       <CardHeader className="justify-between">
         <div className="flex items-center gap-2">
           <JellyfinIcon className="size-5.5 shrink-0" />
-          {isFetchingServerData ? (
-            <Skeleton className="h-5 w-45" />
-          ) : (
-            <h6 className="line-clamp-1">{serverData?.ServerName}</h6>
-          )}
+          <h6 className="line-clamp-1">{server.serverName}</h6>
           {isFetchingStatusData ? (
             <RefreshCw className="size-3 shrink-0 animate-spin" />
           ) : statusData?.status === "up" ? (
@@ -59,9 +59,7 @@ export default function ServerCard({ server }: ServerCardProps) {
             <div className="bg-destructive size-2 shrink-0 rounded-full" />
           )}
         </div>
-        <ServerActions
-          server={{ ...server, serverName: serverData?.ServerName }}
-        />
+        <ServerActions server={server} />
       </CardHeader>
       <CardContent className="gap-2.5">
         <div className="flex items-center justify-between">
@@ -87,9 +85,11 @@ export default function ServerCard({ server }: ServerCardProps) {
         <div className="flex items-center justify-between">
           Version
           {isFetchingServerData ? (
-            <Skeleton className="w-20 h-5" />
+            <Skeleton className="w-19 h-5" />
           ) : (
-            <Badge className="font-mono text-xs">{serverData?.Version}</Badge>
+            <Badge className="font-mono text-xs">
+              {isErrorServerData ? "Unknown" : serverData?.Version}
+            </Badge>
           )}
         </div>
       </CardContent>

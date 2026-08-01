@@ -64,7 +64,6 @@ export default function RefreshTokenDialog({
     onSubmit: ({ value }) =>
       mutate({
         url: server.serverUrl,
-        username: server.serverUsername,
         password: value.password,
       }),
   });

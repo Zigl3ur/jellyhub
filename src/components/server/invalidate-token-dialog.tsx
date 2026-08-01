@@ -12,7 +12,7 @@ import { Alert } from "../ui/alert";
 import LoaderIcon from "../ui/loader-icon";
 import type { JellyfinServer } from "@/types";
 import type { Dialog as BaseDialog } from "@base-ui/react";
-import { invalidateServerToken } from "@/functions/jellyfin.functions";
+import { invalidateServerTokenDB } from "@/functions/jellyfin.functions";
 
 interface InvalidateTokenDialogProps extends BaseDialog.Root.Props {
   server: JellyfinServer;
@@ -28,7 +28,7 @@ export default function InvalidateTokenDialog({
   const queryClient = useQueryClient();
 
   const { mutate, isPending, isError, error, reset } = useMutation({
-    mutationFn: (data: { url: string }) => invalidateServerToken({ data }),
+    mutationFn: (data: { url: string }) => invalidateServerTokenDB({ data }),
     onSuccess: async () => {
       await queryClient.invalidateQueries({
         queryKey: [server.serverUrl, "state"],

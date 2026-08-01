@@ -60,7 +60,7 @@ export default function AddServerDialog() {
       onOpenChange={(state) => {
         setOpen(state);
         if (!state) {
-          reset;
+          reset();
           form.reset();
         }
       }}

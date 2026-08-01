@@ -1,0 +1,1 @@
+ALTER TABLE `jellydata` ADD `server_name` text NOT NULL;
