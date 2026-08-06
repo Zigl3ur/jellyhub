@@ -6,6 +6,7 @@ import type { ItemsOpts } from "@/types";
 import {
   authJellyfinUser,
   checkJellyfinConn,
+  getItemImages,
   getJellyfinApiClient,
   getJellyfinPublicInfo,
   getLibraryItems,
@@ -165,5 +166,11 @@ export const getServerItems = createServerFn({ method: "GET" })
 
     if (items.status !== 200) throw new Error("Failed to fetch items");
 
-    return items.data;
+    const withImages = items.data.Items?.map((i) => ({
+      ...i,
+      PrimaryImage: getItemImages(api, i, "Primary"),
+      BackdropImage: getItemImages(api, i, "Backdrop"),
+    }));
+
+    return withImages;
   });

@@ -1,6 +1,7 @@
 import { Clapperboard, Cog, DiscAlbum, House, LogOut, Tv2 } from "lucide-react";
 import { useNavigate } from "@tanstack/react-router";
 import { AvatarFallback, AvatarImg, AvatarRoot } from "./ui/avatar";
+import Skeleton from "./ui/skeleton";
 import type { LinkProps } from "@tanstack/react-router";
 import type { ReactElement } from "react";
 import { Link } from "@/components/ui/link";
@@ -59,7 +60,7 @@ function AppNav() {
 function UserNav() {
   const navigate = useNavigate();
 
-  const { data: session, isPending, error } = authClient.useSession();
+  const { data: session, isPending } = authClient.useSession();
   const user = session?.user;
 
   const signOut = async () => {
@@ -81,12 +82,16 @@ function UserNav() {
       >
         <LogOut className="size-4.5" strokeWidth={1.5} />
       </button>
-      <AvatarRoot>
-        <AvatarImg src={user?.image as string} width={50} height={50} />
-        <AvatarFallback delay={500}>
-          {user?.username?.charAt(0).toUpperCase()}
-        </AvatarFallback>
-      </AvatarRoot>
+      {isPending ? (
+        <Skeleton className="size-8" />
+      ) : (
+        <AvatarRoot>
+          <AvatarImg src={user?.image as string} width={50} height={50} />
+          <AvatarFallback delay={500}>
+            {user?.username?.charAt(0).toUpperCase()}
+          </AvatarFallback>
+        </AvatarRoot>
+      )}
     </nav>
   );
 }

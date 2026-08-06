@@ -1,6 +1,7 @@
 import { createCipheriv, createDecipheriv, randomBytes } from "node:crypto";
 import { createServerOnlyFn } from "@tanstack/react-start";
 import type { itemJellyfin } from "@/types/jellyfin-api.types";
+import type { BaseItemDto } from "@jellyfin/sdk/lib/generated-client/models";
 
 export const encrypt = createServerOnlyFn((value: string): string => {
   const secretKey = Buffer.from(process.env.SECRET_KEY as string, "base64");
@@ -31,18 +32,17 @@ export const decrypt = createServerOnlyFn((raw: string): string => {
  * @param ticks ticks to convert
  * @returns date from the given ticks
  */
-export function TicksToDuration(ticks: number): string | undefined {
-  if (ticks === undefined || ticks === 0) return undefined;
+export function TicksToDuration(ticks: BaseItemDto["RunTimeTicks"]): string {
+  if (!ticks) return "Unknown Duration";
 
   const ticksPerSecond = 10000000;
-  const seconds = ticks / ticksPerSecond;
+  const tickSeconds = ticks / ticksPerSecond;
 
-  const hours = Math.floor(seconds / 3600);
-  const minutes = Math.floor((seconds % 3600) / 60);
+  const hours = Math.floor(tickSeconds / 3600);
+  const minutes = Math.floor((tickSeconds % 3600) / 60);
+  const seconds = Math.floor(tickSeconds % 60);
 
-  return `${hours.toString().padStart(2, "0")}h${minutes
-    .toString()
-    .padStart(2, "0")}m`;
+  return `${hours > 0 ? `${hours}:` : ""}${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
 }
 
 export function filterItems(items: Array<itemJellyfin>): Array<itemJellyfin> {

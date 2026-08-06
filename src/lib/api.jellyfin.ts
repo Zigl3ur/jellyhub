@@ -2,6 +2,7 @@ import "@tanstack/react-start/server-only";
 
 import { Jellyfin } from "@jellyfin/sdk";
 import {
+  getImageApi,
   getItemsApi,
   getSessionApi,
   getSystemApi,
@@ -12,6 +13,10 @@ import {
   ItemFields,
 } from "@jellyfin/sdk/lib/generated-client/models";
 import axios, { AxiosError } from "axios";
+import type {
+  BaseItemDto,
+  ImageType,
+} from "@jellyfin/sdk/lib/generated-client/models";
 import type { Api } from "@jellyfin/sdk";
 import type { ItemsOpts } from "@/types";
 
@@ -106,6 +111,7 @@ export async function getLibraryItems(api: Api, opts: ItemsOpts) {
       ItemFields.People,
       ItemFields.SeriesStudio,
       ItemFields.Studios,
+      ItemFields.ExtraIds,
     ],
     artists,
     genres,
@@ -113,6 +119,31 @@ export async function getLibraryItems(api: Api, opts: ItemsOpts) {
     studios,
     years,
   });
+}
+
+export function getItemImages(api: Api, item: BaseItemDto, type: ImageType) {
+  const imageApi = getImageApi(api);
+
+  const artistId =
+    item.AlbumArtists && item.AlbumArtists.length > 0
+      ? item.AlbumArtists[0].Id
+      : undefined;
+
+  const id =
+    item.Type === BaseItemKind.MusicAlbum && type === "Backdrop"
+      ? artistId
+      : item.Id;
+
+  const hasImageTags = item.ImageTags && Object.keys(item.ImageTags).length > 0;
+
+  return hasImageTags
+    ? imageApi.getItemImageUrl(
+        {
+          Id: id,
+        },
+        type,
+      )
+    : "/default.svg";
 }
 
 // /**
@@ -161,12 +192,3 @@ export async function getLibraryItems(api: Api, opts: ItemsOpts) {
 //   }
 // }
 
-export function BuildImageUrl(
-  serverUrl: string,
-  itemId: string,
-  imageTag?: string,
-) {
-  return imageTag
-    ? `${serverUrl}/Items/${itemId}/Images/Primary?tag=${imageTag}`
-    : "/default.svg";
-}

@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { getServerItems } from "@/functions/jellyfin.functions";
 import { getJellyData } from "@/functions/server.functions";
+import ItemCard from "@/components/item/item-card";
 
 export const Route = createFileRoute("/_main/_home/")({
   loader: async () => {
@@ -10,13 +11,12 @@ export const Route = createFileRoute("/_main/_home/")({
     try {
       dataitems = await getServerItems({
         data: {
-          url: servers[1].serverUrl,
+          url: servers[0].serverUrl,
           opts: {
             types: ["MusicAlbum"],
           },
         },
       });
-      console.log(dataitems.Items);
     } catch (err) {
       console.log(err);
     }
@@ -31,9 +31,15 @@ export const Route = createFileRoute("/_main/_home/")({
 function RouteComponent() {
   const { data } = Route.useLoaderData();
 
-  return null;
+  return (
+    <div className="flex flex-wrap gap-1.5 justify-center">
+      {data?.map((i) => (
+        <ItemCard key={i.Id} serverUrl={""} item={i} />
+      ))}
+    </div>
+  );
 }
 
 function LoadingComponent() {
-  return <div className="flex flex-col gap-20 max-w-[2000px] mx-auto"></div>;
+  return <div className="size-50 bg-red-500">Loading aaaa</div>;
 }

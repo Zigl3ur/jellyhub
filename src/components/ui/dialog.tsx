@@ -23,11 +23,11 @@ export function DialogContent({
   return (
     <BaseDialog.Portal>
       <BaseDialog.Viewport>
-        <BaseDialog.Backdrop className="fixed inset-0 min-h-dvh bg-black/10 backdrop-blur-[2px] transition-[opacity,backdrop-filter] duration-200 data-ending-style:opacity-0 data-ending-style:backdrop-blur-none data-starting-style:opacity-0 data-starting-style:backdrop-blur-none supports-[-webkit-touch-callout:none]:absolute" />
+        <BaseDialog.Backdrop className="fixed inset-0 min-h-dvh bg-black/20 backdrop-blur-[2px] transition-[opacity,backdrop-filter] duration-200 data-ending-style:opacity-0 data-ending-style:backdrop-blur-none data-starting-style:opacity-0 data-starting-style:backdrop-blur-none supports-[-webkit-touch-callout:none]:absolute" />
         <BaseDialog.Popup
           {...props}
           className={cn(
-            "bg-accent-foreground flex flex-col gap-2 border-muted fixed w-full sm:max-w-sm top-1/2 py-2 px-4 max-w-[calc(100%-2rem)] left-1/2 z-50 -translate-x-1/2 -translate-y-1/2 overflow-hidden border rounded text-sm shadow-lg transition-all duration-200 data-ending-style:scale-90 data-ending-style:opacity-0 data-starting-style:scale-90 data-starting-style:opacity-0",
+            "bg-accent-foreground flex flex-col gap-2 border-muted fixed w-full sm:max-w-sm top-1/2 pb-2 pt-4 px-4 max-w-[calc(100%-2rem)] left-1/2 z-50 -translate-x-1/2 -translate-y-1/2 overflow-hidden border rounded text-sm shadow-lg transition-all duration-200 data-ending-style:scale-90 data-ending-style:opacity-0 data-starting-style:scale-90 data-starting-style:opacity-0",
             className,
           )}
         >
@@ -36,7 +36,7 @@ export function DialogContent({
               <Button
                 variant="ghost"
                 size="icon"
-                className="absolute top-2 right-2"
+                className="absolute top-2 z-1 right-2"
               >
                 <X />
               </Button>
@@ -74,7 +74,10 @@ export function DialogDescription({
   return (
     <BaseDialog.Description
       {...props}
-      className={cn("text-sm opacity-45 max-w-[calc(100%-1rem)] wrap-break-word", className)}
+      className={cn(
+        "text-sm opacity-45 max-w-[calc(100%-1rem)] wrap-break-word",
+        className,
+      )}
     >
       {children}
     </BaseDialog.Description>
