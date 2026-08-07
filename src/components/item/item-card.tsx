@@ -11,6 +11,7 @@ import Button from "../ui/button";
 import Image from "../ui/image";
 import ItemSeasons from "./item-seasons";
 import ItemTracks from "./item-tracks";
+import ItemOverview from "./item-overwiew";
 import type { ItemTypes } from "@/types";
 import type { getServerItems } from "@/functions/jellyfin.functions";
 
@@ -36,12 +37,12 @@ export default function ItemCard({ serverUrl, item }: ItemCardProps) {
             className="rounded transition-transform duration-250 group-hover/item-card:scale-103"
           />
         </div>
-        <div className="space-y-1px mx-1">
+        <div className="mx-1 mb-1.5 space-y-1">
           <h3 className="truncate">{item.Name}</h3>
           <p className="opacity-65 text-xs">{detailLabel}</p>
         </div>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-2xl w-full max-h-160">
+      <DialogContent className="sm:max-w-2xl size-full max-h-[80vh]">
         <DialogHeader>
           <div className="flex gap-4 relative">
             {item.BackdropImage && (
@@ -67,19 +68,17 @@ export default function ItemCard({ serverUrl, item }: ItemCardProps) {
             </div>
           </div>
         </DialogHeader>
+        <ScrollArea className="pr-2">
+          <div className="space-y-4">
+            <ItemOverview name={item.Name} overview={item.Overview} />
 
-        {item.Overview && (
-          <div className="space-y-2">
-            <h6 className="opacity-75">Overview</h6>
-            <ScrollArea className="w-full h-40">{item.Overview}</ScrollArea>
+            {item.Type === "Series" ? (
+              <ItemSeasons serverUrl={serverUrl} item={item} />
+            ) : item.Type === "MusicAlbum" ? (
+              <ItemTracks serverUrl={serverUrl} item={item} />
+            ) : null}
           </div>
-        )}
-
-        {item.Type === "Series" ? (
-          <ItemSeasons serverUrl={serverUrl} item={item} />
-        ) : item.Type === "MusicAlbum" ? (
-          <ItemTracks serverUrl={serverUrl} item={item} />
-        ) : null}
+        </ScrollArea>
       </DialogContent>
     </Dialog>
   );

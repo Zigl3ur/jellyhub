@@ -27,7 +27,7 @@ export function DialogContent({
         <BaseDialog.Popup
           {...props}
           className={cn(
-            "bg-accent-foreground flex flex-col gap-2 border-muted fixed w-full sm:max-w-sm top-1/2 pb-2 pt-4 px-4 max-w-[calc(100%-2rem)] left-1/2 z-50 -translate-x-1/2 -translate-y-1/2 overflow-hidden border rounded text-sm shadow-lg transition-all duration-200 data-ending-style:scale-90 data-ending-style:opacity-0 data-starting-style:scale-90 data-starting-style:opacity-0",
+            "bg-accent-foreground flex flex-col gap-2 border-muted fixed w-full sm:max-w-sm top-1/2 p-4 max-w-[calc(100%-2rem)] left-1/2 z-50 -translate-x-1/2 -translate-y-1/2 overflow-hidden border rounded text-sm shadow-lg transition-all duration-200 data-ending-style:scale-90 data-ending-style:opacity-0 data-starting-style:scale-90 data-starting-style:opacity-0",
             className,
           )}
         >
@@ -96,7 +96,7 @@ export function DialogFooter({ className, children }: DialogFooterProps) {
   return (
     <div
       className={cn(
-        "border-t -mx-4 -mb-2 border-muted rounded-t px-4 py-3 bg-accent/45",
+        "border-t -mx-4 -mb-4 border-muted rounded-t px-4 py-3 bg-accent/45",
         className,
       )}
     >

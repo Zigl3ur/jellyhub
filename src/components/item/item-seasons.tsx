@@ -29,7 +29,7 @@ export default function ItemSeasons({ serverUrl, item }: ItemSeasonsProps) {
   });
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-1">
       <h6 className="opacity-75">Seasons</h6>
 
       <Accordion>

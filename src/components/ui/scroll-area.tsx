@@ -1,14 +1,22 @@
 import { ScrollArea as BaseScrollArea } from "@base-ui/react/scroll-area";
+import { cn } from "@sglara/cn";
 
 export default function ScrollArea({
   children,
   className,
   ...props
-}: BaseScrollArea.Content.Props) {
+}: BaseScrollArea.Root.Props) {
   return (
-    <BaseScrollArea.Root className={className}>
-      <BaseScrollArea.Viewport className="h-full">
-        <BaseScrollArea.Content {...props} className="pr-2 text-sm leading-5.5">
+    <BaseScrollArea.Root
+      {...props}
+      className={cn("overflow-hidden", className)}
+    >
+      <BaseScrollArea.Viewport
+        className={
+          "size-full mask-linear-[to_bottom,transparent_0,black_min(40px,var(--scroll-area-overflow-y-start)),black_calc(100%-min(40px,var(--scroll-area-overflow-y-end,40px))),transparent_100%] mask-no-repeat"
+        }
+      >
+        <BaseScrollArea.Content className="pr-2 text-sm leading-5.5">
           {children}
         </BaseScrollArea.Content>
       </BaseScrollArea.Viewport>

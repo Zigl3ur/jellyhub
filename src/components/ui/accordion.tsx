@@ -2,16 +2,8 @@ import { Accordion as BaseAccordion } from "@base-ui/react/accordion";
 import { cn } from "@sglara/cn";
 import { ChevronDown } from "lucide-react";
 
-export function Accordion({
-  className,
-  children,
-  ...props
-}: BaseAccordion.Root.Props) {
-  return (
-    <BaseAccordion.Root {...props} className={cn("", className)}>
-      {children}
-    </BaseAccordion.Root>
-  );
+export function Accordion({ children, ...props }: BaseAccordion.Root.Props) {
+  return <BaseAccordion.Root {...props}>{children}</BaseAccordion.Root>;
 }
 
 export function AccordionItem({
@@ -22,7 +14,10 @@ export function AccordionItem({
   return (
     <BaseAccordion.Item
       {...props}
-      className={cn("not-first:border-t border-muted py-2", className)}
+      className={cn(
+        "not-first:border-t space-y-1.5 border-muted py-2",
+        className,
+      )}
     >
       {children}
     </BaseAccordion.Item>
@@ -45,7 +40,7 @@ export function AccordionTrigger({
     <BaseAccordion.Trigger
       {...props}
       className={cn(
-        "group flex w-full items-center justify-between",
+        "group flex w-full items-center justify-between hover:cursor-pointer",
         className,
       )}
     >
