@@ -1,27 +1,14 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { getServerItems } from "@/functions/jellyfin.functions";
-import { getJellyData } from "@/functions/server.functions";
+import { getServersItems } from "@/functions/jellyfin.functions";
 import ItemCard from "@/components/item/item-card";
 
 export const Route = createFileRoute("/_main/_home/")({
   loader: async () => {
-    const { servers } = await getJellyData();
+    const data = await getServersItems({
+      data: { opts: { types: ["MusicAlbum", "Movie", "Series"] } },
+    });
 
-    let dataitems;
-    try {
-      dataitems = await getServerItems({
-        data: {
-          url: servers[0].serverUrl,
-          opts: {
-            types: ["MusicAlbum"],
-          },
-        },
-      });
-    } catch (err) {
-      console.log(err);
-    }
-
-    return { data: dataitems };
+    return { data };
   },
   component: RouteComponent,
   pendingComponent: LoadingComponent,
@@ -33,8 +20,8 @@ function RouteComponent() {
 
   return (
     <div className="flex flex-wrap gap-1.5 justify-center">
-      {data?.map((i) => (
-        <ItemCard key={i.Id} serverUrl={""} item={i} />
+      {data.map((i) => (
+        <ItemCard key={i.Id} item={i} />
       ))}
     </div>
   );

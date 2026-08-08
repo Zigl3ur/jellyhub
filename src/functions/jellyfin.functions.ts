@@ -3,6 +3,7 @@ import z from "zod";
 import { and, eq } from "drizzle-orm";
 import { authMiddleware } from "./middlewares";
 import type { ItemsOpts } from "@/types";
+import type { BaseItemDto } from "@jellyfin/sdk/lib/generated-client/models";
 import {
   authJellyfinUser,
   checkJellyfinConn,
@@ -166,11 +167,111 @@ export const getServerItems = createServerFn({ method: "GET" })
 
     if (items.status !== 200) throw new Error("Failed to fetch items");
 
-    const withImages = items.data.Items?.map((i) => ({
+    const withData = items.data.Items?.map((i) => ({
       ...i,
       PrimaryImage: getItemImages(api, i, "Primary"),
       BackdropImage: getItemImages(api, i, "Backdrop"),
+      Server: {
+        url: data.url,
+        name: data.url,
+      },
     }));
 
-    return withImages;
+    return withData;
   });
+
+export type ServerItems = NonNullable<
+  Awaited<ReturnType<typeof getServerItems>>
+>;
+
+export const getServersItems = createServerFn({ method: "GET" })
+  .middleware([authMiddleware])
+  .validator((data: { opts: ItemsOpts }) => data)
+  .handler(async ({ data, context }) => {
+    const servers = await context.db.query.jellydata.findMany({
+      where: {
+        userId: context.session.user.id,
+      },
+      columns: {
+        serverUrl: true,
+        serverName: true,
+        serverToken: true,
+      },
+    });
+
+    if (!servers.length) throw new Error("No servers found");
+
+    const serversFetch = await Promise.allSettled(
+      servers.map(async (server) => {
+        const token = await getServerToken(server.serverUrl);
+        const api = getJellyfinApiClient(server.serverUrl, token);
+
+        const items = await getLibraryItems(api, data.opts);
+
+        if (items.status !== 200) throw new Error("Failed to fetch items");
+
+        const withData = items.data.Items?.map((i) => ({
+          ...i,
+          PrimaryImage: getItemImages(api, i, "Primary"),
+          BackdropImage: getItemImages(api, i, "Backdrop"),
+          Server: {
+            url: server.serverUrl,
+            name: server.serverName,
+          },
+        }));
+
+        return withData;
+      }),
+    );
+
+    const successfullFetchs = serversFetch
+      .filter((fetch) => fetch.status === "fulfilled")
+      .flatMap((fetch) => fetch.value);
+
+    const itemsMap = new Map<
+      string,
+      Omit<ServerItems[number], "Server"> & {
+        Servers: Array<{ url: string; name: string }>;
+      }
+    >();
+
+    successfullFetchs.forEach((item) => {
+      if (!item) return;
+
+      const name = item.Name?.toLowerCase().replaceAll(" ", "");
+      if (!name) return;
+
+      const existingItem = itemsMap.get(name);
+
+      const { Server, ...rest } = item;
+
+      if (
+        existingItem &&
+        !existingItem.Servers.filter((s) => s.url === Server.url).length
+      ) {
+        if (
+          existingItem.PrimaryImage === "/default.svg" &&
+          item.PrimaryImage !== "/default.svg"
+        ) {
+          existingItem.PrimaryImage = item.PrimaryImage;
+        }
+
+        if (
+          existingItem.BackdropImage === "/default.svg" &&
+          item.BackdropImage !== "/default.svg"
+        ) {
+          existingItem.BackdropImage = item.BackdropImage;
+        }
+
+        existingItem.Servers.push(Server);
+      } else {
+        itemsMap.set(name, { ...rest, Servers: [Server] });
+      }
+    });
+
+    return Array.from(itemsMap.values());
+  });
+
+export type ServersItems = NonNullable<
+  Awaited<ReturnType<typeof getServersItems>>
+>;

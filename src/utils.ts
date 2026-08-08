@@ -32,9 +32,10 @@ export const decrypt = createServerOnlyFn((raw: string): string => {
  * @param ticks ticks to convert
  * @returns date from the given ticks
  */
-export function TicksToDuration(ticks: BaseItemDto["RunTimeTicks"]): string {
-  if (!ticks) return "Unknown Duration";
-
+export function ticksToDuration(
+  ticks: NonNullable<BaseItemDto["RunTimeTicks"]>,
+  detailedDisplay: boolean = false,
+): string {
   const ticksPerSecond = 10000000;
   const tickSeconds = ticks / ticksPerSecond;
 
@@ -42,47 +43,11 @@ export function TicksToDuration(ticks: BaseItemDto["RunTimeTicks"]): string {
   const minutes = Math.floor((tickSeconds % 3600) / 60);
   const seconds = Math.floor(tickSeconds % 60);
 
-  return `${hours > 0 ? `${hours}:` : ""}${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
-}
+  if (detailedDisplay) {
+    return `${hours > 0 ? `${hours}h ` : ""}${minutes > 0 ? `${minutes}m ` : ""}${seconds > 0 ? `${seconds}s` : ""}`;
+  }
 
-export function filterItems(items: Array<itemJellyfin>): Array<itemJellyfin> {
-  const filteredItems = Object.values(
-    items.reduce((acc: Record<string, itemJellyfin>, current) => {
-      // format title to avoid dumb duplicates with spaces and Upper case
-      const nameKey = current.item_name.toLowerCase().replaceAll(" ", "");
-
-      if (acc[nameKey]) {
-        const itemLoc = [
-          ...acc[nameKey].item_location,
-          ...current.item_location,
-        ].filter(
-          (item, index, self) =>
-            self.findIndex((i) => i.server_url === item.server_url) === index,
-        );
-        // merge locations
-        // prefer keeping the one with image if available
-        if (current.item_image !== "/default.svg") {
-          acc[nameKey] = {
-            ...current,
-            item_location: itemLoc,
-          };
-        } else {
-          acc[nameKey].item_location = itemLoc;
-        }
-      } else {
-        // add new item
-        acc[nameKey] = { ...current };
-      }
-
-      return acc;
-    }, {}),
-  );
-
-  // shuffle
-  return filteredItems
-    .map((value) => ({ value, sort: Math.random() }))
-    .sort((a, b) => a.sort - b.sort)
-    .map(({ value }) => value);
+  return `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
 }
 
 export function debounce<T extends Array<unknown>>(

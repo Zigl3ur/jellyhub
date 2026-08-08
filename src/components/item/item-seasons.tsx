@@ -6,19 +6,19 @@ import {
   AccordionPanel,
   AccordionTrigger,
 } from "../ui/accordion";
+import type { ServersItems } from "@/functions/jellyfin.functions";
 import { getServerItems } from "@/functions/jellyfin.functions";
 
 interface ItemSeasonsProps {
-  serverUrl: string;
-  item: NonNullable<Awaited<ReturnType<typeof getServerItems>>>[number];
+  item: ServersItems[number];
 }
 
-export default function ItemSeasons({ serverUrl, item }: ItemSeasonsProps) {
+export default function ItemSeasons({ item }: ItemSeasonsProps) {
   const { data, isPending, error, isError } = useQuery({
     queryFn: () =>
       getServerItems({
         data: {
-          url: serverUrl,
+          url: item.Servers[0].url,
           opts: {
             types: ["Season"],
             parentId: item.Id,

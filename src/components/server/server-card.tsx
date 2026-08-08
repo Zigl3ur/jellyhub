@@ -68,7 +68,6 @@ export default function ServerCard({ server }: ServerCardProps) {
             variant="link"
             href={server.serverUrl}
             target="_blank"
-            rel="noopener noreferrer"
           >
             {server.serverUrl.split("://")[1]}
           </ExternalLink>

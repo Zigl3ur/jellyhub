@@ -1,18 +1,18 @@
 import { useQuery } from "@tanstack/react-query";
+import type { ServersItems } from "@/functions/jellyfin.functions";
 import { getServerItems } from "@/functions/jellyfin.functions";
-import { TicksToDuration } from "@/utils";
+import { ticksToDuration } from "@/utils";
 
 interface ItemTracksProps {
-  serverUrl: string;
-  item: NonNullable<Awaited<ReturnType<typeof getServerItems>>>[number];
+  item: ServersItems[number];
 }
 
-export default function ItemTracks({ serverUrl, item }: ItemTracksProps) {
+export default function ItemTracks({ item }: ItemTracksProps) {
   const { data, isPending, error, isError } = useQuery({
     queryFn: () =>
       getServerItems({
         data: {
-          url: serverUrl,
+          url: item.Servers[0].url,
           opts: {
             types: ["Audio"],
             parentId: item.Id,
@@ -38,7 +38,11 @@ export default function ItemTracks({ serverUrl, item }: ItemTracksProps) {
                 ? i.Artists.join(", ")
                 : "Unknown Artist(s)"}
             </p>
-            <p className="flex-1 text-end">{TicksToDuration(i.RunTimeTicks)}</p>
+            {i.RunTimeTicks && (
+              <p className="flex-1 text-end">
+                {ticksToDuration(i.RunTimeTicks)}
+              </p>
+            )}
           </li>
         ))}
       </ul>

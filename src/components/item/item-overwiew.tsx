@@ -1,13 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 import Button from "../ui/button";
-import type { BaseItemDto } from "@jellyfin/sdk/lib/generated-client/models";
+import type { ServersItems } from "@/functions/jellyfin.functions";
 
 interface ItemOverviewProps {
-  name: BaseItemDto["Name"];
-  overview: BaseItemDto["Overview"];
+  item: ServersItems[number];
 }
 
-export default function ItemOverview({ name, overview }: ItemOverviewProps) {
+export default function ItemOverview({ item }: ItemOverviewProps) {
   const overviewRef = useRef<HTMLParagraphElement>(null);
 
   const [expand, setExpand] = useState(false);
@@ -18,18 +17,20 @@ export default function ItemOverview({ name, overview }: ItemOverviewProps) {
     if (!p) return;
 
     setIsOverviewClamped(p.scrollHeight > p.clientHeight);
-  }, [overview]);
+  }, [item.Overview]);
 
   return (
     <div className="space-y-2">
       <h6 className="opacity-75">About</h6>
 
-      {overview ? (
+      {item.Overview ? (
         <p ref={overviewRef} className={expand ? "" : "line-clamp-6"}>
-          {overview}
+          {item.Overview}
         </p>
       ) : (
-        <p className="italic">No Details {name && `about "${name}"`}</p>
+        <p className="italic">
+          No Details {item.Name && `about "${item.Name}"`}
+        </p>
       )}
 
       {isOverviewClamped && (

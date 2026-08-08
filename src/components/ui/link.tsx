@@ -6,7 +6,7 @@ import type { AnchorHTMLAttributes } from "react";
 
 interface LinkProps {
   className?: string;
-  variant?: "default" | "outline" | "link";
+  variant?: "default" | "outline" | "link" | "unstyled";
 }
 
 const variants: Record<NonNullable<LinkProps["variant"]>, string> = {
@@ -14,6 +14,7 @@ const variants: Record<NonNullable<LinkProps["variant"]>, string> = {
   outline:
     "px-1.5 flex gap-1 items-center py-1 select-none data-[status='active']:bg-primary rounded-lg transition-colors duration-200 data-[status='active']:text-accent-foreground not-data-[status='active']:hover:bg-accent",
   link: "text-blue-500 hover:opacity-75 transition-opacity duration-200 inline-flex items-center gap-1 leading-none",
+  unstyled: "",
 };
 
 export function Link({
@@ -36,7 +37,11 @@ export function ExternalLink({
   ...props
 }: LinkProps & AnchorHTMLAttributes<HTMLAnchorElement>) {
   return (
-    <a {...props} className={cn(variants[variant], className)}>
+    <a
+      {...props}
+      className={cn(variants[variant], className)}
+      rel="noopener noreferrer"
+    >
       <>
         {children}
         {variant === "link" && (

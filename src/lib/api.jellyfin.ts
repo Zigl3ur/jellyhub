@@ -32,7 +32,7 @@ const jellyhubClient = new Jellyfin({
 });
 
 export function getJellyfinApiClient(url: string, token?: string) {
-  const instance = axios.create({ timeout: 4_500 });
+  const instance = axios.create({ timeout: 6_000 });
   return jellyhubClient.createApi(url, token, instance);
 }
 
@@ -75,7 +75,7 @@ export async function logoutJellyfinUser(api: Api) {
 
 export async function checkJellyfinConn(api: Api) {
   try {
-    const status = await getUserApi(api).getCurrentUser({ timeout: 3000 });
+    const status = await getUserApi(api).getCurrentUser({ timeout: 2_000 });
 
     return status.status === 200;
   } catch {
@@ -111,7 +111,7 @@ export async function getLibraryItems(api: Api, opts: ItemsOpts) {
       ItemFields.People,
       ItemFields.SeriesStudio,
       ItemFields.Studios,
-      ItemFields.ExtraIds,
+      ItemFields.ProviderIds,
     ],
     artists,
     genres,
@@ -134,61 +134,7 @@ export function getItemImages(api: Api, item: BaseItemDto, type: ImageType) {
       ? artistId
       : item.Id;
 
-  const hasImageTags = item.ImageTags && Object.keys(item.ImageTags).length > 0;
+  const image = imageApi.getItemImageUrl({ Id: id }, type);
 
-  return hasImageTags
-    ? imageApi.getItemImageUrl(
-        {
-          Id: id,
-        },
-        type,
-      )
-    : "/default.svg";
+  return image ? image : "/default.svg";
 }
-
-// /**
-//  * Function to get all items of a server (Movie, Series and MusicAlbum)
-//  * @param server_url the server to query
-//  * @param token the auth token
-//  * @returns an error or an object with an array for each types
-//  */
-// export async function getAllItems(
-//   server_url: string,
-//   token: string,
-// ): Promise<
-//   callersResponse<{
-//     movies: Array<itemJellyfin>;
-//     series: Array<itemJellyfin>;
-//     musicAlbum: Array<itemJellyfin>;
-//   }>
-// > {
-//   try {
-//     const items = await Promise.all([
-//       getLibraryItems(server_url, token, "Movie"),
-//       getLibraryItems(server_url, token, "Series"),
-//       getLibraryItems(server_url, token, "MusicAlbum"),
-//     ]);
-
-//     if (items[0].success && items[1].success && items[2].success) {
-//       return {
-//         success: true,
-//         data: {
-//           // data will always be defined since success is true
-//           movies: items[0].data as Array<itemJellyfin>,
-//           series: items[1].data as Array<itemJellyfin>,
-//           musicAlbum: items[2].data as Array<itemJellyfin>,
-//         },
-//       };
-//     }
-//     return {
-//       success: false,
-//       error: `Failed to retrieves items from ${server_url}`,
-//     };
-//   } catch {
-//     return {
-//       success: false,
-//       error: "Failed to reach server",
-//     };
-//   }
-// }
-

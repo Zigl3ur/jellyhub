@@ -1,25 +1,33 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Input } from "@/components/ui/input";
+import { getServersItems } from "@/functions/jellyfin.functions";
+import ItemCard from "@/components/item/item-card";
 
 export const Route = createFileRoute("/_main/_home/series/")({
+  loader: async () => {
+    const data = await getServersItems({
+      data: { opts: { types: ["Series"] } },
+    });
+
+    return { data };
+  },
   component: RouteComponent,
   pendingComponent: LoadingComponent,
   pendingMs: 0,
+  head: () => ({ meta: [{ title: "Series - JellyHub" }] }),
 });
 
 function RouteComponent() {
-  return null;
-}
+  const { data } = Route.useLoaderData();
 
-export default function LoadingComponent() {
   return (
-    <div className="flex flex-col gap-20 max-w-[2000px] mx-auto px-4">
-      <div className="w-full max-w-xs xs:max-w-sm md:max-w-xl self-center sticky top-2 z-10">
-        <div className="relative">
-          <Input />
-          <div className="absolute bg-secondary rounded-full right-2 top-1/2 -translate-y-1/2 p-1"></div>
-        </div>
-      </div>
+    <div className="flex flex-wrap gap-1.5 justify-center">
+      {data.map((i) => (
+        <ItemCard key={i.Id} item={i} />
+      ))}
     </div>
   );
+}
+
+function LoadingComponent() {
+  return <div className="size-50 bg-red-500">Loading aaaa</div>;
 }
