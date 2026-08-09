@@ -16,7 +16,7 @@ export default function Image({
   }, [src]);
 
   return (
-    <div className={cn("relative overflow-hidden size-fit", className)}>
+    <div className={cn("relative overflow-hidden", className)}>
       <img
         {...props}
         ref={imgRef}

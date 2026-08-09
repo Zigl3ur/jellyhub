@@ -2,7 +2,8 @@ import type { getJellyData } from "./functions/server.functions";
 
 export type ServerStatus = "checking" | "up" | "down";
 
-export type ItemTypes = "Movie" | "Series" | "MusicAlbum" | "Season" | "Audio";
+export type ItemTypes =
+  "Movie" | "Series" | "MusicAlbum" | "Season" | "Audio" | "Episode";
 
 export type ItemsOpts = {
   types: Array<ItemTypes>;
@@ -17,3 +18,10 @@ export type ItemsOpts = {
 export type JellyfinServer = Awaited<
   ReturnType<typeof getJellyData>
 >["servers"][number];
+
+export type ItemServerData = {
+  itemId: string;
+  id: string;
+  url: string;
+  name: string;
+};

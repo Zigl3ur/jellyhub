@@ -21,7 +21,7 @@ export default function ItemProviderLinks({ item }: ItemProviderLinksProps) {
 
 function TVProviderLink({ item }: ItemProviderLinksProps) {
   return (
-    <div className="flex gap-2">
+    <div className="flex gap-2 -ml-1">
       {item.ProviderIds?.["Imdb"] && (
         <ProviderLink
           href={`https://www.imdb.com/title/${item.ProviderIds["Imdb"]}`}
@@ -42,7 +42,7 @@ function TVProviderLink({ item }: ItemProviderLinksProps) {
 
 function MusicProviderLink({ item }: ItemProviderLinksProps) {
   return (
-    <div className="flex gap-2">
+    <div className="flex gap-2 -ml-1">
       {item.AlbumArtist && item.Name && (
         <ProviderLink
           href={`https://www.last.fm/music/${item.AlbumArtist}/${item.Name}`}

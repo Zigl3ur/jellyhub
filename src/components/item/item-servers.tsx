@@ -1,4 +1,4 @@
-import Badge from "../ui/badge";
+import Button from "../ui/button";
 import { JellyfinIcon } from "../ui/jellyfin-icon";
 import { ExternalLink } from "../ui/link";
 import type { ServersItems } from "@/functions/jellyfin.functions";
@@ -14,10 +14,21 @@ export default function ItemServers({ item }: ItemServersProps) {
 
       <div className="flex gap-2">
         {item.Servers.map((s) => (
-          <Badge className="gap-2">
-            <JellyfinIcon className="size-4 shrink-0" />
-            <ExternalLink href={s.url}>{s.name}</ExternalLink>
-          </Badge>
+          <Button
+            key={s.url}
+            variant="outline"
+            className="gap-2"
+            render={
+              <ExternalLink
+                href={`${s.url}/#/details?id=${s.itemId}&serverId=${s.id}`}
+                variant="unstyled"
+                target="_blank"
+              >
+                <JellyfinIcon className="size-4 shrink-0" />
+                {s.name}
+              </ExternalLink>
+            }
+          />
         ))}
       </div>
     </div>

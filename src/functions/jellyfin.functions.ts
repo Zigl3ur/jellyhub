@@ -2,8 +2,7 @@ import { createServerFn, createServerOnlyFn } from "@tanstack/react-start";
 import z from "zod";
 import { and, eq } from "drizzle-orm";
 import { authMiddleware } from "./middlewares";
-import type { ItemsOpts } from "@/types";
-import type { BaseItemDto } from "@jellyfin/sdk/lib/generated-client/models";
+import type { ItemServerData, ItemsOpts } from "@/types";
 import {
   authJellyfinUser,
   checkJellyfinConn,
@@ -172,8 +171,9 @@ export const getServerItems = createServerFn({ method: "GET" })
       PrimaryImage: getItemImages(api, i, "Primary"),
       BackdropImage: getItemImages(api, i, "Backdrop"),
       Server: {
+        itemId: i.Id as string,
+        id: i.ServerId,
         url: data.url,
-        name: data.url,
       },
     }));
 
@@ -215,6 +215,8 @@ export const getServersItems = createServerFn({ method: "GET" })
           PrimaryImage: getItemImages(api, i, "Primary"),
           BackdropImage: getItemImages(api, i, "Backdrop"),
           Server: {
+            itemId: i.Id as string,
+            id: i.ServerId as string,
             url: server.serverUrl,
             name: server.serverName,
           },
@@ -231,7 +233,7 @@ export const getServersItems = createServerFn({ method: "GET" })
     const itemsMap = new Map<
       string,
       Omit<ServerItems[number], "Server"> & {
-        Servers: Array<{ url: string; name: string }>;
+        Servers: Array<ItemServerData>;
       }
     >();
 

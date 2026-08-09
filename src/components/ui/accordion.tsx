@@ -40,7 +40,7 @@ export function AccordionTrigger({
     <BaseAccordion.Trigger
       {...props}
       className={cn(
-        "group flex w-full items-center justify-between hover:cursor-pointer",
+        "group flex w-full items-center justify-between hover:cursor-pointer data-disabled:hover:cursor-default",
         className,
       )}
     >

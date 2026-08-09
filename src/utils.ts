@@ -36,7 +36,7 @@ export function ticksToDuration(
   ticks: NonNullable<BaseItemDto["RunTimeTicks"]>,
   detailedDisplay: boolean = false,
 ): string {
-  const ticksPerSecond = 10000000;
+  const ticksPerSecond = 10_000_000;
   const tickSeconds = ticks / ticksPerSecond;
 
   const hours = Math.floor(tickSeconds / 3600);
@@ -47,7 +47,7 @@ export function ticksToDuration(
     return `${hours > 0 ? `${hours}h ` : ""}${minutes > 0 ? `${minutes}m ` : ""}${seconds > 0 ? `${seconds}s` : ""}`;
   }
 
-  return `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+  return `${hours > 0 ? `${hours}:` : ""}${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
 }
 
 export function debounce<T extends Array<unknown>>(

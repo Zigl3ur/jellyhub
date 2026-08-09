@@ -98,6 +98,8 @@ export async function getLibraryItems(api: Api, opts: ItemsOpts) {
         return BaseItemKind.MusicAlbum;
       case "Audio":
         return BaseItemKind.Audio;
+      case "Episode":
+        return BaseItemKind.Episode;
     }
   });
 
