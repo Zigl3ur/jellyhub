@@ -9,8 +9,9 @@ import {
 } from "../ui/accordion";
 import Skeleton from "../ui/skeleton";
 import Image from "../ui/image";
+import ItemSelectServer from "./item-select-server";
 import type { ServerItems, ServersItems } from "@/functions/jellyfin.functions";
-import type { BaseItemDto } from "@jellyfin/sdk/lib/generated-client/models";
+import type { ItemServerData } from "@/types";
 import { getServerItems } from "@/functions/jellyfin.functions";
 import { ticksToDuration } from "@/utils";
 
@@ -19,25 +20,38 @@ interface ItemSeasonsProps {
 }
 
 export default function ItemSeasons({ item }: ItemSeasonsProps) {
-  const { data, isPending, isError, error, isSuccess } = useQuery({
+  const [selectedServer, setSelectedServer] = useState<ItemServerData>(
+    item.Servers[0],
+  );
+
+  const { data, isSuccess, isPending, error, isError } = useQuery({
     queryFn: () =>
       getServerItems({
         data: {
-          url: item.Servers[0].url,
+          url: selectedServer.url,
           opts: {
             types: ["Season"],
-            parentId: item.Id,
+            parentId: selectedServer.itemId,
           },
         },
       }),
-    queryKey: ["seasons", item.Id],
+    queryKey: [selectedServer, "season"],
   });
 
   const defaultValue = data && data.length === 1 ? [data[0].Id] : [];
 
   return (
-    <div className="space-y-1">
-      <h6 className="opacity-75">Seasons</h6>
+    <div>
+      <div className="flex gap-2 items-center justify-between">
+        <h6 className="opacity-75">Seasons</h6>
+        {item.Servers.length > 1 && (
+          <ItemSelectServer
+            defaultValue={item.Servers[0]}
+            servers={item.Servers}
+            onSelect={(server) => setSelectedServer(server)}
+          />
+        )}
+      </div>
 
       {isSuccess ? (
         <Accordion defaultValue={defaultValue}>
@@ -95,7 +109,7 @@ function ItemSeasonEpisodes({ item }: ItemSeasonEpisodesProps) {
   return (
     <AccordionPanel className="space-y-2">
       {data?.map((e) => (
-        <div className="flex gap-2">
+        <div key={e.Id} className="flex gap-2">
           <Image
             src={e.PrimaryImage}
             className="aspect-video w-48 rounded shrink-0"

@@ -1,5 +1,4 @@
-import { format, parseISO } from "date-fns";
-import { Play } from "lucide-react";
+import { parseISO } from "date-fns";
 import {
   Dialog,
   DialogContent,
@@ -7,17 +6,13 @@ import {
   DialogTrigger,
 } from "../ui/dialog";
 import ScrollArea from "../ui/scroll-area";
-import Button from "../ui/button";
 import Image from "../ui/image";
 import ItemSeasons from "./item-seasons";
 import ItemTracks from "./item-tracks";
 import ItemOverview from "./item-overwiew";
-import ItemProviderLinks from "./item-provider-links";
 import ItemServers from "./item-servers";
 import ItemPresentation from "./item-presentation";
-import type { ItemTypes } from "@/types";
 import type { ServersItems } from "@/functions/jellyfin.functions";
-import { ticksToDuration } from "@/utils";
 
 interface ItemCardProps {
   item: ServersItems[number];

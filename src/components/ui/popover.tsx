@@ -59,7 +59,7 @@ export function Popover({
 
     const handleScroll = (event: Event) => {
       console.log(event.target);
-      if (!popoverContentRef.current?.contains(event.target)) {
+      if (!popoverContentRef.current?.contains(event.target as Node)) {
         setOpen(false);
       }
     };
@@ -94,16 +94,15 @@ export function PopoverTrigger({
   );
 }
 
-interface PopoverContentProps extends PropsWithChildren<BasePopover.Positioner.Props> {
+interface PopoverContentProps extends BasePopover.Positioner.Props {
   portalContainer?: HTMLElement | null;
-  sideOffset?: number;
-  className?: string;
 }
 
 export function PopoverContent({
   children,
   className,
   portalContainer,
+  sideOffset,
   ...props
 }: PopoverContentProps) {
   const { popoverContentRef } = usePopoverContext();
@@ -112,7 +111,7 @@ export function PopoverContent({
     <BasePopover.Portal container={portalContainer}>
       <BasePopover.Positioner
         {...props}
-        sideOffset={props.sideOffset ?? 8}
+        sideOffset={sideOffset ?? 8}
         positionMethod="fixed"
       >
         <BasePopover.Popup

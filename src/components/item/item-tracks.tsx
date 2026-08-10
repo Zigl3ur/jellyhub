@@ -1,7 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
 import { cn } from "@sglara/cn";
+import { useState } from "react";
 import Skeleton from "../ui/skeleton";
+import ItemSelectServer from "./item-select-server";
 import type { ServersItems } from "@/functions/jellyfin.functions";
+import type { ItemServerData } from "@/types";
 import { getServerItems } from "@/functions/jellyfin.functions";
 import { ticksToDuration } from "@/utils";
 
@@ -10,24 +13,36 @@ interface ItemTracksProps {
 }
 
 export default function ItemTracks({ item }: ItemTracksProps) {
+  const [selectedServer, setSelectedServer] = useState<ItemServerData>(
+    item.Servers[0],
+  );
+
   const { data, isSuccess, isPending, error, isError } = useQuery({
     queryFn: () =>
       getServerItems({
         data: {
-          url: item.Servers[0].url,
+          url: selectedServer.url,
           opts: {
             types: ["Audio"],
-            parentId: item.Id,
+            parentId: selectedServer.itemId,
           },
         },
       }),
-    queryKey: ["tracks", item.Id],
+    queryKey: [selectedServer, "tracks"],
   });
 
   return (
     <div>
-      <h6 className="opacity-75">Tracks</h6>
-
+      <div className="flex gap-2 items-center justify-between">
+        <h6 className="opacity-75">Tracks</h6>
+        {item.Servers.length > 1 && (
+          <ItemSelectServer
+            defaultValue={item.Servers[0]}
+            servers={item.Servers}
+            onSelect={(server) => setSelectedServer(server)}
+          />
+        )}
+      </div>
       {isSuccess ? (
         <ul>
           {data?.map((i) => (
@@ -51,9 +66,9 @@ export default function ItemTracks({ item }: ItemTracksProps) {
         </ul>
       ) : isPending ? (
         <LoadingTracks />
-      ) : isError ? (
-        <></>
-      ) : null}
+      ) : (
+        <>Error</>
+      )}
     </div>
   );
 }
