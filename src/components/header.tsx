@@ -47,12 +47,12 @@ const destinations = [
 function AppNav() {
   return (
     <nav className="flex gap-2 p-1.5 bg-accent-foreground rounded-lg items-center">
-      {/* {destinations.map((d) => (
+      {destinations.map((d) => (
         <Link key={d.to} to={d.to} variant="outline">
           {d.icon}
           {d.label}
         </Link>
-      ))} */}
+      ))}
     </nav>
   );
 }

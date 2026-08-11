@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "bun --bun vite dev",
     "build": "bun --bun vite build",
-    "start": "bun --bun .output/server/index.mjs"
+    "start": "bun --bun .output/server/index.mjs",
+    "lint": "eslint"
   },
   "dependencies": {
     "@base-ui/react": "^1.6.0",

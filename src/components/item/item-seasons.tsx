@@ -9,6 +9,8 @@ import {
 } from "../ui/accordion";
 import Skeleton from "../ui/skeleton";
 import Image from "../ui/image";
+import Paragraph from "../ui/paragraph";
+import { Alert } from "../ui/alert";
 import ItemSelectServer from "./item-select-server";
 import type { ServerItems, ServersItems } from "@/functions/jellyfin.functions";
 import type { ItemServerData } from "@/types";
@@ -24,7 +26,7 @@ export default function ItemSeasons({ item }: ItemSeasonsProps) {
     item.Servers[0],
   );
 
-  const { data, isSuccess, isPending, error, isError } = useQuery({
+  const { data, isSuccess, isPending, error } = useQuery({
     queryFn: () =>
       getServerItems({
         data: {
@@ -41,7 +43,7 @@ export default function ItemSeasons({ item }: ItemSeasonsProps) {
   const defaultValue = data && data.length === 1 ? [data[0].Id] : [];
 
   return (
-    <div>
+    <div className="space-y-2">
       <div className="flex gap-2 items-center justify-between">
         <h6 className="opacity-75">Seasons</h6>
         {item.Servers.length > 1 && (
@@ -66,7 +68,13 @@ export default function ItemSeasons({ item }: ItemSeasonsProps) {
         </Accordion>
       ) : isPending ? (
         <LoadingSeasons />
-      ) : null}
+      ) : (
+        <Alert
+          type="destructive"
+          title="Failed to fetch seasons"
+          message={error.message}
+        />
+      )}
     </div>
   );
 }
@@ -92,7 +100,7 @@ interface ItemSeasonEpisodesProps {
 }
 
 function ItemSeasonEpisodes({ item }: ItemSeasonEpisodesProps) {
-  const { data, isPending, isError, error, isSuccess } = useQuery({
+  const { data, isPending, error, isSuccess } = useQuery({
     queryFn: () =>
       getServerItems({
         data: {
@@ -103,29 +111,69 @@ function ItemSeasonEpisodes({ item }: ItemSeasonEpisodesProps) {
           },
         },
       }),
-    queryKey: ["edpisodes", item.Id],
+    queryKey: ["episodes", item.Id],
   });
 
   return (
     <AccordionPanel>
-      {data?.map((e) => (
-        <div
-          key={e.Id}
-          className="flex gap-4 not-first:border-t not-first:border-muted py-4"
-        >
-          <Image
-            src={e.PrimaryImage}
-            className="aspect-video w-24 @sm/item-content:w-48 rounded shrink-0 size-fit"
-          />
-          <div className="space-y-2">
-            <div className="flex justify-between items-center">
-              <h5 className="@md/item-content:text-lg text-md">{e.Name}</h5>
-              <p>{e.RunTimeTicks ? ticksToDuration(e.RunTimeTicks) : null}</p>
+      {isSuccess ? (
+        data?.map((e) => (
+          <div
+            key={e.Id}
+            className="flex gap-4 not-first:border-t not-first:border-muted py-4 first:pt-0"
+          >
+            <Image
+              src={e.PrimaryImage}
+              className="aspect-video w-24 @sm/item-content:w-48 rounded shrink-0 size-fit"
+            />
+            <div className="space-y-2 w-full">
+              <div className="flex justify-between items-center">
+                <h5 className="text-lg">{e.Name}</h5>
+                <p>{e.RunTimeTicks ? ticksToDuration(e.RunTimeTicks) : null}</p>
+              </div>
+              {e.Overview && (
+                <Paragraph
+                  lineClamp={5}
+                  text={e.Overview}
+                  className="@md/item-content:text-sm text-xs"
+                />
+              )}
             </div>
-            <p className="@md/item-content:text-sm text-xs">{e.Overview}</p>
           </div>
-        </div>
-      ))}
+        ))
+      ) : isPending ? (
+        <LoadingSeasonEpisodes />
+      ) : (
+        <Alert
+          type="destructive"
+          title="Failed to fetch season episodes"
+          message={error.message}
+        />
+      )}
     </AccordionPanel>
   );
+}
+
+function LoadingSeasonEpisodes() {
+  return Array.from({ length: 6 }).map((_, i) => (
+    <div
+      key={i}
+      className="flex gap-4 not-first:border-t not-first:border-muted py-4"
+    >
+      <Skeleton className="aspect-video w-24 @sm/item-content:w-48 @sm/item-content:h-27 h-13.5 rounded shrink-0" />
+      <div className="space-y-2 w-full">
+        <div className="flex justify-between items-center">
+          <Skeleton className="@md/item-content:w-32 w-24 h-5" />
+          <Skeleton className="w-8.75 h-5" />
+        </div>
+        <div className="flex flex-col gap-1">
+          <Skeleton className="h-3 w-full" />
+          <Skeleton className="h-3 w-[calc(100%-4rem)]" />
+          <Skeleton className="h-3 w-full" />
+          <Skeleton className="h-3 w-full" />
+          <Skeleton className="h-3 w-[calc(100%-6rem)]" />
+        </div>
+      </div>
+    </div>
+  ));
 }

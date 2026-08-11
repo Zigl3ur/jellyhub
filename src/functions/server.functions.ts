@@ -188,7 +188,11 @@ export const deleteJellyfinServer = createServerFn({ method: "POST" })
 
     const api = getJellyfinApiClient(data.url, token);
 
-    if (token) await logoutJellyfinUser(api);
+    if (token) {
+      try {
+        await logoutJellyfinUser(api);
+      } catch {}
+    }
 
     try {
       await context.db

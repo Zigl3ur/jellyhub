@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { cn } from "@sglara/cn";
 import { useState } from "react";
 import Skeleton from "../ui/skeleton";
+import { Alert } from "../ui/alert";
 import ItemSelectServer from "./item-select-server";
 import type { ServersItems } from "@/functions/jellyfin.functions";
 import type { ItemServerData } from "@/types";
@@ -17,7 +18,7 @@ export default function ItemTracks({ item }: ItemTracksProps) {
     item.Servers[0],
   );
 
-  const { data, isSuccess, isPending, error, isError } = useQuery({
+  const { data, isSuccess, isPending, error } = useQuery({
     queryFn: () =>
       getServerItems({
         data: {
@@ -32,7 +33,7 @@ export default function ItemTracks({ item }: ItemTracksProps) {
   });
 
   return (
-    <div>
+    <div className="space-y-2">
       <div className="flex gap-2 items-center justify-between">
         <h6 className="opacity-75">Tracks</h6>
         {item.Servers.length > 1 && (
@@ -67,7 +68,11 @@ export default function ItemTracks({ item }: ItemTracksProps) {
       ) : isPending ? (
         <LoadingTracks />
       ) : (
-        <>Error</>
+        <Alert
+          type="destructive"
+          title="Failed to fetch tracks"
+          message={error.message}
+        />
       )}
     </div>
   );
