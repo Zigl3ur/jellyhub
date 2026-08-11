@@ -15,7 +15,7 @@ export function AccordionItem({
     <BaseAccordion.Item
       {...props}
       className={cn(
-        "not-first:border-t space-y-1.5 border-muted py-2",
+        "not-first:border-t space-y-3 border-muted py-2",
         className,
       )}
     >

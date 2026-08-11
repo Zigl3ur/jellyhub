@@ -107,18 +107,23 @@ function ItemSeasonEpisodes({ item }: ItemSeasonEpisodesProps) {
   });
 
   return (
-    <AccordionPanel className="space-y-2">
+    <AccordionPanel>
       {data?.map((e) => (
-        <div key={e.Id} className="flex gap-2">
+        <div
+          key={e.Id}
+          className="flex gap-4 not-first:border-t not-first:border-muted py-4"
+        >
           <Image
             src={e.PrimaryImage}
-            className="aspect-video w-48 rounded shrink-0"
+            className="aspect-video w-24 @sm/item-content:w-48 rounded shrink-0 size-fit"
           />
-          <div className="space-y-px">
-            <h5>{e.Name}</h5>
-            <p>{e.Overview}</p>
+          <div className="space-y-2">
+            <div className="flex justify-between items-center">
+              <h5 className="@md/item-content:text-lg text-md">{e.Name}</h5>
+              <p>{e.RunTimeTicks ? ticksToDuration(e.RunTimeTicks) : null}</p>
+            </div>
+            <p className="@md/item-content:text-sm text-xs">{e.Overview}</p>
           </div>
-          {e.RunTimeTicks ? ticksToDuration(e.RunTimeTicks) : null}
         </div>
       ))}
     </AccordionPanel>
