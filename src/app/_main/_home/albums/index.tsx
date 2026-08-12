@@ -13,18 +13,21 @@ export const Route = createFileRoute("/_main/_home/albums/")({
   component: RouteComponent,
   pendingComponent: LoadingComponent,
   pendingMs: 0,
-  head: () => ({ meta: [{ title: "Albums - JellyHub"}]})
+  head: () => ({ meta: [{ title: "Albums - JellyHub" }] }),
 });
 
 function RouteComponent() {
   const { data } = Route.useLoaderData();
 
   return (
-    <div className="flex flex-wrap gap-1.5 justify-center">
-      {data.map((i) => (
-        <ItemCard key={i.Id} item={i} />
-      ))}
-    </div>
+    <>
+      <h3 className="font-serif text-4xl">Albums ({data.length})</h3>
+      <div className="flex flex-wrap gap-1.5 justify-center">
+        {data.map((i) => (
+          <ItemCard key={i.Id} item={i} />
+        ))}
+      </div>
+    </>
   );
 }
 

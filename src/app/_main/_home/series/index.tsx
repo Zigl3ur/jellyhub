@@ -20,11 +20,14 @@ function RouteComponent() {
   const { data } = Route.useLoaderData();
 
   return (
-    <div className="flex flex-wrap gap-1.5 justify-center">
-      {data.map((i) => (
-        <ItemCard key={i.Id} item={i} />
-      ))}
-    </div>
+    <>
+      <h3 className="font-serif text-4xl">TV Show ({data.length})</h3>
+      <div className="flex flex-wrap gap-1.5 justify-center">
+        {data.map((i) => (
+          <ItemCard key={i.Id} item={i} />
+        ))}
+      </div>
+    </>
   );
 }
 

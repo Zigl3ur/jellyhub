@@ -28,13 +28,11 @@ export default function ItemCard({ item }: ItemCardProps) {
 
   return (
     <Dialog>
-      <DialogTrigger className="w-45 space-y-1.5 hover:bg-accent p-1.5 group/item-card transition-colors duration-200 rounded hover:cursor-pointer h-fit">
-        <div className="overflow-hidden rounded">
-          <Image
-            src={item.PrimaryImage}
-            className="rounded transition-transform duration-100 group-hover/item-card:scale-103"
-          />
-        </div>
+      <DialogTrigger className="w-45 gap-1.5 hover:bg-accent p-1.5 group/item-card transition-colors duration-200 rounded hover:cursor-pointer flex flex-col justify-between">
+        <Image
+          src={item.PrimaryImage}
+          className="rounded transition-transform duration-100 group-hover/item-card:scale-103 h-full"
+        />
         <div className="mx-1 mb-1.5 space-y-1">
           <h3 className="truncate">{item.Name}</h3>
           <p className="opacity-65 text-xs">{detailLabel}</p>
@@ -53,7 +51,7 @@ export default function ItemCard({ item }: ItemCardProps) {
 
             <Image
               src={item.PrimaryImage}
-              className="rounded w-26 @sm/item-content:w-42 shrink-0 size-fit"
+              className="rounded w-26 @sm/item-content:w-42 shrink-0 size-full"
             />
             <ItemPresentation item={item} />
           </div>

@@ -9,12 +9,9 @@ import { authClient } from "@/lib/auth-client";
 
 export default function Header() {
   return (
-    <header className="flex items-center h-11">
-      <div className="flex-1" />
-      <AppNav />
-      <div className="flex-1 flex justify-end">
-        <UserNav />
-      </div>
+    <header className="flex items-center h-11 justify-center">
+      <DesktopNav />
+      <MobileNav />
     </header>
   );
 }
@@ -41,16 +38,46 @@ const destinations = [
     icon: <Tv2 className="size-4" strokeWidth={1.5} />,
     to: "/series",
   },
-  { label: "Albums", icon: <DiscAlbum className="size-4" />, to: "/albums" },
+  {
+    label: "Albums",
+    icon: <DiscAlbum className="size-4" />,
+    to: "/albums",
+  },
 ] satisfies Array<DestinationEntry>;
+
+function MobileNav() {
+  return (
+    <div className="bg-accent-foreground p-1.5 gap-2 rounded inlinde sm:hidden flex items-center justify-center w-fit h-full">
+      <AppNav />
+      <span className="h-full w-px bg-muted" />
+      <UserNav />
+    </div>
+  );
+}
+
+function DesktopNav() {
+  return (
+    <div className="hidden sm:flex sm:w-full">
+      <div className="flex-1" />
+      <div className="bg-accent-foreground p-1.5 rounded">
+        <AppNav />
+      </div>
+      <div className="flex-1 flex justify-end">
+        <div className="bg-accent-foreground p-1.5 rounded">
+          <UserNav />
+        </div>
+      </div>
+    </div>
+  );
+}
 
 function AppNav() {
   return (
-    <nav className="flex gap-2 p-1.5 bg-accent-foreground rounded-lg items-center">
+    <nav className="flex gap-2 items-center h-full">
       {destinations.map((d) => (
-        <Link key={d.to} to={d.to} variant="outline">
+        <Link key={d.to} to={d.to} variant="outline" className="h-full">
           {d.icon}
-          {d.label}
+          <span className="hidden sm:block">{d.label}</span>
         </Link>
       ))}
     </nav>
@@ -72,7 +99,7 @@ function UserNav() {
   };
 
   return (
-    <nav className="flex gap-2 p-1.5 bg-accent-foreground rounded-lg">
+    <nav className="flex gap-2">
       <Link to="/settings" variant="outline">
         <Cog className="size-4.5" strokeWidth={1.5} />
       </Link>
