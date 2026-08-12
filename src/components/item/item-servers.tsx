@@ -18,6 +18,7 @@ export default function ItemServers({ item }: ItemServersProps) {
             key={s.url}
             variant="outline"
             className="gap-2"
+            nativeButton={false}
             render={
               <ExternalLink
                 href={`${s.url}/#/details?id=${s.itemId}&serverId=${s.id}`}
