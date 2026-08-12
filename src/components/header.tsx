@@ -47,9 +47,8 @@ const destinations = [
 
 function MobileNav() {
   return (
-    <div className="bg-accent-foreground p-1.5 gap-2 rounded inlinde sm:hidden flex items-center justify-center w-fit h-full">
+    <div className="bg-accent-foreground p-1.5 gap-2 rounded inlinde sm:hidden flex items-center h-full justify-between w-full">
       <AppNav />
-      <span className="h-full w-px bg-muted" />
       <UserNav />
     </div>
   );

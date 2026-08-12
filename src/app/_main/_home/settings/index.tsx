@@ -6,7 +6,7 @@ import ServerCard from "@/components/server/server-card";
 import AddServerDialog from "@/components/server/add-server-dialog";
 
 const jellyDataQuery = queryOptions({
-  queryFn: getJellyData,
+  queryFn: () => getJellyData({ data: { updateStatus: true } }),
   queryKey: ["jellydata"],
 });
 

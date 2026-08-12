@@ -124,7 +124,7 @@ function ItemSeasonEpisodes({ item }: ItemSeasonEpisodesProps) {
           >
             <Image
               src={e.PrimaryImage}
-              className="aspect-video w-24 @sm/item-content:w-48 rounded shrink-0 size-fit"
+              className="aspect-video w-24 @sm/item-content:w-48 rounded shrink-0"
             />
             <div className="space-y-2 w-full">
               <div className="flex justify-between items-center">

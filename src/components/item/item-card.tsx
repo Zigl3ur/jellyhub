@@ -31,7 +31,7 @@ export default function ItemCard({ item }: ItemCardProps) {
 
   return (
     <Dialog>
-      <DialogTrigger className="min-w-45 flex-1 gap-2.5 hover:bg-accent p-1.5 transition-colors duration-200 rounded hover:cursor-pointer flex flex-col justify-between">
+      <DialogTrigger className="min-w-45 flex-1 space-y-2.5 hover:bg-accent p-1.5 transition-colors duration-200 rounded hover:cursor-pointer">
         <Image
           src={item.PrimaryImage}
           className={cn(

@@ -16,14 +16,18 @@ export default function Image({
   }, [src]);
 
   return (
-    <div className={cn("relative overflow-hidden", className)}>
+    <div className={cn("relative overflow-hidden h-fit", className)}>
       <img
         {...props}
         ref={imgRef}
         src={src}
         onLoad={() => setImgLoaded(true)}
+        onError={() => {
+          setImgLoaded(true);
+          if (imgRef.current) imgRef.current.src = "/default.svg";
+        }}
         className={cn(
-          "transition-opacity duration-200",
+          "transition-opacity duration-200 size-full object-cover",
           imgLoaded ? "opacity-100" : "opacity-0",
         )}
       />

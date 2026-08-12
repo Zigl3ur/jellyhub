@@ -1,6 +1,5 @@
 import { createCipheriv, createDecipheriv, randomBytes } from "node:crypto";
 import { createServerOnlyFn } from "@tanstack/react-start";
-import type { itemJellyfin } from "@/types/jellyfin-api.types";
 import type { BaseItemDto } from "@jellyfin/sdk/lib/generated-client/models";
 
 export const encrypt = createServerOnlyFn((value: string): string => {

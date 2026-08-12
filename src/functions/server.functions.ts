@@ -101,7 +101,8 @@ export const endSetup = createServerFn({ method: "POST" })
 
 export const getJellyData = createServerFn({ method: "GET" })
   .middleware([authMiddleware])
-  .handler(async ({ context }) => {
+  .validator(z.object({ updateStatus: z.boolean() }))
+  .handler(async ({ context, data }) => {
     const serverList = await context.db.query.jellydata.findMany({
       where: {
         userId: context.session.user.id,
@@ -113,24 +114,26 @@ export const getJellyData = createServerFn({ method: "GET" })
       },
     });
 
-    await Promise.allSettled(
-      serverList.map(async (server) => {
-        const api = getJellyfinApiClient(server.serverUrl);
-        const info = await getJellyfinPublicInfo(api);
+    if (data.updateStatus) {
+      await Promise.allSettled(
+        serverList.map(async (server) => {
+          const api = getJellyfinApiClient(server.serverUrl);
+          const info = await getJellyfinPublicInfo(api);
 
-        if (info.ServerName && info.ServerName !== server.serverName) {
-          await context.db
-            .update(jellydataSchema)
-            .set({ serverName: info.ServerName })
-            .where(
-              and(
-                eq(jellydataSchema.userId, context.session.user.id),
-                eq(jellydataSchema.serverUrl, server.serverUrl),
-              ),
-            );
-        }
-      }),
-    );
+          if (info.ServerName && info.ServerName !== server.serverName) {
+            await context.db
+              .update(jellydataSchema)
+              .set({ serverName: info.ServerName })
+              .where(
+                and(
+                  eq(jellydataSchema.userId, context.session.user.id),
+                  eq(jellydataSchema.serverUrl, server.serverUrl),
+                ),
+              );
+          }
+        }),
+      );
+    }
 
     return { servers: serverList };
   });
