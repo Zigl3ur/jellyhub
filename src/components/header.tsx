@@ -51,7 +51,7 @@ const destinations = [
 
 function MobileNav() {
   return (
-    <div className="bg-accent-foreground p-1.5 gap-2 rounded inlinde sm:hidden flex items-center h-full justify-between w-full">
+    <div className="bg-accent-foreground p-1.5 border border-input/40 gap-2 rounded inlinde sm:hidden flex items-center h-full justify-between w-full">
       <div className="inline-flex items-center h-full gap-2">
         <img
           src={"/icon.png"}
@@ -69,7 +69,7 @@ function MobileNav() {
 function DesktopNav() {
   return (
     <div className="hidden sm:flex sm:w-full sm:justify-between">
-      <div className="bg-accent-foreground p-1.5 rounded flex items-center">
+      <div className="bg-accent-foreground p-1.5 border border-input/40 rounded flex items-center">
         <img
           src={"/icon.png"}
           alt="jellyhub icon"
@@ -77,10 +77,10 @@ function DesktopNav() {
         />
         <h1 className="pl-2 font-semibold text-xl">JellyHub</h1>
       </div>
-      <div className="bg-accent-foreground p-1.5 rounded">
+      <div className="bg-accent-foreground border border-input/40 p-1.5 rounded">
         <AppNav />
       </div>
-      <div className="bg-accent-foreground p-1.5 rounded">
+      <div className="bg-accent-foreground border border-input/40 p-1.5 rounded">
         <UserNav />
       </div>
     </div>
