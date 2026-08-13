@@ -1,4 +1,4 @@
-import { Clapperboard, Cog, DiscAlbum, House, LogOut, Tv2 } from "lucide-react";
+import { Clapperboard, Cog, Disc3, House, LogOut, Tv2 } from "lucide-react";
 import { useNavigate } from "@tanstack/react-router";
 import { AvatarFallback, AvatarImg, AvatarRoot } from "./ui/avatar";
 import Skeleton from "./ui/skeleton";
@@ -43,7 +43,7 @@ const destinations = [
   },
   {
     label: "Albums",
-    icon: <DiscAlbum className="size-4" />,
+    icon: <Disc3 className="size-4" />,
     to: "/$type",
     params: { type: "albums" },
   },
@@ -52,7 +52,15 @@ const destinations = [
 function MobileNav() {
   return (
     <div className="bg-accent-foreground p-1.5 gap-2 rounded inlinde sm:hidden flex items-center h-full justify-between w-full">
-      <AppNav />
+      <div className="inline-flex items-center h-full gap-2">
+        <img
+          src={"/icon.png"}
+          alt="jellyhub icon"
+          className="size-8 shrink-0"
+        />
+        <span className="h-full w-px bg-muted rounded" />
+        <AppNav />
+      </div>
       <UserNav />
     </div>
   );
@@ -60,15 +68,20 @@ function MobileNav() {
 
 function DesktopNav() {
   return (
-    <div className="hidden sm:flex sm:w-full">
-      <div className="flex-1" />
+    <div className="hidden sm:flex sm:w-full sm:justify-between">
+      <div className="bg-accent-foreground p-1.5 rounded flex items-center">
+        <img
+          src={"/icon.png"}
+          alt="jellyhub icon"
+          className="size-8 shrink-0"
+        />
+        <h1 className="pl-2 font-semibold text-xl">JellyHub</h1>
+      </div>
       <div className="bg-accent-foreground p-1.5 rounded">
         <AppNav />
       </div>
-      <div className="flex-1 flex justify-end">
-        <div className="bg-accent-foreground p-1.5 rounded">
-          <UserNav />
-        </div>
+      <div className="bg-accent-foreground p-1.5 rounded">
+        <UserNav />
       </div>
     </div>
   );

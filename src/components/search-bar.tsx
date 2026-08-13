@@ -28,7 +28,7 @@ export default function SearchBar({
   const fuse = useMemo(() => {
     return new Fuse(items, {
       keys: ["Name", "AlbumArtist"],
-      threshold: 0.3,
+      threshold: 0.2,
       ignoreLocation: true,
     });
   }, [items]);

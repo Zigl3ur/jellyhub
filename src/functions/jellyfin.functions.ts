@@ -199,7 +199,7 @@ export const getServersItems = createServerFn({ method: "GET" })
       },
     });
 
-    if (!servers.length) throw new Error("No servers found");
+    if (!servers.length) return [];
 
     const serversFetch = await Promise.allSettled(
       servers.map(async (server) => {

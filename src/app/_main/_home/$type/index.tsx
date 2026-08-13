@@ -1,6 +1,8 @@
 import ItemCard, { ItemCardLoading } from "@/components/item/item-card";
 import SearchBar from "@/components/search-bar";
+import Button from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Link } from "@/components/ui/link";
 import Skeleton from "@/components/ui/skeleton";
 import {
   getServersItems,
@@ -8,7 +10,8 @@ import {
 } from "@/functions/jellyfin.functions";
 import { getJellyData } from "@/functions/server.functions";
 import { Await, createFileRoute, notFound } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { SearchX, ServerOff } from "lucide-react";
+import { useState } from "react";
 
 const routesWithType = [
   { param: "movies", type: "Movie", name: "Movies" },
@@ -57,10 +60,10 @@ function RouteComponent() {
         const albums = filtered ?? data;
 
         return (
-          <>
+          <div className="space-y-6">
             <div className="flex flex-col xs:flex-row xs:justify-between xs:items-end gap-4">
               <div className="space-y-1">
-                <h3 className="font-serif text-4xl">
+                <h3 className="font-serif text-5xl">
                   {routeData.name} ({data.length})
                 </h3>
                 <p className="opacity-75">Accross {servers.length} servers</p>
@@ -73,11 +76,15 @@ function RouteComponent() {
               />
             </div>
             <div className="grid grid-cols-[repeat(auto-fill,minmax(180px,1fr))] gap-2">
-              {albums.map((i) => (
-                <ItemCard key={i.Id} item={i} />
-              ))}
+              {servers.length === 0 ? (
+                <NoServers itemName={routeData.name} />
+              ) : albums.length > 0 ? (
+                albums.map((i) => <ItemCard key={i.Id} item={i} />)
+              ) : (
+                <EmptyItems itemName={routeData.name} />
+              )}
             </div>
-          </>
+          </div>
         );
       }}
     </Await>
@@ -89,12 +96,12 @@ function LoadingComponent() {
   const routeData = routesWithType.find((r) => r.param === type);
 
   return (
-    <>
+    <div className="space-y-6">
       <div className="flex flex-col xs:flex-row xs:justify-between xs:items-end gap-4">
         <div className="space-y-1">
-          <h3 className="font-serif text-4xl flex items-center gap-2">
+          <h3 className="font-serif text-5xl flex items-center gap-2">
             {routeData?.name}
-            <Skeleton className="h-8 w-10 rounded" />
+            <Skeleton className="h-10 w-12 rounded" />
           </h3>
           <div className="opacity-75 flex items-center gap-1">
             Accross <Skeleton className="w-3.5 h-5" /> servers
@@ -114,6 +121,50 @@ function LoadingComponent() {
           />
         ))}
       </div>
-    </>
+    </div>
+  );
+}
+
+interface EmptyItemsProps {
+  itemName: string;
+}
+
+function EmptyItems({ itemName }: EmptyItemsProps) {
+  return (
+    <div className="bg-accent/45 col-span-full p-1 flex-col h-75 gap-4 flex items-center justify-center rounded border border-muted w-full">
+      <div className="flex flex-col items-center gap-0.5">
+        <div className="size-8 mb-2 flex items-center justify-center p-1.25 rounded bg-accent-foreground border border-muted">
+          <SearchX />
+        </div>
+        <h5 className="text-lg">No {itemName} found</h5>
+        <p className="opacity-50 text-center">
+          No Items found through configured servers.
+        </p>
+      </div>
+    </div>
+  );
+}
+
+function NoServers({ itemName }: EmptyItemsProps) {
+  return (
+    <div className="bg-accent/45 col-span-full p-1 flex-col h-75 gap-4 flex items-center justify-center rounded border border-muted w-full">
+      <div className="flex flex-col items-center gap-0.5">
+        <div className="size-8 mb-2 flex items-center justify-center p-1.25 rounded bg-accent-foreground border border-muted">
+          <ServerOff />
+        </div>
+        <h5 className="text-lg">No Servers configured</h5>
+        <p className="opacity-50 text-center">
+          Configure Jellyfin Servers to see available {itemName}
+        </p>
+      </div>
+      <Button
+        nativeButton={false}
+        render={
+          <Link to="/settings" variant="unstyled">
+            Configure a Server
+          </Link>
+        }
+      />
+    </div>
   );
 }
