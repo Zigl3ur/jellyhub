@@ -26,6 +26,7 @@
     "better-auth": "^1.6.27",
     "date-fns": "^4.4.0",
     "drizzle-orm": "1.0.0-rc.4",
+    "fuse.js": "^7.5.0",
     "lucide-react": "^1.31.0",
     "nitro": "^3.0.260610-beta",
     "react": "19.1.1",

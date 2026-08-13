@@ -9,7 +9,7 @@ import { authClient } from "@/lib/auth-client";
 
 export default function Header() {
   return (
-    <header className="flex items-center h-11 justify-center">
+    <header className="h-11">
       <DesktopNav />
       <MobileNav />
     </header>
@@ -20,6 +20,7 @@ type DestinationEntry = {
   label: string;
   icon: ReactElement;
   to: LinkProps["to"];
+  params?: LinkProps["params"];
 };
 
 const destinations = [
@@ -31,17 +32,20 @@ const destinations = [
   {
     label: "Movies",
     icon: <Clapperboard className="size-4" strokeWidth={1.5} />,
-    to: "/movies",
+    to: "/$type",
+    params: { type: "movies" },
   },
   {
     label: "Series",
     icon: <Tv2 className="size-4" strokeWidth={1.5} />,
-    to: "/series",
+    to: "/$type",
+    params: { type: "tv-shows" },
   },
   {
     label: "Albums",
     icon: <DiscAlbum className="size-4" />,
-    to: "/albums",
+    to: "/$type",
+    params: { type: "albums" },
   },
 ] satisfies Array<DestinationEntry>;
 
@@ -74,7 +78,13 @@ function AppNav() {
   return (
     <nav className="flex gap-2 items-center h-full">
       {destinations.map((d) => (
-        <Link key={d.to} to={d.to} variant="outline" className="h-full">
+        <Link
+          key={d.label}
+          to={d.to}
+          params={d.params}
+          variant="outline"
+          className="h-full"
+        >
           {d.icon}
           <span className="hidden sm:block">{d.label}</span>
         </Link>

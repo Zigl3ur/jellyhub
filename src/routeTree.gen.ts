@@ -17,9 +17,7 @@ import { Route as MainHomeIndexRouteImport } from './app/_main/_home/index'
 import { Route as ApiAuthSplatRouteImport } from './app/api/auth/$'
 import { Route as MainAuthLoginIndexRouteImport } from './app/_main/_auth/login/index'
 import { Route as MainAuthRegisterIndexRouteImport } from './app/_main/_auth/register/index'
-import { Route as MainHomeAlbumsIndexRouteImport } from './app/_main/_home/albums/index'
-import { Route as MainHomeMoviesIndexRouteImport } from './app/_main/_home/movies/index'
-import { Route as MainHomeSeriesIndexRouteImport } from './app/_main/_home/series/index'
+import { Route as MainHomeTypeIndexRouteImport } from './app/_main/_home/$type/index'
 import { Route as MainHomeSettingsIndexRouteImport } from './app/_main/_home/settings/index'
 
 const MainRouteRoute = MainRouteRouteImport.update({
@@ -59,19 +57,9 @@ const MainAuthRegisterIndexRoute = MainAuthRegisterIndexRouteImport.update({
   path: '/register/',
   getParentRoute: () => MainAuthRouteRoute,
 } as any)
-const MainHomeAlbumsIndexRoute = MainHomeAlbumsIndexRouteImport.update({
-  id: '/albums/',
-  path: '/albums/',
-  getParentRoute: () => MainHomeRouteRoute,
-} as any)
-const MainHomeMoviesIndexRoute = MainHomeMoviesIndexRouteImport.update({
-  id: '/movies/',
-  path: '/movies/',
-  getParentRoute: () => MainHomeRouteRoute,
-} as any)
-const MainHomeSeriesIndexRoute = MainHomeSeriesIndexRouteImport.update({
-  id: '/series/',
-  path: '/series/',
+const MainHomeTypeIndexRoute = MainHomeTypeIndexRouteImport.update({
+  id: '/$type/',
+  path: '/$type/',
   getParentRoute: () => MainHomeRouteRoute,
 } as any)
 const MainHomeSettingsIndexRoute = MainHomeSettingsIndexRouteImport.update({
@@ -86,9 +74,7 @@ export interface FileRoutesByFullPath {
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/login/': typeof MainAuthLoginIndexRoute
   '/register/': typeof MainAuthRegisterIndexRoute
-  '/albums/': typeof MainHomeAlbumsIndexRoute
-  '/movies/': typeof MainHomeMoviesIndexRoute
-  '/series/': typeof MainHomeSeriesIndexRoute
+  '/$type/': typeof MainHomeTypeIndexRoute
   '/settings/': typeof MainHomeSettingsIndexRoute
 }
 export interface FileRoutesByTo {
@@ -97,9 +83,7 @@ export interface FileRoutesByTo {
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/login': typeof MainAuthLoginIndexRoute
   '/register': typeof MainAuthRegisterIndexRoute
-  '/albums': typeof MainHomeAlbumsIndexRoute
-  '/movies': typeof MainHomeMoviesIndexRoute
-  '/series': typeof MainHomeSeriesIndexRoute
+  '/$type': typeof MainHomeTypeIndexRoute
   '/settings': typeof MainHomeSettingsIndexRoute
 }
 export interface FileRoutesById {
@@ -112,9 +96,7 @@ export interface FileRoutesById {
   '/_main/_home/': typeof MainHomeIndexRoute
   '/_main/_auth/login/': typeof MainAuthLoginIndexRoute
   '/_main/_auth/register/': typeof MainAuthRegisterIndexRoute
-  '/_main/_home/albums/': typeof MainHomeAlbumsIndexRoute
-  '/_main/_home/movies/': typeof MainHomeMoviesIndexRoute
-  '/_main/_home/series/': typeof MainHomeSeriesIndexRoute
+  '/_main/_home/$type/': typeof MainHomeTypeIndexRoute
   '/_main/_home/settings/': typeof MainHomeSettingsIndexRoute
 }
 export interface FileRouteTypes {
@@ -125,9 +107,7 @@ export interface FileRouteTypes {
     | '/api/auth/$'
     | '/login/'
     | '/register/'
-    | '/albums/'
-    | '/movies/'
-    | '/series/'
+    | '/$type/'
     | '/settings/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -136,9 +116,7 @@ export interface FileRouteTypes {
     | '/api/auth/$'
     | '/login'
     | '/register'
-    | '/albums'
-    | '/movies'
-    | '/series'
+    | '/$type'
     | '/settings'
   id:
     | '__root__'
@@ -150,9 +128,7 @@ export interface FileRouteTypes {
     | '/_main/_home/'
     | '/_main/_auth/login/'
     | '/_main/_auth/register/'
-    | '/_main/_home/albums/'
-    | '/_main/_home/movies/'
-    | '/_main/_home/series/'
+    | '/_main/_home/$type/'
     | '/_main/_home/settings/'
   fileRoutesById: FileRoutesById
 }
@@ -220,25 +196,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MainAuthRegisterIndexRouteImport
       parentRoute: typeof MainAuthRouteRoute
     }
-    '/_main/_home/albums/': {
-      id: '/_main/_home/albums/'
-      path: '/albums'
-      fullPath: '/albums/'
-      preLoaderRoute: typeof MainHomeAlbumsIndexRouteImport
-      parentRoute: typeof MainHomeRouteRoute
-    }
-    '/_main/_home/movies/': {
-      id: '/_main/_home/movies/'
-      path: '/movies'
-      fullPath: '/movies/'
-      preLoaderRoute: typeof MainHomeMoviesIndexRouteImport
-      parentRoute: typeof MainHomeRouteRoute
-    }
-    '/_main/_home/series/': {
-      id: '/_main/_home/series/'
-      path: '/series'
-      fullPath: '/series/'
-      preLoaderRoute: typeof MainHomeSeriesIndexRouteImport
+    '/_main/_home/$type/': {
+      id: '/_main/_home/$type/'
+      path: '/$type'
+      fullPath: '/$type/'
+      preLoaderRoute: typeof MainHomeTypeIndexRouteImport
       parentRoute: typeof MainHomeRouteRoute
     }
     '/_main/_home/settings/': {
@@ -267,17 +229,13 @@ const MainAuthRouteRouteWithChildren = MainAuthRouteRoute._addFileChildren(
 
 interface MainHomeRouteRouteChildren {
   MainHomeIndexRoute: typeof MainHomeIndexRoute
-  MainHomeAlbumsIndexRoute: typeof MainHomeAlbumsIndexRoute
-  MainHomeMoviesIndexRoute: typeof MainHomeMoviesIndexRoute
-  MainHomeSeriesIndexRoute: typeof MainHomeSeriesIndexRoute
+  MainHomeTypeIndexRoute: typeof MainHomeTypeIndexRoute
   MainHomeSettingsIndexRoute: typeof MainHomeSettingsIndexRoute
 }
 
 const MainHomeRouteRouteChildren: MainHomeRouteRouteChildren = {
   MainHomeIndexRoute: MainHomeIndexRoute,
-  MainHomeAlbumsIndexRoute: MainHomeAlbumsIndexRoute,
-  MainHomeMoviesIndexRoute: MainHomeMoviesIndexRoute,
-  MainHomeSeriesIndexRoute: MainHomeSeriesIndexRoute,
+  MainHomeTypeIndexRoute: MainHomeTypeIndexRoute,
   MainHomeSettingsIndexRoute: MainHomeSettingsIndexRoute,
 }
 

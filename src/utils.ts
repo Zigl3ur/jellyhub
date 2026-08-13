@@ -48,18 +48,3 @@ export function ticksToDuration(
 
   return `${hours > 0 ? `${hours}:` : ""}${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
 }
-
-export function debounce<T extends Array<unknown>>(
-  callback: (...args: T) => void,
-  delay: number,
-) {
-  let timeoutTimer: ReturnType<typeof setTimeout>;
-
-  return (...args: T) => {
-    clearTimeout(timeoutTimer);
-
-    timeoutTimer = setTimeout(() => {
-      callback(...args);
-    }, delay);
-  };
-}
