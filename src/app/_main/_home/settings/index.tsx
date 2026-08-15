@@ -25,22 +25,24 @@ function RouteComponent() {
   const { data } = useSuspenseQuery(jellyDataQuery);
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h3 className="text-5xl font-serif">Servers</h3>
-        {data.servers.length > 0 && <AddServerDialog />}
-      </div>
-      <div className="grid grid-cols-[repeat(auto-fill,minmax(250px,1fr))] gap-2">
-        {data.servers.length > 0 ? (
-          data.servers.map((s) => <ServerCard key={s.serverUrl} server={s} />)
-        ) : (
-          <EmptyServers />
-        )}
+    <div className="space-y-12">
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <h3 className="text-5xl font-serif">Servers</h3>
+          {data.servers.length > 0 && <AddServerDialog />}
+        </div>
+        <div className="grid grid-cols-[repeat(auto-fill,minmax(250px,1fr))] gap-2">
+          {data.servers.length > 0 ? (
+            data.servers.map((s) => <ServerCard key={s.serverUrl} server={s} />)
+          ) : (
+            <EmptyServers />
+          )}
+        </div>
       </div>
 
       <div className="space-y-4">
         <h3 className="text-5xl font-serif">Settings</h3>
-        <div className="flex flex-col gap-2">
+        <div className="space-y-2">
           <ProfileEditor />
           <PasswordEditor />
           <DeleteAccount />

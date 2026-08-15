@@ -13,6 +13,7 @@ import LoaderIcon from "../ui/loader-icon";
 import type { JellyfinServer } from "@/types";
 import type { Dialog as BaseDialog } from "@base-ui/react";
 import { invalidateServerTokenDB } from "@/functions/jellyfin.functions";
+import Badge from "../ui/badge";
 
 interface InvalidateTokenDialogProps extends BaseDialog.Root.Props {
   server: JellyfinServer;
@@ -56,6 +57,12 @@ export default function InvalidateTokenDialog({
             message={error.message}
           />
         )}
+        <p>
+          This will revoke the token for the server{" "}
+          <Badge>{server.serverName}</Badge> with url{" "}
+          <Badge>{server.serverUrl}</Badge>. You will need to re-authenticate to
+          be able to fetch medias from it.
+        </p>
         <DialogFooter className="flex justify-end items-center gap-2">
           <DialogClose render={<Button variant="outline">Cancel</Button>} />
           <Button

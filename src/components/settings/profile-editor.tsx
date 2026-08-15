@@ -11,12 +11,13 @@ import { FieldError, FieldLabel, FieldRoot } from "../ui/field";
 import { Input } from "../ui/input";
 import LoaderIcon from "../ui/loader-icon";
 import { Alert } from "../ui/alert";
+import Skeleton from "../ui/skeleton";
 
 export default function ProfileEditor() {
   const fileInput = useRef<HTMLInputElement>(null);
 
-  const session = authClient.useSession();
-  const user = session.data?.user;
+  const { isPending, data: session } = authClient.useSession();
+  const user = session?.user;
 
   const defaultValues: editProfileSchemaType = {
     image: user?.image,
@@ -127,15 +128,19 @@ export default function ProfileEditor() {
                     handleFileChange(e);
                   }}
                 />
-                <Avatar
-                  onClick={() => fileInput.current?.click()}
-                  className="size-24 hover:cursor-pointer"
-                >
-                  <AvatarImg src={form.getFieldValue("image") as string} />
-                  <AvatarFallback delay={500} className="text-2xl">
-                    {user?.username?.charAt(0).toUpperCase()}
-                  </AvatarFallback>
-                </Avatar>
+                {isPending ? (
+                  <Skeleton className="size-24" />
+                ) : (
+                  <Avatar
+                    onClick={() => fileInput.current?.click()}
+                    className="size-24 hover:cursor-pointer"
+                  >
+                    <AvatarImg src={form.getFieldValue("image") as string} />
+                    <AvatarFallback delay={500} className="text-2xl">
+                      {user?.username?.charAt(0).toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
+                )}
                 <FieldError match={invalid}>{error?.message}</FieldError>
               </FieldRoot>
             );

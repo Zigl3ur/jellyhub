@@ -1,6 +1,5 @@
 import { authClient } from "@/lib/auth-client";
-import { useState, type ChangeEvent } from "react";
-import { Avatar, AvatarFallback, AvatarImg } from "../ui/avatar";
+import { useState } from "react";
 import Button from "../ui/button";
 import { revalidateLogic, useForm } from "@tanstack/react-form";
 import { FieldError, FieldLabel, FieldRoot } from "../ui/field";
@@ -45,7 +44,7 @@ export default function DeleteAccount() {
   });
 
   return (
-    <div className="p-4 @container/content border-input/40 border-b-2 flex sm:flex-row flex-col gap-8 sm:gap-0 sm:justify-between">
+    <div className="p-4 @container/content flex sm:flex-row flex-col gap-8 sm:gap-0 sm:justify-between">
       <div className="space-y-px">
         <h4 className="text-xl text-destructive">Danger Zone</h4>
         <p className="text-sm opacity-75 text-destructive">
