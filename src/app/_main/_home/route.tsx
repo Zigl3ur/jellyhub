@@ -15,7 +15,7 @@ export const Route = createFileRoute("/_main/_home")({
 
 function RouteComponent() {
   return (
-    <main className="py-2 px-4 space-y-10">
+    <main className="py-2 px-4 space-y-20">
       <Header />
       <Outlet />
     </main>

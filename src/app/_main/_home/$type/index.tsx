@@ -114,7 +114,7 @@ function LoadingComponent() {
         />
       </div>
       <div className="grid grid-cols-[repeat(auto-fill,minmax(180px,1fr))] gap-2">
-        {Array.from({ length: 25 }).map((_, i) => (
+        {Array.from({ length: 52 }).map((_, i) => (
           <ItemCardLoading
             key={i}
             type={routeData?.type === "MusicAlbum" ? "small" : "default"}

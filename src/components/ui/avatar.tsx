@@ -1,13 +1,13 @@
-import { Avatar } from "@base-ui/react/avatar";
+import { Avatar as BaseAvatar } from "@base-ui/react/avatar";
 import { cn } from "@sglara/cn";
 
-export function AvatarRoot({
+export function Avatar({
   className,
   children,
   ...props
-}: Avatar.Root.Props) {
+}: BaseAvatar.Root.Props) {
   return (
-    <Avatar.Root
+    <BaseAvatar.Root
       {...props}
       className={cn(
         "inline-flex size-8 items-center justify-center border border-muted overflow-hidden rounded bg-accent-foreground align-middle text-sm leading-none font-normal text-foreground select-none",
@@ -15,13 +15,13 @@ export function AvatarRoot({
       )}
     >
       {children}
-    </Avatar.Root>
+    </BaseAvatar.Root>
   );
 }
 
-export function AvatarImg({ className, ...props }: Avatar.Image.Props) {
+export function AvatarImg({ className, ...props }: BaseAvatar.Image.Props) {
   return (
-    <Avatar.Image
+    <BaseAvatar.Image
       {...props}
       className={cn("size-full object-cover", className)}
     />
@@ -32,9 +32,9 @@ export function AvatarFallback({
   className,
   children,
   ...props
-}: Avatar.Fallback.Props) {
+}: BaseAvatar.Fallback.Props) {
   return (
-    <Avatar.Fallback
+    <BaseAvatar.Fallback
       {...props}
       className={cn(
         "flex size-full items-center justify-center text-sm",
@@ -42,6 +42,6 @@ export function AvatarFallback({
       )}
     >
       {children}
-    </Avatar.Fallback>
+    </BaseAvatar.Fallback>
   );
 }

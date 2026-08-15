@@ -5,4 +5,6 @@ const db = drizzle(process.env.DB_FILE as string, {
   relations,
 });
 
+db.$client.run("PRAGMA foreign_keys = ON");
+
 export default db;

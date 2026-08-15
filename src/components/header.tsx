@@ -1,6 +1,6 @@
 import { Clapperboard, Cog, Disc3, House, LogOut, Tv2 } from "lucide-react";
 import { useNavigate } from "@tanstack/react-router";
-import { AvatarFallback, AvatarImg, AvatarRoot } from "./ui/avatar";
+import { AvatarFallback, AvatarImg, Avatar } from "./ui/avatar";
 import Skeleton from "./ui/skeleton";
 import type { LinkProps } from "@tanstack/react-router";
 import type { ReactElement } from "react";
@@ -134,12 +134,12 @@ function UserNav() {
       {isPending ? (
         <Skeleton className="size-8" />
       ) : (
-        <AvatarRoot>
+        <Avatar>
           <AvatarImg src={user?.image as string} width={50} height={50} />
           <AvatarFallback delay={500}>
             {user?.username?.charAt(0).toUpperCase()}
           </AvatarFallback>
-        </AvatarRoot>
+        </Avatar>
       )}
     </nav>
   );

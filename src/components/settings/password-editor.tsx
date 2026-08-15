@@ -1,119 +1,123 @@
-import { createFileRoute, redirect, useRouter } from "@tanstack/react-router";
-import { revalidateLogic, useForm } from "@tanstack/react-form";
 import { useState } from "react";
+import Button from "../ui/button";
+import { revalidateLogic, useForm } from "@tanstack/react-form";
+import {
+  resetPasswdSchema,
+  type resetPasswdType,
+} from "@/schemas/settings.schema";
+import { FieldError, FieldLabel, FieldRoot } from "../ui/field";
+import { Input, InputAddon } from "../ui/input";
+import LoaderIcon from "../ui/loader-icon";
 import { Eye, EyeOff } from "lucide-react";
-import type { registerSchemaType } from "@/schemas/auth.schema";
-import { isSignupAllowed } from "@/functions/auth.functions";
 import { authClient } from "@/lib/auth-client";
-import { registerSchema } from "@/schemas/auth.schema";
-import { FieldError, FieldLabel, FieldRoot } from "@/components/ui/field";
-import Button from "@/components/ui/button";
-import { Input, InputAddon } from "@/components/ui/input";
-import { Alert } from "@/components/ui/alert";
-import LoaderIcon from "@/components/ui/loader-icon";
-import { Link } from "@/components/ui/link";
+import { Alert } from "../ui/alert";
 
-export const Route = createFileRoute("/_main/_auth/register/")({
-  beforeLoad: async () => {
-    const canSignup = await isSignupAllowed();
-
-    if (!canSignup) throw redirect({ to: "/login" });
-  },
-  component: RouteComponent,
-  head: () => ({ meta: [{ title: "Register - JellyHub" }] }),
-});
-
-const defaultValues: registerSchemaType = {
-  username: "",
+const defaultValues: resetPasswdType = {
+  currentPassword: "",
   password: "",
   confirmPassword: "",
 };
 
-function RouteComponent() {
-  const router = useRouter();
-
-  const [showPassword, setShowPassword] = useState(false);
+export default function PasswordEditor() {
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
   const [error, setError] = useState<string | null>(null);
 
-  const registerForm = useForm({
+  const form = useForm({
     defaultValues,
     validationLogic: revalidateLogic({
       mode: "submit",
       modeAfterSubmission: "change",
     }),
     validators: {
-      onDynamic: registerSchema,
+      onDynamic: resetPasswdSchema,
     },
-    onSubmit: async ({ value }) => {
-      const { username, confirmPassword } = value;
-
-      await authClient.signUp.email({
-        email: `${username}@jellyhub.com`,
-        name: username,
-        username,
-        password: confirmPassword,
-        fetchOptions: {
+    onSubmit: async ({ value }) =>
+      await authClient.changePassword(
+        {
+          newPassword: value.password,
+          currentPassword: value.currentPassword,
+        },
+        {
           onSuccess: () => {
             setError(null);
-            registerForm.reset();
-            router.navigate({ to: "/" });
+            form.reset();
           },
           onError: ({ error }) => setError(error.message),
         },
-      });
-    },
+      ),
   });
 
   return (
-    <div className="max-w-sm w-full p-6 rounded-xl space-y-8 bg-accent-foreground">
-      <h3 className="font-serif italic text-3xl font-semibold text-foreground">
-        Register to get started
-      </h3>
+    <div className="p-4 @container/content border-input/40 border-b-2 flex sm:flex-row flex-col gap-8 sm:gap-0 sm:justify-between">
+      <div className="space-y-px">
+        <h4 className="text-xl">Password</h4>
+        <p className="text-sm opacity-75">Update your account password</p>
+      </div>
+
+      {error && (
+        <Alert
+          type="destructive"
+          title="Failed to update profile"
+          message={error}
+        />
+      )}
+
       <form
-        className="space-y-4"
+        className="space-y-4 @sm/content:max-w-90 w-full"
         onSubmit={(e) => {
           e.preventDefault();
-          e.stopPropagation();
-          registerForm.handleSubmit();
+          form.handleSubmit();
         }}
       >
-        {error && (
-          <Alert type="destructive" title="Register Failed" message={error} />
-        )}
-        <registerForm.Field name="username">
-          {(field) => {
+        <form.Field
+          name="currentPassword"
+          children={(field) => {
             const error = field.state.meta.errors[0];
             const invalid = !field.state.meta.isValid;
 
             return (
               <FieldRoot name={field.name} invalid={invalid}>
-                <FieldLabel>Username</FieldLabel>
-
+                <FieldLabel>Current Pasword</FieldLabel>
                 <Input
                   name={field.name}
-                  placeholder="Username"
+                  type={showCurrentPassword ? "text" : "password"}
+                  placeholder="Current Password"
                   value={field.state.value}
                   onBlur={field.handleBlur}
                   onChange={(e) => field.handleChange(e.target.value)}
-                />
-
+                >
+                  <InputAddon side="right">
+                    <Button
+                      type="button"
+                      size="icon"
+                      variant="ghost"
+                      onClick={() => setShowCurrentPassword((prev) => !prev)}
+                    >
+                      {showCurrentPassword ? <EyeOff /> : <Eye />}
+                    </Button>
+                  </InputAddon>
+                </Input>
                 <FieldError match={invalid}>{error?.message}</FieldError>
               </FieldRoot>
             );
           }}
-        </registerForm.Field>
-        <registerForm.Field name="password">
-          {(field) => {
+        />
+
+        <form.Field
+          name="password"
+          children={(field) => {
             const error = field.state.meta.errors[0];
             const invalid = !field.state.meta.isValid;
 
             return (
               <FieldRoot name={field.name} invalid={invalid}>
-                <FieldLabel>Password</FieldLabel>
+                <FieldLabel>New Password</FieldLabel>
                 <Input
                   name={field.name}
-                  type={showPassword ? "text" : "password"}
+                  type={showNewPassword ? "text" : "password"}
                   placeholder="Password"
                   value={field.state.value}
                   onBlur={field.handleBlur}
@@ -124,9 +128,9 @@ function RouteComponent() {
                       type="button"
                       size="icon"
                       variant="ghost"
-                      onClick={() => setShowPassword((prev) => !prev)}
+                      onClick={() => setShowNewPassword((prev) => !prev)}
                     >
-                      {showPassword ? <EyeOff /> : <Eye />}
+                      {showNewPassword ? <EyeOff /> : <Eye />}
                     </Button>
                   </InputAddon>
                 </Input>
@@ -134,9 +138,11 @@ function RouteComponent() {
               </FieldRoot>
             );
           }}
-        </registerForm.Field>
-        <registerForm.Field name="confirmPassword">
-          {(field) => {
+        />
+
+        <form.Field
+          name="confirmPassword"
+          children={(field) => {
             const error = field.state.meta.errors[0];
             const invalid = !field.state.meta.isValid;
 
@@ -166,30 +172,28 @@ function RouteComponent() {
               </FieldRoot>
             );
           }}
-        </registerForm.Field>
-        <div className="flex justify-center w-full">
-          <registerForm.Subscribe
-            selector={(state) => [state.canSubmit, state.isSubmitting]}
-            children={([canSubmit, isSubmitting]) => (
-              <Button
-                type="submit"
-                disabled={!canSubmit}
-                className="w-full xs:w-auto"
-              >
+        />
+
+        <div className="flex justify-end">
+          <form.Subscribe
+            selector={(state) => [
+              state.canSubmit,
+              state.isSubmitting,
+              state.isDefaultValue,
+            ]}
+            children={([canSubmit, isSubmitting, isDefaultValue]) => (
+              <Button type="submit" disabled={!canSubmit || isDefaultValue}>
                 {isSubmitting ? (
                   <>
                     <LoaderIcon />
-                    Registering...
+                    Updating
                   </>
                 ) : (
-                  "Register"
+                  "Update"
                 )}
               </Button>
             )}
           />
-        </div>
-        <div className="text-center text-sm">
-          Already have an account ? <Link to="/login">Login</Link>
         </div>
       </form>
     </div>

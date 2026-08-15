@@ -8,50 +8,29 @@ export const addServerSchema = z.object({
 
 export type addServerSchemaType = z.output<typeof addServerSchema>;
 
-export const editUserSchema = z
-  .object({
-    username: z.optional(
-      z
-        .string()
-        .min(3, { error: "Username must be at least 3 characters long" })
-        .max(15, { error: "Username cant exceed 15 characters" }),
-    ),
-    password: z.optional(
-      z
-        .string()
-        .min(6, { error: "Password must be at least 6 characters long" })
-        .max(50, { error: "Password cant exceed 50 characters" }),
-    ),
-    confirmPassword: z.optional(
-      z
-        .string()
-        .min(6, { error: "Password must be at least 6 characters long" })
-        .max(50, { error: "Password cant exceed 50 characters" }),
-    ),
-  })
-  .check((ctx) => {
-    if (ctx.value.password && ctx.value.confirmPassword?.length === 0) {
-      ctx.issues.push({
-        code: "custom",
-        message: "Confirm the new password",
-        path: ["confirmPassword"],
-        input: ctx.value.confirmPassword,
-      });
-    }
-    if (ctx.value.password !== ctx.value.confirmPassword) {
-      ctx.issues.push({
-        code: "custom",
-        message: "Passwords do not match",
-        path: ["confirmPassword"],
-        input: ctx.value.confirmPassword,
-      });
-    }
-  });
+export const editProfileSchema = z.object({
+  image: z
+    .string()
+    .transform((val) => val.replace(/^data:image\/\w+;base64,/, ""))
+    .pipe(z.base64())
+    .optional()
+    .nullable(),
+  username: z
+    .string()
+    .min(3, { error: "Username must be at least 3 characters long" })
+    .max(15, { error: "Username cant exceed 15 characters" })
+    .optional()
+    .nullable(),
+});
 
-export type editUserSchemaType = z.output<typeof editUserSchema>;
+export type editProfileSchemaType = z.output<typeof editProfileSchema>;
 
-export const resetPasswdScema = z
+export const resetPasswdSchema = z
   .object({
+    currentPassword: z
+      .string()
+      .min(6, { error: "Password must be at least 6 characters long" })
+      .max(50, { error: "Password cant exceed 50 characters" }),
     password: z
       .string()
       .min(6, { error: "Password must be at least 6 characters long" })
@@ -72,7 +51,20 @@ export const resetPasswdScema = z
     }
   });
 
-export type resetPasswdType = z.output<typeof resetPasswdScema>;
+export type resetPasswdType = z.output<typeof resetPasswdSchema>;
+
+export const deleteAccountSchema = z
+  .object({
+    confirm: z
+      .string()
+      .min(1, { error: "Please confirm by typing 'delete my account'" }),
+  })
+  .refine((data) => data.confirm === "delete my account", {
+    message: "Please confirm by typing 'delete my account'",
+    path: ["confirm"],
+  });
+
+export type deleteAccountSchemaType = z.output<typeof deleteAccountSchema>;
 
 export const endSetupSchema = z.object({
   admin: z.object({

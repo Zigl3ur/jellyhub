@@ -11,7 +11,6 @@ import type {
   endSetupSchemaType,
 } from "@/schemas/settings.schema";
 import { hasAdminUser } from "@/functions/auth.functions";
-import Logo from "@/components/logo";
 import {
   Stepper,
   StepperContent,
@@ -99,7 +98,10 @@ function RouteComponent() {
 
   return (
     <div className="flex items-center flex-col justify-center min-h-svh gap-8 p-4">
-      <Logo />
+      <div className="flex flex-col xs:flex-row gap-2 text-center justify-center items-center">
+        <img src={"/icon.png"} alt="jellyhub icon" width={60} height={60} />
+        <h1 className="pl-2 font-semibold text-4xl">JellyHub</h1>
+      </div>
       <div className="max-w-sm w-full p-6 rounded-xl space-y-8 bg-accent-foreground">
         <h3 className="font-serif italic text-3xl font-semibold text-foreground">
           Get Started with JellyHub

@@ -4,6 +4,9 @@ import { HardDrive } from "lucide-react";
 import { getJellyData } from "@/functions/server.functions";
 import ServerCard from "@/components/server/server-card";
 import AddServerDialog from "@/components/server/add-server-dialog";
+import ProfileEditor from "@/components/settings/profile-editor";
+import PasswordEditor from "@/components/settings/password-editor";
+import DeleteAccount from "@/components/settings/delete-account";
 
 const jellyDataQuery = queryOptions({
   queryFn: () => getJellyData({ data: { updateStatus: true } }),
@@ -27,12 +30,21 @@ function RouteComponent() {
         <h3 className="text-5xl font-serif">Servers</h3>
         {data.servers.length > 0 && <AddServerDialog />}
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
+      <div className="grid grid-cols-[repeat(auto-fill,minmax(250px,1fr))] gap-2">
         {data.servers.length > 0 ? (
           data.servers.map((s) => <ServerCard key={s.serverUrl} server={s} />)
         ) : (
           <EmptyServers />
         )}
+      </div>
+
+      <div className="space-y-4">
+        <h3 className="text-5xl font-serif">Settings</h3>
+        <div className="flex flex-col gap-2">
+          <ProfileEditor />
+          <PasswordEditor />
+          <DeleteAccount />
+        </div>
       </div>
     </div>
   );
