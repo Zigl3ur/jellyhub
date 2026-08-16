@@ -1,14 +1,14 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { getServersItems } from "@/functions/jellyfin.functions";
 import ItemCard from "@/components/item/item-card";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { itemsQueryOptions } from "@/queries/servers";
+import { Suspense } from "react";
 
 export const Route = createFileRoute("/_main/_home/")({
-  loader: async () => {
-    const data = await getServersItems({
-      data: { opts: { types: ["MusicAlbum", "Movie", "Series"] } },
-    });
-
-    return { data };
+  loader: ({ context: { queryClient } }) => {
+    queryClient.prefetchQuery(itemsQueryOptions(["Movie"]));
+    queryClient.prefetchQuery(itemsQueryOptions(["Series"]));
+    queryClient.prefetchQuery(itemsQueryOptions(["MusicAlbum"]));
   },
   component: RouteComponent,
   pendingComponent: LoadingComponent,
@@ -16,15 +16,28 @@ export const Route = createFileRoute("/_main/_home/")({
 });
 
 function RouteComponent() {
-  const { data } = Route.useLoaderData();
-
   return (
-    <div className="flex flex-wrap gap-1.5 justify-center">
-      {data.map((i) => (
-        <ItemCard key={i.Id} item={i} />
-      ))}
+    <div className="flex flex-col gap-2">
+      <Suspense fallback={"movies..."}>
+        <Section queryOpt={itemsQueryOptions(["Movie"])} />
+      </Suspense>
+      <Suspense fallback={"series..."}>
+        <Section queryOpt={itemsQueryOptions(["Series"])} />
+      </Suspense>
+      <Suspense fallback={"albums..."}>
+        <Section queryOpt={itemsQueryOptions(["MusicAlbum"])} />
+      </Suspense>
     </div>
   );
+}
+
+interface SectionProps {
+  queryOpt: ReturnType<typeof itemsQueryOptions>;
+}
+
+function Section({ queryOpt }: SectionProps) {
+  const { data } = useSuspenseQuery(queryOpt);
+  return data.map((d) => <ItemCard key={d.Id} item={d} />);
 }
 
 function LoadingComponent() {

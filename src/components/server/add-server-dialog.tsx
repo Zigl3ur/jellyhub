@@ -39,6 +39,7 @@ export default function AddServerDialog() {
       setOpen(false);
       form.reset();
       await queryClient.invalidateQueries({ queryKey: ["jellydata"] });
+      await queryClient.invalidateQueries({ queryKey: ["items"] });
     },
   });
 

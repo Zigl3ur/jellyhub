@@ -4,14 +4,13 @@ import Button from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Link } from "@/components/ui/link";
 import Skeleton from "@/components/ui/skeleton";
-import {
-  getServersItems,
-  type ServersItems,
-} from "@/functions/jellyfin.functions";
+import { type ServersItems } from "@/functions/jellyfin.functions";
 import { getJellyData } from "@/functions/server.functions";
-import { Await, createFileRoute, notFound } from "@tanstack/react-router";
+import { itemsQueryOptions } from "@/queries/servers";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { createFileRoute, notFound } from "@tanstack/react-router";
 import { SearchX, ServerOff } from "lucide-react";
-import { useState } from "react";
+import { Suspense, useState } from "react";
 
 const routesWithType = [
   { param: "movies", type: "Movie", name: "Movies" },
@@ -25,20 +24,17 @@ export const Route = createFileRoute("/_main/_home/$type/")({
 
     if (!routeData) throw notFound();
   },
-  loader: async ({ params }) => {
+  loader: async ({ params, context: { queryClient } }) => {
     const routeData = routesWithType.find((r) => r.param === params.type);
 
     if (!routeData) throw notFound();
 
-    const items = getServersItems({
-      data: { opts: { types: [routeData.type] } },
-    });
+    queryClient.prefetchQuery(itemsQueryOptions([routeData.type]));
 
     const { servers } = await getJellyData({ data: { updateStatus: false } });
 
     return {
       routeData,
-      items,
       servers,
     };
   },
@@ -51,43 +47,51 @@ export const Route = createFileRoute("/_main/_home/$type/")({
 });
 
 function RouteComponent() {
-  const { items, servers, routeData } = Route.useLoaderData();
+  return (
+    <Suspense fallback={<LoadingComponent />}>
+      <Content />
+    </Suspense>
+  );
+}
+
+function Content() {
+  const { servers, routeData } = Route.useLoaderData();
+  const { data, isFetching } = useSuspenseQuery(
+    itemsQueryOptions([routeData.type]),
+  );
+
   const [filtered, setFiltered] = useState<ServersItems | null>(null);
 
-  return (
-    <Await promise={items} fallback={<LoadingComponent />}>
-      {(data) => {
-        const albums = filtered ?? data;
+  const items = filtered ?? data;
 
-        return (
-          <div className="space-y-6">
-            <div className="flex flex-col xs:flex-row xs:justify-between xs:items-end gap-4">
-              <div className="space-y-1">
-                <h3 className="font-serif text-5xl">
-                  {routeData.name} ({data.length})
-                </h3>
-                <p className="opacity-75">Accross {servers.length} servers</p>
-              </div>
-              <SearchBar
-                placeholder={`Search for ${routeData.name}`}
-                items={data}
-                onSearch={setFiltered}
-                className="w-full xs:w-70"
-              />
-            </div>
-            <div className="grid grid-cols-[repeat(auto-fill,minmax(180px,1fr))] gap-2">
-              {servers.length === 0 ? (
-                <NoServers itemName={routeData.name} />
-              ) : albums.length > 0 ? (
-                albums.map((i) => <ItemCard key={i.Id} item={i} />)
-              ) : (
-                <EmptyItems itemName={routeData.name} />
-              )}
-            </div>
-          </div>
-        );
-      }}
-    </Await>
+  return (
+    <div className="space-y-6">
+      <div className="flex flex-col xs:flex-row xs:justify-between xs:items-end gap-4">
+        <div className="space-y-1">
+          <h3 className="font-serif text-5xl">
+            {routeData.name} ({data.length})
+          </h3>
+          <p className="opacity-75">Accross {servers.length} servers</p>
+        </div>
+        <SearchBar
+          placeholder={`Search for ${routeData.name}`}
+          items={data}
+          onSearch={setFiltered}
+          className="w-full xs:w-70"
+        />
+      </div>
+      <div className="grid grid-cols-[repeat(auto-fill,minmax(180px,1fr))] gap-2">
+        {servers.length === 0 ? (
+          <NoServers itemName={routeData.name} />
+        ) : items.length > 0 ? (
+          items.map((i) => <ItemCard key={i.Id} item={i} />)
+        ) : isFetching ? (
+          <ItemsSkeleton />
+        ) : (
+          <EmptyItems itemName={routeData.name} />
+        )}
+      </div>
+    </div>
   );
 }
 
@@ -114,15 +118,21 @@ function LoadingComponent() {
         />
       </div>
       <div className="grid grid-cols-[repeat(auto-fill,minmax(180px,1fr))] gap-2">
-        {Array.from({ length: 52 }).map((_, i) => (
-          <ItemCardLoading
-            key={i}
-            type={routeData?.type === "MusicAlbum" ? "small" : "default"}
-          />
-        ))}
+        <ItemsSkeleton />
       </div>
     </div>
   );
+}
+
+function ItemsSkeleton() {
+  const { routeData } = Route.useLoaderData();
+
+  return Array.from({ length: 52 }).map((_, i) => (
+    <ItemCardLoading
+      key={i}
+      type={routeData.type === "MusicAlbum" ? "small" : "default"}
+    />
+  ));
 }
 
 interface EmptyItemsProps {

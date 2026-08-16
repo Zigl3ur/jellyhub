@@ -34,6 +34,7 @@ export default function InvalidateTokenDialog({
       await queryClient.invalidateQueries({
         queryKey: [server.serverUrl, "state"],
       });
+      await queryClient.invalidateQueries({ queryKey: ["items"] });
       onSuccess?.();
     },
   });

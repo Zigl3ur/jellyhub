@@ -45,6 +45,7 @@ export default function RefreshTokenDialog({
       await queryClient.invalidateQueries({
         queryKey: [server.serverUrl, "state"],
       });
+      await queryClient.invalidateQueries({ queryKey: ["items"] });
       onSuccess?.();
       form.reset();
     },

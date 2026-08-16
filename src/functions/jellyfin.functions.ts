@@ -203,8 +203,9 @@ export const getServersItems = createServerFn({ method: "GET" })
 
     const serversFetch = await Promise.allSettled(
       servers.map(async (server) => {
-        const token = await getServerToken(server.serverUrl);
-        const api = getJellyfinApiClient(server.serverUrl, token);
+        if (!server.serverToken) throw new Error("Server token not found");
+
+        const api = getJellyfinApiClient(server.serverUrl, server.serverToken);
 
         const items = await getLibraryItems(api, data.opts);
 
