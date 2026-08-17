@@ -31,7 +31,7 @@ export default function ItemCard({ item }: ItemCardProps) {
 
   return (
     <Dialog>
-      <DialogTrigger className="w-full space-y-2.5 hover:bg-accent p-1.5 transition-colors duration-200 rounded hover:cursor-pointer">
+      <DialogTrigger className="min-w-45 space-y-2.5 hover:bg-accent p-1.5 transition-colors duration-200 rounded hover:cursor-pointer h-fit">
         <Image
           src={item.PrimaryImage}
           className={cn(
@@ -89,15 +89,15 @@ interface ItemCardLoadingProps {
 
 export function ItemCardLoading({ type }: ItemCardLoadingProps) {
   return (
-    <div className="min-w-45 flex-1 gap-2.5 p-1.5 rounded flex flex-col justify-between">
+    <div className="min-w-45 gap-2.5 p-1.5 rounded flex flex-col justify-between">
       <Skeleton
         className={cn(
           "w-full",
           type === "default" ? "aspect-2/3" : "aspect-square",
         )}
       />
-      <div className="flex flex-col items-center gap-2 mb-1.5 mx-1">
-        <Skeleton className="h-5 w-full" />
+      <div className="flex flex-col items-center gap-2.5 mb-1.5 mx-1">
+        <Skeleton className="h-5.5 w-full" />
         <Skeleton className="h-3 w-22" />
       </div>
     </div>

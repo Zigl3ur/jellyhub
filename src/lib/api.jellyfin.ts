@@ -84,7 +84,8 @@ export async function checkJellyfinConn(api: Api) {
 }
 
 export async function getLibraryItems(api: Api, opts: ItemsOpts) {
-  const { types, parentId, artists, genres, person, studios, years } = opts;
+  const { types, parentId, artists, genres, person, studios, years, limit } =
+    opts;
 
   const typesToInclude: Array<BaseItemKind> = types.map((type) => {
     switch (type) {
@@ -120,6 +121,7 @@ export async function getLibraryItems(api: Api, opts: ItemsOpts) {
     person,
     studios,
     years,
+    limit,
   });
 }
 

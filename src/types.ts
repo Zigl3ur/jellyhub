@@ -13,6 +13,7 @@ export type ItemsOpts = {
   person?: string;
   studios?: Array<string>;
   years?: Array<number>;
+  limit?: number;
 };
 
 export type JellyfinServer = Awaited<

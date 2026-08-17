@@ -1,10 +1,10 @@
 import { getServersItems } from "@/functions/jellyfin.functions";
-import type { ItemTypes } from "@/types";
+import type { ItemsOpts } from "@/types";
 import { queryOptions } from "@tanstack/react-query";
 
-export const itemsQueryOptions = (types: ItemTypes[]) =>
+export const itemsQueryOptions = (opts: ItemsOpts) =>
   queryOptions({
-    queryKey: ["items", types],
-    queryFn: () => getServersItems({ data: { opts: { types } } }),
+    queryKey: ["items", opts.types],
+    queryFn: () => getServersItems({ data: { opts } }),
     staleTime: 60_000,
   });

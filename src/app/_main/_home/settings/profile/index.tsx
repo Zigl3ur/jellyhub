@@ -5,7 +5,7 @@ import DeleteAccount from "@/components/settings/delete-account";
 
 export const Route = createFileRoute("/_main/_home/settings/profile/")({
   component: RouteComponent,
-  head: () => ({ meta: [{ title: "Settings - JellyHub" }] }),
+  head: () => ({ meta: [{ title: "Profile - JellyHub" }] }),
 });
 
 function RouteComponent() {

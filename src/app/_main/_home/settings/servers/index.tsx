@@ -18,6 +18,7 @@ export const Route = createFileRoute("/_main/_home/settings/servers/")({
     context.queryClient.prefetchQuery(jellyDataQuery);
   },
   component: RouteComponent,
+  head: () => ({ meta: [{ title: "Servers - JellyHub" }] }),
 });
 
 function RouteComponent() {

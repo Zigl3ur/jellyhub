@@ -1,16 +1,12 @@
 import AddUserDialog from "@/components/users/add-user-dialog";
 import { UserCard, UserCardSkeleton } from "@/components/users/users-card";
-import { authClient } from "@/lib/auth-client";
+import { adminUsersList } from "@/functions/auth.functions";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { Suspense } from "react";
 
 const usersListQuery = queryOptions({
-  queryFn: async () => {
-    return await authClient.admin.listUsers({
-      query: {},
-    });
-  },
+  queryFn: adminUsersList,
   queryKey: ["usersList"],
 });
 
@@ -19,6 +15,7 @@ export const Route = createFileRoute("/_main/_home/settings/users/")({
     context.queryClient.prefetchQuery(usersListQuery);
   },
   component: RouteComponent,
+  head: () => ({ meta: [{ title: "Users - JellyHub" }] }),
 });
 
 function RouteComponent() {
@@ -47,8 +44,8 @@ function UsersContent() {
 
   return (
     <div className="grid grid-cols-[repeat(auto-fill,minmax(180px,1fr))] gap-2">
-      {data.data && data.data.total > 0 ? (
-        data.data.users.map((u) => (
+      {data && data.total > 0 ? (
+        data.users.map((u) => (
           <UserCard key={u.id} actualUserId={session.user.id} user={u} />
         ))
       ) : isFetching ? (

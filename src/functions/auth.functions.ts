@@ -53,3 +53,12 @@ export const hasAdminUser = createServerFn({ method: "GET" })
 
     return !!adminUser;
   });
+
+export const adminUsersList = createServerFn({ method: "GET" })
+  .middleware([ctxMiddleware])
+  .handler(async ({ context: ctx }) => {
+    return await ctx.auth.api.listUsers({
+      headers: getRequestHeaders(),
+      query: {},
+    });
+  });

@@ -29,7 +29,7 @@ export const Route = createFileRoute("/_main/_home/$type/")({
 
     if (!routeData) throw notFound();
 
-    queryClient.prefetchQuery(itemsQueryOptions([routeData.type]));
+    queryClient.prefetchQuery(itemsQueryOptions({ types: [routeData.type] }));
 
     const { servers } = await getJellyData({ data: { updateStatus: false } });
 
@@ -57,7 +57,7 @@ function RouteComponent() {
 function Content() {
   const { servers, routeData } = Route.useLoaderData();
   const { data, isFetching } = useSuspenseQuery(
-    itemsQueryOptions([routeData.type]),
+    itemsQueryOptions({ types: [routeData.type] }),
   );
 
   const [filtered, setFiltered] = useState<ServersItems | null>(null);
@@ -71,7 +71,7 @@ function Content() {
           <h3 className="font-serif text-5xl">
             {routeData.name} ({data.length})
           </h3>
-          <p className="opacity-75">Accross {servers.length} servers</p>
+          <p className="opacity-75">Accross {servers.length} server(s)</p>
         </div>
         <SearchBar
           placeholder={`Search for ${routeData.name}`}
@@ -84,7 +84,7 @@ function Content() {
         {servers.length === 0 ? (
           <NoServers itemName={routeData.name} />
         ) : items.length > 0 ? (
-          items.map((i) => <ItemCard key={i.Id} item={i} />)
+          items.map((i) => <ItemCard key={i.Id} item={i} className="w-full" />)
         ) : isFetching ? (
           <ItemsSkeleton />
         ) : (
