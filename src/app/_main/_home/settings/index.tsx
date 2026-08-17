@@ -1,70 +1,7 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
-import { HardDrive } from "lucide-react";
-import { getJellyData } from "@/functions/server.functions";
-import ServerCard from "@/components/server/server-card";
-import AddServerDialog from "@/components/server/add-server-dialog";
-import ProfileEditor from "@/components/settings/profile-editor";
-import PasswordEditor from "@/components/settings/password-editor";
-import DeleteAccount from "@/components/settings/delete-account";
-
-const jellyDataQuery = queryOptions({
-  queryFn: () => getJellyData({ data: { updateStatus: true } }),
-  queryKey: ["jellydata"],
-});
+import { createFileRoute, redirect } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_main/_home/settings/")({
-  loader: async ({ context }) => {
-    await context.queryClient.ensureQueryData(jellyDataQuery);
+  beforeLoad: () => {
+    throw redirect({ to: "/settings/servers" });
   },
-  component: RouteComponent,
-  head: () => ({ meta: [{ title: "Settings - JellyHub" }] }),
 });
-
-function RouteComponent() {
-  const { data } = useSuspenseQuery(jellyDataQuery);
-
-  return (
-    <div className="space-y-12">
-      <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <h3 className="text-5xl font-serif">Servers</h3>
-          {data.servers.length > 0 && <AddServerDialog />}
-        </div>
-        <div className="grid grid-cols-[repeat(auto-fill,minmax(250px,1fr))] gap-2">
-          {data.servers.length > 0 ? (
-            data.servers.map((s) => <ServerCard key={s.serverUrl} server={s} />)
-          ) : (
-            <EmptyServers />
-          )}
-        </div>
-      </div>
-
-      <div className="space-y-4">
-        <h3 className="text-5xl font-serif">Settings</h3>
-        <div className="space-y-2">
-          <ProfileEditor />
-          <PasswordEditor />
-          <DeleteAccount />
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function EmptyServers() {
-  return (
-    <div className="bg-accent/45 col-span-full h-75 flex-col gap-4 flex items-center justify-center rounded border border-muted w-full">
-      <div className="flex flex-col items-center gap-0.5">
-        <div className="size-8 mb-2 flex items-center justify-center p-1.25 rounded bg-accent-foreground border border-muted">
-          <HardDrive />
-        </div>
-        <h5 className="text-lg">No Jellyfin Servers</h5>
-        <p className="opacity-50">
-          Get Started by adding and configuring a Jellyfin server to Jellyhub
-        </p>
-      </div>
-      <AddServerDialog />
-    </div>
-  );
-}

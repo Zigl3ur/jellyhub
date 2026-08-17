@@ -30,7 +30,7 @@ export function CardContent({ className, children }: CardProps) {
   return (
     <div
       className={cn(
-        "flex h-full flex-col gap-4 rounded border-t border-muted bg-accent/45 p-4",
+        "flex h-full flex-col gap-4 rounded last:border-t first:border-b border-muted bg-accent/45 p-4",
         className,
       )}
     >

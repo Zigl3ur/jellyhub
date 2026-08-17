@@ -64,11 +64,7 @@ export default function ServerCard({ server }: ServerCardProps) {
       <CardContent className="gap-2.5">
         <div className="flex items-center justify-between">
           Url
-          <ExternalLink
-            variant="link"
-            href={server.serverUrl}
-            target="_blank"
-          >
+          <ExternalLink variant="link" href={server.serverUrl} target="_blank">
             {server.serverUrl.split("://")[1]}
           </ExternalLink>
         </div>
@@ -97,7 +93,7 @@ export default function ServerCard({ server }: ServerCardProps) {
 }
 
 interface ServerActionsProps {
-  server: JellyfinServer & { serverName?: string | null };
+  server: JellyfinServer;
 }
 
 function ServerActions({ server }: ServerActionsProps) {
@@ -162,5 +158,36 @@ function ServerActions({ server }: ServerActionsProps) {
         onSuccess={() => setDeleteOpen(false)}
       />
     </>
+  );
+}
+
+export function ServerCardSkeleton() {
+  return (
+    <Card className="w-full">
+      <CardHeader className="justify-between items-center">
+        <Skeleton className="w-24 h-6" />
+        <Skeleton className="size-6" />
+      </CardHeader>
+      <CardContent className="gap-2.5">
+        <div className="flex items-center justify-between">
+          Url
+          <Skeleton className="w-31.25 h-4" />
+        </div>
+
+        <span className="h-px w-full bg-muted" />
+
+        <div className="flex items-center justify-between">
+          Username
+          <Skeleton className="w-11 h-6" />
+        </div>
+
+        <span className="h-px w-full bg-muted" />
+
+        <div className="flex items-center justify-between">
+          Version
+          <Skeleton className="w-19 h-5" />
+        </div>
+      </CardContent>
+    </Card>
   );
 }

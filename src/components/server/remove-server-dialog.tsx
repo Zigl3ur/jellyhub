@@ -16,7 +16,7 @@ import type { JellyfinServer } from "@/types";
 import { deleteJellyfinServer } from "@/functions/server.functions";
 
 interface RemoveServerDialogProps extends BaseDialog.Root.Props {
-  server: JellyfinServer & { serverName?: string | null };
+  server: JellyfinServer;
   onSuccess?: () => void;
 }
 

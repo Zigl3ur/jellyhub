@@ -14,11 +14,15 @@ import { Route as MainAuthRouteRouteImport } from './app/_main/_auth/route'
 import { Route as MainHomeRouteRouteImport } from './app/_main/_home/route'
 import { Route as GetStartedIndexRouteImport } from './app/get-started/index'
 import { Route as MainHomeIndexRouteImport } from './app/_main/_home/index'
+import { Route as MainHomeSettingsRouteRouteImport } from './app/_main/_home/settings/route'
 import { Route as ApiAuthSplatRouteImport } from './app/api/auth/$'
 import { Route as MainAuthLoginIndexRouteImport } from './app/_main/_auth/login/index'
 import { Route as MainAuthRegisterIndexRouteImport } from './app/_main/_auth/register/index'
 import { Route as MainHomeTypeIndexRouteImport } from './app/_main/_home/$type/index'
 import { Route as MainHomeSettingsIndexRouteImport } from './app/_main/_home/settings/index'
+import { Route as MainHomeSettingsProfileIndexRouteImport } from './app/_main/_home/settings/profile/index'
+import { Route as MainHomeSettingsServersIndexRouteImport } from './app/_main/_home/settings/servers/index'
+import { Route as MainHomeSettingsUsersIndexRouteImport } from './app/_main/_home/settings/users/index'
 
 const MainRouteRoute = MainRouteRouteImport.update({
   id: '/_main',
@@ -42,6 +46,11 @@ const MainHomeIndexRoute = MainHomeIndexRouteImport.update({
   path: '/',
   getParentRoute: () => MainHomeRouteRoute,
 } as any)
+const MainHomeSettingsRouteRoute = MainHomeSettingsRouteRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => MainHomeRouteRoute,
+} as any)
 const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   id: '/api/auth/$',
   path: '/api/auth/$',
@@ -63,19 +72,41 @@ const MainHomeTypeIndexRoute = MainHomeTypeIndexRouteImport.update({
   getParentRoute: () => MainHomeRouteRoute,
 } as any)
 const MainHomeSettingsIndexRoute = MainHomeSettingsIndexRouteImport.update({
-  id: '/settings/',
-  path: '/settings/',
-  getParentRoute: () => MainHomeRouteRoute,
+  id: '/',
+  path: '/',
+  getParentRoute: () => MainHomeSettingsRouteRoute,
 } as any)
+const MainHomeSettingsProfileIndexRoute =
+  MainHomeSettingsProfileIndexRouteImport.update({
+    id: '/profile/',
+    path: '/profile/',
+    getParentRoute: () => MainHomeSettingsRouteRoute,
+  } as any)
+const MainHomeSettingsServersIndexRoute =
+  MainHomeSettingsServersIndexRouteImport.update({
+    id: '/servers/',
+    path: '/servers/',
+    getParentRoute: () => MainHomeSettingsRouteRoute,
+  } as any)
+const MainHomeSettingsUsersIndexRoute =
+  MainHomeSettingsUsersIndexRouteImport.update({
+    id: '/users/',
+    path: '/users/',
+    getParentRoute: () => MainHomeSettingsRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof MainHomeIndexRoute
   '/get-started/': typeof GetStartedIndexRoute
+  '/settings': typeof MainHomeSettingsRouteRouteWithChildren
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/login/': typeof MainAuthLoginIndexRoute
   '/register/': typeof MainAuthRegisterIndexRoute
   '/$type/': typeof MainHomeTypeIndexRoute
   '/settings/': typeof MainHomeSettingsIndexRoute
+  '/settings/profile/': typeof MainHomeSettingsProfileIndexRoute
+  '/settings/servers/': typeof MainHomeSettingsServersIndexRoute
+  '/settings/users/': typeof MainHomeSettingsUsersIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof MainHomeIndexRoute
@@ -85,6 +116,9 @@ export interface FileRoutesByTo {
   '/register': typeof MainAuthRegisterIndexRoute
   '/$type': typeof MainHomeTypeIndexRoute
   '/settings': typeof MainHomeSettingsIndexRoute
+  '/settings/profile': typeof MainHomeSettingsProfileIndexRoute
+  '/settings/servers': typeof MainHomeSettingsServersIndexRoute
+  '/settings/users': typeof MainHomeSettingsUsersIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -92,23 +126,31 @@ export interface FileRoutesById {
   '/_main/_auth': typeof MainAuthRouteRouteWithChildren
   '/_main/_home': typeof MainHomeRouteRouteWithChildren
   '/get-started/': typeof GetStartedIndexRoute
+  '/_main/_home/settings': typeof MainHomeSettingsRouteRouteWithChildren
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/_main/_home/': typeof MainHomeIndexRoute
   '/_main/_auth/login/': typeof MainAuthLoginIndexRoute
   '/_main/_auth/register/': typeof MainAuthRegisterIndexRoute
   '/_main/_home/$type/': typeof MainHomeTypeIndexRoute
   '/_main/_home/settings/': typeof MainHomeSettingsIndexRoute
+  '/_main/_home/settings/profile/': typeof MainHomeSettingsProfileIndexRoute
+  '/_main/_home/settings/servers/': typeof MainHomeSettingsServersIndexRoute
+  '/_main/_home/settings/users/': typeof MainHomeSettingsUsersIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
     | '/get-started/'
+    | '/settings'
     | '/api/auth/$'
     | '/login/'
     | '/register/'
     | '/$type/'
     | '/settings/'
+    | '/settings/profile/'
+    | '/settings/servers/'
+    | '/settings/users/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -118,18 +160,25 @@ export interface FileRouteTypes {
     | '/register'
     | '/$type'
     | '/settings'
+    | '/settings/profile'
+    | '/settings/servers'
+    | '/settings/users'
   id:
     | '__root__'
     | '/_main'
     | '/_main/_auth'
     | '/_main/_home'
     | '/get-started/'
+    | '/_main/_home/settings'
     | '/api/auth/$'
     | '/_main/_home/'
     | '/_main/_auth/login/'
     | '/_main/_auth/register/'
     | '/_main/_home/$type/'
     | '/_main/_home/settings/'
+    | '/_main/_home/settings/profile/'
+    | '/_main/_home/settings/servers/'
+    | '/_main/_home/settings/users/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -175,6 +224,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MainHomeIndexRouteImport
       parentRoute: typeof MainHomeRouteRoute
     }
+    '/_main/_home/settings': {
+      id: '/_main/_home/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof MainHomeSettingsRouteRouteImport
+      parentRoute: typeof MainHomeRouteRoute
+    }
     '/api/auth/$': {
       id: '/api/auth/$'
       path: '/api/auth/$'
@@ -205,10 +261,31 @@ declare module '@tanstack/react-router' {
     }
     '/_main/_home/settings/': {
       id: '/_main/_home/settings/'
-      path: '/settings'
+      path: '/'
       fullPath: '/settings/'
       preLoaderRoute: typeof MainHomeSettingsIndexRouteImport
-      parentRoute: typeof MainHomeRouteRoute
+      parentRoute: typeof MainHomeSettingsRouteRoute
+    }
+    '/_main/_home/settings/profile/': {
+      id: '/_main/_home/settings/profile/'
+      path: '/profile'
+      fullPath: '/settings/profile/'
+      preLoaderRoute: typeof MainHomeSettingsProfileIndexRouteImport
+      parentRoute: typeof MainHomeSettingsRouteRoute
+    }
+    '/_main/_home/settings/servers/': {
+      id: '/_main/_home/settings/servers/'
+      path: '/servers'
+      fullPath: '/settings/servers/'
+      preLoaderRoute: typeof MainHomeSettingsServersIndexRouteImport
+      parentRoute: typeof MainHomeSettingsRouteRoute
+    }
+    '/_main/_home/settings/users/': {
+      id: '/_main/_home/settings/users/'
+      path: '/users'
+      fullPath: '/settings/users/'
+      preLoaderRoute: typeof MainHomeSettingsUsersIndexRouteImport
+      parentRoute: typeof MainHomeSettingsRouteRoute
     }
   }
 }
@@ -227,16 +304,35 @@ const MainAuthRouteRouteWithChildren = MainAuthRouteRoute._addFileChildren(
   MainAuthRouteRouteChildren,
 )
 
+interface MainHomeSettingsRouteRouteChildren {
+  MainHomeSettingsIndexRoute: typeof MainHomeSettingsIndexRoute
+  MainHomeSettingsProfileIndexRoute: typeof MainHomeSettingsProfileIndexRoute
+  MainHomeSettingsServersIndexRoute: typeof MainHomeSettingsServersIndexRoute
+  MainHomeSettingsUsersIndexRoute: typeof MainHomeSettingsUsersIndexRoute
+}
+
+const MainHomeSettingsRouteRouteChildren: MainHomeSettingsRouteRouteChildren = {
+  MainHomeSettingsIndexRoute: MainHomeSettingsIndexRoute,
+  MainHomeSettingsProfileIndexRoute: MainHomeSettingsProfileIndexRoute,
+  MainHomeSettingsServersIndexRoute: MainHomeSettingsServersIndexRoute,
+  MainHomeSettingsUsersIndexRoute: MainHomeSettingsUsersIndexRoute,
+}
+
+const MainHomeSettingsRouteRouteWithChildren =
+  MainHomeSettingsRouteRoute._addFileChildren(
+    MainHomeSettingsRouteRouteChildren,
+  )
+
 interface MainHomeRouteRouteChildren {
+  MainHomeSettingsRouteRoute: typeof MainHomeSettingsRouteRouteWithChildren
   MainHomeIndexRoute: typeof MainHomeIndexRoute
   MainHomeTypeIndexRoute: typeof MainHomeTypeIndexRoute
-  MainHomeSettingsIndexRoute: typeof MainHomeSettingsIndexRoute
 }
 
 const MainHomeRouteRouteChildren: MainHomeRouteRouteChildren = {
+  MainHomeSettingsRouteRoute: MainHomeSettingsRouteRouteWithChildren,
   MainHomeIndexRoute: MainHomeIndexRoute,
   MainHomeTypeIndexRoute: MainHomeTypeIndexRoute,
-  MainHomeSettingsIndexRoute: MainHomeSettingsIndexRoute,
 }
 
 const MainHomeRouteRouteWithChildren = MainHomeRouteRoute._addFileChildren(
