@@ -9,8 +9,8 @@ import {
 import { TanStackDevtools } from "@tanstack/react-devtools";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import { ReactQueryDevtoolsPanel } from "@tanstack/react-query-devtools";
-import appCss from "./globals.css?url";
 import type { RouterContext } from "@/router";
+import "./globals.css";
 
 export const Route = createRootRouteWithContext<RouterContext>()({
   head: () => ({
@@ -21,12 +21,6 @@ export const Route = createRootRouteWithContext<RouterContext>()({
         content: "width=device-width, initial-scale=1",
       },
       { title: "Jellyhub" },
-    ],
-    links: [
-      {
-        rel: "stylesheet",
-        href: appCss,
-      },
     ],
     scripts: [
       process.env.NODE_ENV === "development"

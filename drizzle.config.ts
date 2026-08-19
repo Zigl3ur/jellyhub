@@ -5,6 +5,9 @@ export default defineConfig({
   schema: "./src/lib/db/schema.ts",
   dialect: "sqlite",
   dbCredentials: {
-    url: process.env.DB_FILE as string,
+    url:
+      process.env.NODE_ENV === "production"
+        ? "/app/data/jellyhub.db"
+        : "jellyhub.db",
   },
 });

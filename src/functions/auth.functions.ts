@@ -1,6 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { getRequestHeaders } from "@tanstack/react-start/server";
-import { ctxMiddleware } from "./middlewares";
+import { authMiddleware, ctxMiddleware } from "./middlewares";
 import { auth } from "@/lib/auth";
 
 export const isSignupAllowed = createServerFn({ method: "GET" }).handler(
@@ -55,8 +55,12 @@ export const hasAdminUser = createServerFn({ method: "GET" })
   });
 
 export const adminUsersList = createServerFn({ method: "GET" })
-  .middleware([ctxMiddleware])
+  .middleware([authMiddleware])
   .handler(async ({ context: ctx }) => {
+    if (ctx.session.user.role !== "admin") {
+      throw new Error("Unauthorized");
+    }
+
     return await ctx.auth.api.listUsers({
       headers: getRequestHeaders(),
       query: {},

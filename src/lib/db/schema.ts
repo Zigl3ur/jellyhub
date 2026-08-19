@@ -5,6 +5,7 @@ import {
   sqliteTable,
   text,
   unique,
+  uniqueIndex,
 } from "drizzle-orm/sqlite-core";
 import { encryptedText } from "./types";
 
@@ -58,6 +59,7 @@ export const account = sqliteTable(
     id: text("id")
       .primaryKey()
       .$defaultFn(() => Bun.randomUUIDv7()),
+    issuer: text("issuer").notNull(),
     accountId: text("account_id").notNull(),
     providerId: text("provider_id").notNull(),
     userId: text("user_id")
@@ -79,7 +81,13 @@ export const account = sqliteTable(
       .$onUpdate(() => new Date())
       .notNull(),
   },
-  (table) => [index("account_userId_idx").on(table.userId)],
+  (table) => [
+    uniqueIndex("account_issuer_accountId_uidx").on(
+      table.issuer,
+      table.accountId,
+    ),
+    index("account_userId_idx").on(table.userId),
+  ],
 );
 
 export const verification = sqliteTable(
@@ -132,21 +140,22 @@ export const relations = defineRelations(
   { user, jellydata, session, account },
   (r) => ({
     user: {
-      sessions: r.many.session(),
-      accounts: r.many.account(),
-      jellydata: r.many.jellydata(),
+      sessions: r.many.session({
+        from: r.user.id,
+        to: r.session.userId,
+      }),
+      accounts: r.many.account({
+        from: r.user.id,
+        to: r.account.userId,
+      }),
+      jellydata: r.many.jellydata({
+        from: r.user.id,
+        to: r.jellydata.userId,
+      }),
     },
-
     session: {
       user: r.one.user({
         from: r.session.userId,
-        to: r.user.id,
-      }),
-    },
-
-    account: {
-      user: r.one.user({
-        from: r.account.userId,
         to: r.user.id,
       }),
     },

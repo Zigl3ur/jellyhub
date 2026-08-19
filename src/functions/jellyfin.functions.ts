@@ -83,6 +83,7 @@ export const invalidateServerTokenDB = createServerFn({ method: "GET" })
   });
 
 export const invalidateServerToken = createServerFn({ method: "GET" })
+  .middleware([authMiddleware])
   .validator(
     apiJellyfinSchema.extend({
       token: z.string({ error: "Provide a server token" }),

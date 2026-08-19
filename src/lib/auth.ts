@@ -1,13 +1,14 @@
 import { APIError, betterAuth } from "better-auth";
 import { admin, username } from "better-auth/plugins";
 import { tanstackStartCookies } from "better-auth/tanstack-start";
-import { drizzleAdapter } from "@better-auth/drizzle-adapter";
+import { drizzleAdapter } from "@better-auth/drizzle-adapter/relations-v2";
 import db from "./db";
 import * as schema from "./db/schema";
 import { createAuthMiddleware } from "better-auth/api";
 
 export const auth = betterAuth({
   appName: "Jellyhub",
+  baseUrl: process.env.BETTER_AUTH_URL || "http://localhost:3000",
   defaultCookieAttributes: {
     httpOnly: true,
     secure: true,

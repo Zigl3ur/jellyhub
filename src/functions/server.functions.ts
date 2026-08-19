@@ -72,7 +72,8 @@ export const endSetup = createServerFn({ method: "POST" })
           })),
         );
       }
-    } catch {
+    } catch (err) {
+      console.error("[SETUP FAILED]", err);
       await Promise.all(
         usersIds.map(async (id) => {
           await context.auth.api.removeUser({

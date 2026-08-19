@@ -7,7 +7,9 @@
     "build": "bun --bun vite build",
     "preview": "bun --bun vite preview",
     "start": "bun --bun .output/server/index.mjs",
-    "lint": "eslint"
+    "lint": "eslint",
+    "db:generate": "bun --bun drizzle-kit generate",
+    "db:migrate": "bun --bun drizzle-kit migrate"
   },
   "dependencies": {
     "@base-ui/react": "^1.7.0",

@@ -84,7 +84,7 @@ function Content() {
         {servers.length === 0 ? (
           <NoServers itemName={routeData.name} />
         ) : items.length > 0 ? (
-          items.map((i) => <ItemCard key={i.Id} item={i} className="w-full" />)
+          items.map((i) => <ItemCard key={i.Id} item={i} />)
         ) : isFetching ? (
           <ItemsSkeleton />
         ) : (
