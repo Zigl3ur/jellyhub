@@ -8,7 +8,8 @@ import { createAuthMiddleware } from "better-auth/api";
 
 export const auth = betterAuth({
   appName: "Jellyhub",
-  baseUrl: process.env.BETTER_AUTH_URL || "http://localhost:3000",
+  secret: process.env.AUTH_SECRET as string,
+  baseUrl: process.env.BASE_URL || "http://localhost:3000",
   defaultCookieAttributes: {
     httpOnly: true,
     secure: true,

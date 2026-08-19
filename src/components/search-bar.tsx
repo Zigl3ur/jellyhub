@@ -12,6 +12,7 @@ interface SearchBarProps {
   placeholder: string;
   items: ServersItems;
   onSearch: (items: ServersItems) => void;
+  disabled?: boolean;
 }
 
 export default function SearchBar({
@@ -19,6 +20,7 @@ export default function SearchBar({
   placeholder,
   items,
   onSearch,
+  disabled,
 }: SearchBarProps) {
   const [search, setSearch] = useState("");
   const debouncedSearch = useDebounce(search, 300);
@@ -48,6 +50,7 @@ export default function SearchBar({
       className={className}
       placeholder={placeholder}
       value={search}
+      disabled={disabled}
       onChange={(e) => setSearch(e.target.value)}
     >
       {search !== "" && (

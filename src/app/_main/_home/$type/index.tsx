@@ -77,6 +77,7 @@ function Content() {
           placeholder={`Search for ${routeData.name}`}
           items={data}
           onSearch={setFiltered}
+          disabled={data.length === 0}
           className="w-full xs:w-70"
         />
       </div>

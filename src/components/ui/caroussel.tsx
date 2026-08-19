@@ -22,13 +22,13 @@ export function Carousel({ children }: PropsWithChildren) {
 
       <button
         onClick={() => scroll("left")}
-        className="absolute left-1 top-1/2 -translate-y-1/2 size-7  opacity-0 group-hover/container:opacity-100 border border-muted transition-opacity bg-accent-foreground shadow-md rounded flex items-center justify-center duration-200"
+        className="absolute left-1 top-1/2 -translate-y-1/2 size-7 hover:cursor-pointer opacity-0 group-hover/container:opacity-100 border border-muted transition-opacity bg-accent-foreground shadow-md rounded flex items-center justify-center duration-200"
       >
         <ChevronLeft className="size-4" />
       </button>
       <button
         onClick={() => scroll("right")}
-        className="absolute right-1 top-1/2 size-7 -translate-y-1/2 opacity-0 group-hover/container:opacity-100 border border-muted transition-opacity bg-accent-foreground shadow-md rounded flex items-center justify-center duration-200"
+        className="absolute right-1 top-1/2 -translate-y-1/2 size-7 hover:cursor-pointer opacity-0 group-hover/container:opacity-100 border border-muted transition-opacity bg-accent-foreground shadow-md rounded flex items-center justify-center duration-200"
       >
         <ChevronRight className="size-4" />
       </button>

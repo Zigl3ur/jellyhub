@@ -1,16 +1,25 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import ItemCard, { ItemCardLoading } from "@/components/item/item-card";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { itemsQueryOptions } from "@/queries/servers";
-import { Suspense, type ComponentProps, type PropsWithoutRef } from "react";
-import { ChevronRight } from "lucide-react";
+import { Suspense, type ComponentProps } from "react";
 import { Carousel } from "@/components/ui/caroussel";
+import { SearchX, ServerOff } from "lucide-react";
+import type { ItemTypes } from "@/types";
+import { cn } from "@sglara/cn";
+import { getJellyData } from "@/functions/server.functions";
+import { Link } from "@/components/ui/link";
+import Button from "@/components/ui/button";
 
 export const Route = createFileRoute("/_main/_home/")({
-  loader: ({ context: { queryClient } }) => {
+  loader: async ({ context: { queryClient } }) => {
     queryClient.prefetchQuery(itemsQueryOptions({ types: ["Movie"] }));
     queryClient.prefetchQuery(itemsQueryOptions({ types: ["Series"] }));
     queryClient.prefetchQuery(itemsQueryOptions({ types: ["MusicAlbum"] }));
+
+    const { servers } = await getJellyData({ data: { updateStatus: false } });
+
+    return { servers };
   },
   component: RouteComponent,
   pendingComponent: LoadingComponent,
@@ -18,7 +27,9 @@ export const Route = createFileRoute("/_main/_home/")({
 });
 
 function RouteComponent() {
-  return (
+  const { servers } = Route.useLoaderData();
+
+  return servers.length > 0 ? (
     <div className="flex flex-col gap-8">
       <div className="space-y-4">
         <h3 className="font-serif text-5xl">Movies</h3>
@@ -27,7 +38,7 @@ function RouteComponent() {
         </Suspense>
       </div>
       <div className="space-y-4">
-        <h3 className="font-serif text-5xl">Series</h3>
+        <h3 className="font-serif text-5xl">TV Shows</h3>
         <Suspense fallback={<CarouselSkeleton type="default" />}>
           <Section queryOpt={itemsQueryOptions({ types: ["Series"] })} />
         </Suspense>
@@ -39,6 +50,8 @@ function RouteComponent() {
         </Suspense>
       </div>
     </div>
+  ) : (
+    <EmptyItems />
   );
 }
 
@@ -50,12 +63,14 @@ function Section({ queryOpt }: SectionProps) {
   const { data } = useSuspenseQuery(queryOpt);
   const shuffled = data.sort(() => Math.random() - 0.5);
 
-  return (
+  return data.length > 0 ? (
     <Carousel>
       {shuffled.map((s) => (
         <ItemCard key={s.Id} item={s} />
       ))}
     </Carousel>
+  ) : (
+    <NoItems type={queryOpt.queryKey[1][0] as ItemTypes} />
   );
 }
 
@@ -81,13 +96,65 @@ function LoadingComponent() {
         <CarouselSkeleton type="default" />
       </div>
       <div className="space-y-4">
-        <h3 className="font-serif text-5xl">Series</h3>
+        <h3 className="font-serif text-5xl">TV Shows</h3>
         <CarouselSkeleton type="default" />
       </div>
       <div className="space-y-4">
         <h3 className="font-serif text-5xl">Albums</h3>
         <CarouselSkeleton type="small" />
       </div>
+    </div>
+  );
+}
+
+interface NoItemsProps {
+  type: ItemTypes;
+}
+
+function NoItems({ type }: NoItemsProps) {
+  const typeDisplay =
+    type === "Movie" ? "Movies" : type === "Series" ? "TV Shows" : "Albums";
+
+  return (
+    <div
+      className={cn(
+        "bg-accent/45 p-1 flex-col h-81 gap-4 flex items-center justify-center rounded border border-muted w-full",
+        type === "MusicAlbum" ? "h-60" : "h-81",
+      )}
+    >
+      <div className="flex flex-col items-center gap-0.5">
+        <div className="size-8 mb-2 flex items-center justify-center p-1.25 rounded bg-accent-foreground border border-muted">
+          <SearchX />
+        </div>
+        <h5 className="text-lg">No {typeDisplay} found</h5>
+        <p className="opacity-50 text-center">
+          No Items found through configured servers.
+        </p>
+      </div>
+    </div>
+  );
+}
+
+function EmptyItems() {
+  return (
+    <div className="bg-accent/45 p-1 flex-col h-85 gap-4 flex items-center justify-center rounded border border-muted w-full">
+      <div className="flex flex-col items-center gap-0.5">
+        <div className="size-8 mb-2 flex items-center justify-center p-1.25 rounded bg-accent-foreground border border-muted">
+          <ServerOff />
+        </div>
+        <h5 className="text-lg">No Servers configured</h5>
+        <p className="opacity-50 text-center">
+          Configure Jellyfin Servers to see available items
+        </p>
+      </div>
+      <Button
+        nativeButton={false}
+        render={
+          <Link to="/settings" variant="unstyled">
+            Configure a Server
+          </Link>
+        }
+      />
     </div>
   );
 }

@@ -15,6 +15,7 @@ import {
 import Button from "../ui/button";
 import { EllipsisVertical, Pencil, Trash2 } from "lucide-react";
 import DeleteUserDialog from "./delete-user-dialog";
+import { Avatar, AvatarFallback, AvatarImg } from "../ui/avatar";
 
 interface UserCardProps {
   actualUserId: string;
@@ -25,7 +26,12 @@ export function UserCard({ actualUserId, user }: UserCardProps) {
   return (
     <Card className="w-full">
       <CardContent className="p-0">
-        <Image src={user.image as string} className="aspect-square rounded-t" />
+        <Avatar className="size-full aspect-square border-none">
+          <AvatarImg src={user.image as string} />
+          <AvatarFallback delay={500} className="text-4xl">
+            {user?.name?.charAt(0).toUpperCase()}
+          </AvatarFallback>
+        </Avatar>
       </CardContent>
       <CardHeader className="justify-between items-center">
         {user.name}
