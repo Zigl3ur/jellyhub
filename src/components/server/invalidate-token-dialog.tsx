@@ -34,7 +34,10 @@ export default function InvalidateTokenDialog({
       await queryClient.invalidateQueries({
         queryKey: [server.serverUrl, "state"],
       });
-      await queryClient.invalidateQueries({ queryKey: ["items"] });
+      await queryClient.invalidateQueries({
+        queryKey: ["items"],
+        refetchType: "all",
+      });
       onSuccess?.();
     },
   });
@@ -58,12 +61,12 @@ export default function InvalidateTokenDialog({
             message={error.message}
           />
         )}
-        <p>
+        <div>
           This will revoke the token for the server{" "}
           <Badge>{server.serverName}</Badge> with url{" "}
           <Badge>{server.serverUrl}</Badge>. You will need to re-authenticate to
           be able to fetch medias from it.
-        </p>
+        </div>
         <DialogFooter className="flex justify-end items-center gap-2">
           <DialogClose render={<Button variant="outline">Cancel</Button>} />
           <Button

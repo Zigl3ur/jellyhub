@@ -37,11 +37,13 @@ function RouteComponent() {
   return (
     <div className="space-y-8">
       <div className="flex gap-2 p-1 bg-accent-foreground rounded w-fit border border-muted">
-        {destinations.map((d) => (
-          <Link key={d.label} to={d.to} variant="outline" className="h-full">
-            {d.label}
-          </Link>
-        ))}
+        {destinations
+          .filter((d) => d.enabled ?? true)
+          .map((d) => (
+            <Link key={d.label} to={d.to} variant="outline" className="h-full">
+              {d.label}
+            </Link>
+          ))}
       </div>
       <Outlet />
     </div>

@@ -1,6 +1,5 @@
 import { authClient } from "@/lib/auth-client";
-import { useRef, useState, type ChangeEvent } from "react";
-import { Avatar, AvatarFallback, AvatarImg } from "../ui/avatar";
+import { useState } from "react";
 import Button from "../ui/button";
 import { revalidateLogic, useForm } from "@tanstack/react-form";
 import {
@@ -11,12 +10,10 @@ import { FieldError, FieldLabel, FieldRoot } from "../ui/field";
 import { Input } from "../ui/input";
 import LoaderIcon from "../ui/loader-icon";
 import { Alert } from "../ui/alert";
-import Skeleton from "../ui/skeleton";
+import AvatarEditor from "../users/avatar-editor";
 
 export default function ProfileEditor() {
-  const fileInput = useRef<HTMLInputElement>(null);
-
-  const { isPending, data: session } = authClient.useSession();
+  const { data: session } = authClient.useSession();
   const user = session?.user;
 
   const defaultValues: editProfileSchemaType = {
@@ -45,41 +42,6 @@ export default function ProfileEditor() {
       });
     },
   });
-
-  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files.length > 0) {
-      const image = e.target.files[0];
-
-      if (image.size > 10_000_000) {
-        form.setFieldMeta("image", (prev) => ({
-          ...prev,
-          errorMap: {
-            ...prev.errorMap,
-            onChange: new Error("File exceed size limit of 10MB"),
-          },
-        }));
-        return;
-      }
-
-      form.setFieldMeta("image", (prev) => ({
-        ...prev,
-        errorMap: {
-          ...prev.errorMap,
-          onChange: undefined,
-        },
-      }));
-
-      const reader = new FileReader();
-
-      reader.readAsDataURL(image);
-      reader.addEventListener("load", () => {
-        const result = reader.result;
-        if (!result) return;
-
-        form.setFieldValue("image", result.toString());
-      });
-    }
-  };
 
   return (
     <div className="p-4 @container/content border-input/40 border-b-2 flex sm:flex-row flex-col gap-8 sm:gap-0 sm:justify-between">
@@ -115,32 +77,23 @@ export default function ProfileEditor() {
                 invalid={invalid}
                 className="items-center"
               >
-                <input
-                  type="file"
-                  accept="image/jpeg, image/png, image/jpg, image/webp, image/gif"
-                  hidden
-                  multiple={false}
-                  ref={fileInput}
+                <AvatarEditor
+                  image={field.state.value as string}
+                  username={user?.username as string}
+                  onEdit={(value) => form.setFieldValue("image", value)}
+                  onFailed={(err) =>
+                    form.setFieldMeta("image", (prev) => ({
+                      ...prev,
+                      errorMap: {
+                        ...prev.errorMap,
+                        onChange: err,
+                      },
+                    }))
+                  }
                   name={field.name}
                   onBlur={field.handleBlur}
-                  onChange={(e) => {
-                    field.handleChange(e.target.value);
-                    handleFileChange(e);
-                  }}
+                  onChange={(e) => field.handleChange(e.target.value)}
                 />
-                {isPending ? (
-                  <Skeleton className="size-24" />
-                ) : (
-                  <Avatar
-                    onClick={() => fileInput.current?.click()}
-                    className="size-24 hover:cursor-pointer"
-                  >
-                    <AvatarImg src={form.getFieldValue("image") as string} />
-                    <AvatarFallback delay={500} className="text-2xl">
-                      {user?.username?.charAt(0).toUpperCase()}
-                    </AvatarFallback>
-                  </Avatar>
-                )}
                 <FieldError match={invalid}>{error?.message}</FieldError>
               </FieldRoot>
             );

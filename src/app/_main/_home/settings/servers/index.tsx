@@ -10,7 +10,7 @@ import { Suspense } from "react";
 
 const jellyDataQuery = queryOptions({
   queryFn: () => getJellyData({ data: { updateStatus: true } }),
-  queryKey: ["jellydata"],
+  queryKey: ["jellydata", "updated"],
 });
 
 export const Route = createFileRoute("/_main/_home/settings/servers/")({

@@ -45,7 +45,10 @@ export default function RefreshTokenDialog({
       await queryClient.invalidateQueries({
         queryKey: [server.serverUrl, "state"],
       });
-      await queryClient.invalidateQueries({ queryKey: ["items"] });
+      await queryClient.invalidateQueries({
+        queryKey: ["items"],
+        refetchType: "all",
+      });
       onSuccess?.();
       form.reset();
     },
@@ -115,6 +118,7 @@ export default function RefreshTokenDialog({
                   <FieldLabel>Password</FieldLabel>
                   <Input
                     name={field.name}
+                    disabled={isPending}
                     type={showPassword ? "text" : "password"}
                     placeholder="Server password"
                     value={field.state.value}

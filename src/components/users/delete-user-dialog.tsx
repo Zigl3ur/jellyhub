@@ -12,12 +12,11 @@ import Badge from "../ui/badge";
 import LoaderIcon from "../ui/loader-icon";
 import { Alert } from "../ui/alert";
 import type { Dialog as BaseDialog } from "@base-ui/react";
-import type { UserWithRole } from "better-auth/plugins";
 import { authClient } from "@/lib/auth-client";
 import { useState } from "react";
 
 interface RemoveServerDialogProps extends BaseDialog.Root.Props {
-  user: UserWithRole;
+  user: typeof authClient.$Infer.Session.user;
   onSuccess?: () => void;
 }
 

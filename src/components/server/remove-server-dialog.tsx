@@ -32,7 +32,10 @@ export default function RemoveServerDialog({
     mutationFn: (data: { url: string }) => deleteJellyfinServer({ data }),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ["jellydata"] });
-      await queryClient.invalidateQueries({ queryKey: ["items"] });
+      await queryClient.invalidateQueries({
+        queryKey: ["items"],
+        refetchType: "all",
+      });
       onSuccess?.();
     },
   });

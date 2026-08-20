@@ -2,7 +2,7 @@ import AddUserDialog from "@/components/users/add-user-dialog";
 import { UserCard, UserCardSkeleton } from "@/components/users/users-card";
 import { adminUsersList } from "@/functions/auth.functions";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 import { Suspense } from "react";
 
 const usersListQuery = queryOptions({
@@ -11,6 +11,11 @@ const usersListQuery = queryOptions({
 });
 
 export const Route = createFileRoute("/_main/_home/settings/users/")({
+  beforeLoad: ({ context }) => {
+    if (context.session.user.role !== "admin") {
+      throw redirect({ to: "/settings/profile" });
+    }
+  },
   loader: ({ context }) => {
     context.queryClient.prefetchQuery(usersListQuery);
   },

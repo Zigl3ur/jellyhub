@@ -36,7 +36,7 @@ const destinations = [
     params: { type: "movies" },
   },
   {
-    label: "Series",
+    label: "TV Shows",
     icon: <Tv2 className="size-4" strokeWidth={1.5} />,
     to: "/$type",
     params: { type: "tv-shows" },

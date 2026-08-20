@@ -1,7 +1,5 @@
-import type { UserWithRole } from "better-auth/plugins";
 import { Card, CardContent, CardHeader } from "../ui/card";
 import Skeleton from "../ui/skeleton";
-import Image from "../ui/image";
 import { useState } from "react";
 import {
   Menu,
@@ -15,11 +13,13 @@ import {
 import Button from "../ui/button";
 import { EllipsisVertical, Pencil, Trash2 } from "lucide-react";
 import DeleteUserDialog from "./delete-user-dialog";
+import UserEditDialog from "./user-edit-dialog";
 import { Avatar, AvatarFallback, AvatarImg } from "../ui/avatar";
+import { authClient } from "@/lib/auth-client";
 
 interface UserCardProps {
   actualUserId: string;
-  user: UserWithRole;
+  user: typeof authClient.$Infer.Session.user;
 }
 
 export function UserCard({ actualUserId, user }: UserCardProps) {
@@ -29,12 +29,12 @@ export function UserCard({ actualUserId, user }: UserCardProps) {
         <Avatar className="size-full aspect-square border-none">
           <AvatarImg src={user.image as string} />
           <AvatarFallback delay={500} className="text-4xl">
-            {user?.name?.charAt(0).toUpperCase()}
+            {user?.username?.charAt(0).toUpperCase()}
           </AvatarFallback>
         </Avatar>
       </CardContent>
       <CardHeader className="justify-between items-center">
-        {user.name}
+        {user.username}
         {actualUserId !== user.id && <UserActions user={user} />}
       </CardHeader>
     </Card>
@@ -42,7 +42,7 @@ export function UserCard({ actualUserId, user }: UserCardProps) {
 }
 
 interface UserActionsProps {
-  user: UserWithRole;
+  user: typeof authClient.$Infer.Session.user;
 }
 
 function UserActions({ user }: UserActionsProps) {
@@ -81,6 +81,12 @@ function UserActions({ user }: UserActionsProps) {
         </MenuContent>
       </Menu>
 
+      <UserEditDialog
+        open={editOpen}
+        onOpenChange={setEditOpen}
+        user={user}
+        onSuccess={() => setEditOpen(false)}
+      />
       <DeleteUserDialog
         open={deleteOpen}
         onOpenChange={setDeleteOpen}

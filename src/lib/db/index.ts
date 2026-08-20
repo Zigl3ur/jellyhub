@@ -1,10 +1,6 @@
 import { drizzle } from "drizzle-orm/bun-sqlite";
 import { relations } from "./schema";
-
-const dbFile =
-  process.env.NODE_ENV === "production"
-    ? "/app/data/jellyhub.db"
-    : "jellyhub.db";
+import { dbFile } from "../../../drizzle.config";
 
 const db = drizzle(dbFile, {
   relations,
