@@ -107,6 +107,32 @@ export const verification = sqliteTable(
   (table) => [index("verification_identifier_idx").on(table.identifier)],
 );
 
+export const ssoProvider = sqliteTable(
+  "sso_provider",
+  {
+    id: text("id")
+      .primaryKey()
+      .$defaultFn(() => Bun.randomUUIDv7()),
+    issuer: text("issuer").notNull(),
+    oidcConfig: text("oidc_config"),
+    samlConfig: text("saml_config"),
+    userId: text("user_id").references(() => user.id, { onDelete: "cascade" }),
+    providerId: text("provider_id").notNull().unique(),
+    organizationId: text("organization_id"),
+    domain: text("domain").notNull(),
+    domainVerified: integer("domain_verified", { mode: "boolean" })
+      .default(false)
+      .notNull(),
+    createdAt: integer("created_at", { mode: "timestamp_ms" }).$default(
+      () => new Date(),
+    ),
+    updatedAt: integer("updated_at", { mode: "timestamp_ms" })
+      .$onUpdate(() => new Date())
+      .notNull(),
+  },
+  (table) => [index("sso_provider_userId_idx").on(table.userId)],
+);
+
 export const jellydata = sqliteTable(
   "jellydata",
   {
@@ -137,7 +163,7 @@ export const jellydata = sqliteTable(
 );
 
 export const relations = defineRelations(
-  { user, jellydata, session, account },
+  { user, jellydata, session, account, ssoProvider },
   (r) => ({
     user: {
       sessions: r.many.session({
@@ -151,6 +177,10 @@ export const relations = defineRelations(
       jellydata: r.many.jellydata({
         from: r.user.id,
         to: r.jellydata.userId,
+      }),
+      ssoProviders: r.many.ssoProvider({
+        from: r.user.id,
+        to: r.ssoProvider.userId,
       }),
     },
     session: {

@@ -22,6 +22,7 @@ import { Route as MainHomeTypeIndexRouteImport } from './app/_main/_home/$type/i
 import { Route as MainHomeSettingsIndexRouteImport } from './app/_main/_home/settings/index'
 import { Route as MainHomeSettingsProfileIndexRouteImport } from './app/_main/_home/settings/profile/index'
 import { Route as MainHomeSettingsServersIndexRouteImport } from './app/_main/_home/settings/servers/index'
+import { Route as MainHomeSettingsSsoIndexRouteImport } from './app/_main/_home/settings/sso/index'
 import { Route as MainHomeSettingsUsersIndexRouteImport } from './app/_main/_home/settings/users/index'
 
 const MainRouteRoute = MainRouteRouteImport.update({
@@ -88,6 +89,12 @@ const MainHomeSettingsServersIndexRoute =
     path: '/servers/',
     getParentRoute: () => MainHomeSettingsRouteRoute,
   } as any)
+const MainHomeSettingsSsoIndexRoute =
+  MainHomeSettingsSsoIndexRouteImport.update({
+    id: '/sso/',
+    path: '/sso/',
+    getParentRoute: () => MainHomeSettingsRouteRoute,
+  } as any)
 const MainHomeSettingsUsersIndexRoute =
   MainHomeSettingsUsersIndexRouteImport.update({
     id: '/users/',
@@ -106,6 +113,7 @@ export interface FileRoutesByFullPath {
   '/settings/': typeof MainHomeSettingsIndexRoute
   '/settings/profile/': typeof MainHomeSettingsProfileIndexRoute
   '/settings/servers/': typeof MainHomeSettingsServersIndexRoute
+  '/settings/sso/': typeof MainHomeSettingsSsoIndexRoute
   '/settings/users/': typeof MainHomeSettingsUsersIndexRoute
 }
 export interface FileRoutesByTo {
@@ -118,6 +126,7 @@ export interface FileRoutesByTo {
   '/settings': typeof MainHomeSettingsIndexRoute
   '/settings/profile': typeof MainHomeSettingsProfileIndexRoute
   '/settings/servers': typeof MainHomeSettingsServersIndexRoute
+  '/settings/sso': typeof MainHomeSettingsSsoIndexRoute
   '/settings/users': typeof MainHomeSettingsUsersIndexRoute
 }
 export interface FileRoutesById {
@@ -135,6 +144,7 @@ export interface FileRoutesById {
   '/_main/_home/settings/': typeof MainHomeSettingsIndexRoute
   '/_main/_home/settings/profile/': typeof MainHomeSettingsProfileIndexRoute
   '/_main/_home/settings/servers/': typeof MainHomeSettingsServersIndexRoute
+  '/_main/_home/settings/sso/': typeof MainHomeSettingsSsoIndexRoute
   '/_main/_home/settings/users/': typeof MainHomeSettingsUsersIndexRoute
 }
 export interface FileRouteTypes {
@@ -150,6 +160,7 @@ export interface FileRouteTypes {
     | '/settings/'
     | '/settings/profile/'
     | '/settings/servers/'
+    | '/settings/sso/'
     | '/settings/users/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -162,6 +173,7 @@ export interface FileRouteTypes {
     | '/settings'
     | '/settings/profile'
     | '/settings/servers'
+    | '/settings/sso'
     | '/settings/users'
   id:
     | '__root__'
@@ -178,6 +190,7 @@ export interface FileRouteTypes {
     | '/_main/_home/settings/'
     | '/_main/_home/settings/profile/'
     | '/_main/_home/settings/servers/'
+    | '/_main/_home/settings/sso/'
     | '/_main/_home/settings/users/'
   fileRoutesById: FileRoutesById
 }
@@ -280,6 +293,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MainHomeSettingsServersIndexRouteImport
       parentRoute: typeof MainHomeSettingsRouteRoute
     }
+    '/_main/_home/settings/sso/': {
+      id: '/_main/_home/settings/sso/'
+      path: '/sso'
+      fullPath: '/settings/sso/'
+      preLoaderRoute: typeof MainHomeSettingsSsoIndexRouteImport
+      parentRoute: typeof MainHomeSettingsRouteRoute
+    }
     '/_main/_home/settings/users/': {
       id: '/_main/_home/settings/users/'
       path: '/users'
@@ -308,6 +328,7 @@ interface MainHomeSettingsRouteRouteChildren {
   MainHomeSettingsIndexRoute: typeof MainHomeSettingsIndexRoute
   MainHomeSettingsProfileIndexRoute: typeof MainHomeSettingsProfileIndexRoute
   MainHomeSettingsServersIndexRoute: typeof MainHomeSettingsServersIndexRoute
+  MainHomeSettingsSsoIndexRoute: typeof MainHomeSettingsSsoIndexRoute
   MainHomeSettingsUsersIndexRoute: typeof MainHomeSettingsUsersIndexRoute
 }
 
@@ -315,6 +336,7 @@ const MainHomeSettingsRouteRouteChildren: MainHomeSettingsRouteRouteChildren = {
   MainHomeSettingsIndexRoute: MainHomeSettingsIndexRoute,
   MainHomeSettingsProfileIndexRoute: MainHomeSettingsProfileIndexRoute,
   MainHomeSettingsServersIndexRoute: MainHomeSettingsServersIndexRoute,
+  MainHomeSettingsSsoIndexRoute: MainHomeSettingsSsoIndexRoute,
   MainHomeSettingsUsersIndexRoute: MainHomeSettingsUsersIndexRoute,
 }
 

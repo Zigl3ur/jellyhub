@@ -106,3 +106,21 @@ export const apiJellyfinSchema = z.object({
 });
 
 export type apiJellyfinSchemaType = z.output<typeof apiJellyfinSchema>;
+
+export const addSsoSchema = z.object({
+  providerId: z
+    .string()
+    .min(1, { error: "Provider ID is required" })
+    .regex(/^[a-zA-Z0-9-_]+$/, {
+      error: "Only letters, numbers, dashes and underscores are allowed",
+    }),
+  domain: z.string().min(1, { error: "Domain is required" }),
+  issuer: z.url({
+    protocol: /^https?$/,
+    error: "Please enter a valid URL",
+  }),
+  clientId: z.string().min(1, { error: "Client ID is required" }),
+  clientSecret: z.string().min(1, { error: "Client secret is required" }),
+});
+
+export type addSsoSchemaType = z.output<typeof addSsoSchema>;

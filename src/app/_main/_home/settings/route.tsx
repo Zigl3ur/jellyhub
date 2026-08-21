@@ -28,6 +28,11 @@ function RouteComponent() {
       to: "/settings/users",
       enabled: user.role === "admin",
     },
+    {
+      label: "SSO",
+      to: "/settings/sso",
+      enabled: user.role === "admin",
+    },
   ] satisfies Array<{
     label: string;
     to: LinkProps["to"];

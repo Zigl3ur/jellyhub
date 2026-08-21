@@ -12,6 +12,7 @@ import { Input, InputAddon } from "@/components/ui/input";
 import { Alert } from "@/components/ui/alert";
 import LoaderIcon from "@/components/ui/loader-icon";
 import { Link } from "@/components/ui/link";
+import SsoAuth from "@/components/sso-auth";
 
 export const Route = createFileRoute("/_main/_auth/register/")({
   beforeLoad: async () => {
@@ -70,128 +71,131 @@ function RouteComponent() {
       <h3 className="font-serif italic text-3xl font-semibold text-foreground">
         Register to get started
       </h3>
-      <form
-        className="space-y-4"
-        onSubmit={(e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          registerForm.handleSubmit();
-        }}
-      >
-        {error && (
-          <Alert type="destructive" title="Register Failed" message={error} />
-        )}
-        <registerForm.Field name="username">
-          {(field) => {
-            const error = field.state.meta.errors[0];
-            const invalid = !field.state.meta.isValid;
+      <div className="space-y-3">
+        <SsoAuth />
 
-            return (
-              <FieldRoot name={field.name} invalid={invalid}>
-                <FieldLabel>Username</FieldLabel>
-
-                <Input
-                  name={field.name}
-                  placeholder="Username"
-                  value={field.state.value}
-                  onBlur={field.handleBlur}
-                  onChange={(e) => field.handleChange(e.target.value)}
-                />
-
-                <FieldError match={invalid}>{error?.message}</FieldError>
-              </FieldRoot>
-            );
+        <form
+          className="space-y-3"
+          onSubmit={(e) => {
+            e.preventDefault();
+            registerForm.handleSubmit();
           }}
-        </registerForm.Field>
-        <registerForm.Field name="password">
-          {(field) => {
-            const error = field.state.meta.errors[0];
-            const invalid = !field.state.meta.isValid;
+        >
+          {error && (
+            <Alert type="destructive" title="Register Failed" message={error} />
+          )}
+          <registerForm.Field name="username">
+            {(field) => {
+              const error = field.state.meta.errors[0];
+              const invalid = !field.state.meta.isValid;
 
-            return (
-              <FieldRoot name={field.name} invalid={invalid}>
-                <FieldLabel>Password</FieldLabel>
-                <Input
-                  name={field.name}
-                  type={showPassword ? "text" : "password"}
-                  placeholder="Password"
-                  value={field.state.value}
-                  onBlur={field.handleBlur}
-                  onChange={(e) => field.handleChange(e.target.value)}
+              return (
+                <FieldRoot name={field.name} invalid={invalid}>
+                  <FieldLabel>Username</FieldLabel>
+
+                  <Input
+                    name={field.name}
+                    placeholder="Username"
+                    value={field.state.value}
+                    onBlur={field.handleBlur}
+                    onChange={(e) => field.handleChange(e.target.value)}
+                  />
+
+                  <FieldError match={invalid}>{error?.message}</FieldError>
+                </FieldRoot>
+              );
+            }}
+          </registerForm.Field>
+          <registerForm.Field name="password">
+            {(field) => {
+              const error = field.state.meta.errors[0];
+              const invalid = !field.state.meta.isValid;
+
+              return (
+                <FieldRoot name={field.name} invalid={invalid}>
+                  <FieldLabel>Password</FieldLabel>
+                  <Input
+                    name={field.name}
+                    type={showPassword ? "text" : "password"}
+                    placeholder="Password"
+                    value={field.state.value}
+                    onBlur={field.handleBlur}
+                    onChange={(e) => field.handleChange(e.target.value)}
+                  >
+                    <InputAddon side="right">
+                      <Button
+                        type="button"
+                        size="icon"
+                        variant="ghost"
+                        onClick={() => setShowPassword((prev) => !prev)}
+                      >
+                        {showPassword ? <EyeOff /> : <Eye />}
+                      </Button>
+                    </InputAddon>
+                  </Input>
+                  <FieldError match={invalid}>{error?.message}</FieldError>
+                </FieldRoot>
+              );
+            }}
+          </registerForm.Field>
+          <registerForm.Field name="confirmPassword">
+            {(field) => {
+              const error = field.state.meta.errors[0];
+              const invalid = !field.state.meta.isValid;
+
+              return (
+                <FieldRoot name={field.name} invalid={invalid}>
+                  <FieldLabel>Confirm Password</FieldLabel>
+                  <Input
+                    name={field.name}
+                    type={showConfirmPassword ? "text" : "password"}
+                    placeholder="Confirm Password"
+                    value={field.state.value}
+                    onBlur={field.handleBlur}
+                    onChange={(e) => field.handleChange(e.target.value)}
+                  >
+                    <InputAddon side="right">
+                      <Button
+                        type="button"
+                        size="icon"
+                        variant="ghost"
+                        onClick={() => setShowConfirmPassword((prev) => !prev)}
+                      >
+                        {showConfirmPassword ? <EyeOff /> : <Eye />}
+                      </Button>
+                    </InputAddon>
+                  </Input>
+                  <FieldError match={invalid}>{error?.message}</FieldError>
+                </FieldRoot>
+              );
+            }}
+          </registerForm.Field>
+          <div className="flex justify-center w-full">
+            <registerForm.Subscribe
+              selector={(state) => [state.canSubmit, state.isSubmitting]}
+              children={([canSubmit, isSubmitting]) => (
+                <Button
+                  type="submit"
+                  disabled={!canSubmit}
+                  className="w-full xs:w-auto"
                 >
-                  <InputAddon side="right">
-                    <Button
-                      type="button"
-                      size="icon"
-                      variant="ghost"
-                      onClick={() => setShowPassword((prev) => !prev)}
-                    >
-                      {showPassword ? <EyeOff /> : <Eye />}
-                    </Button>
-                  </InputAddon>
-                </Input>
-                <FieldError match={invalid}>{error?.message}</FieldError>
-              </FieldRoot>
-            );
-          }}
-        </registerForm.Field>
-        <registerForm.Field name="confirmPassword">
-          {(field) => {
-            const error = field.state.meta.errors[0];
-            const invalid = !field.state.meta.isValid;
-
-            return (
-              <FieldRoot name={field.name} invalid={invalid}>
-                <FieldLabel>Confirm Password</FieldLabel>
-                <Input
-                  name={field.name}
-                  type={showConfirmPassword ? "text" : "password"}
-                  placeholder="Confirm Password"
-                  value={field.state.value}
-                  onBlur={field.handleBlur}
-                  onChange={(e) => field.handleChange(e.target.value)}
-                >
-                  <InputAddon side="right">
-                    <Button
-                      type="button"
-                      size="icon"
-                      variant="ghost"
-                      onClick={() => setShowConfirmPassword((prev) => !prev)}
-                    >
-                      {showConfirmPassword ? <EyeOff /> : <Eye />}
-                    </Button>
-                  </InputAddon>
-                </Input>
-                <FieldError match={invalid}>{error?.message}</FieldError>
-              </FieldRoot>
-            );
-          }}
-        </registerForm.Field>
-        <div className="flex justify-center w-full">
-          <registerForm.Subscribe
-            selector={(state) => [state.canSubmit, state.isSubmitting]}
-            children={([canSubmit, isSubmitting]) => (
-              <Button
-                type="submit"
-                disabled={!canSubmit}
-                className="w-full xs:w-auto"
-              >
-                {isSubmitting ? (
-                  <>
-                    <LoaderIcon />
-                    Registering...
-                  </>
-                ) : (
-                  "Register"
-                )}
-              </Button>
-            )}
-          />
-        </div>
-        <div className="text-center text-sm">
-          Already have an account ? <Link to="/login">Login</Link>
-        </div>
-      </form>
+                  {isSubmitting ? (
+                    <>
+                      <LoaderIcon />
+                      Registering...
+                    </>
+                  ) : (
+                    "Register"
+                  )}
+                </Button>
+              )}
+            />
+          </div>
+          <div className="text-center text-sm">
+            Already have an account ? <Link to="/login">Login</Link>
+          </div>
+        </form>
+      </div>
     </div>
   );
 }
