@@ -6,5 +6,5 @@ export const itemsQueryOptions = (opts: ItemsOpts) =>
   queryOptions({
     queryKey: ["items", opts.types],
     queryFn: () => getServersItems({ data: { opts } }),
-    staleTime: 60_000,
+    select: (data) => [...data].sort(() => Math.random() - 0.5),
   });

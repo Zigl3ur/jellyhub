@@ -8,7 +8,7 @@ import * as schema from "./db/schema";
 import { createAuthMiddleware } from "better-auth/api";
 import { eq } from "drizzle-orm";
 
-const baseUrl = process.env.BASE_URL || "http://localhost:3000";
+const baseUrl = process.env.APP_URL || "http://localhost:3000";
 
 export const auth = betterAuth({
   appName: "Jellyhub",
@@ -78,9 +78,7 @@ export const auth = betterAuth({
   },
   emailAndPassword: {
     enabled: true,
-    disableSignUp:
-      process.env.DISABLE_SIGNUP === "true" ||
-      process.env.ALLOW_SIGNUP !== "true",
+    disableSignUp: process.env.ALLOW_SIGNUP !== "true",
     requireEmailVerification: false,
     minPasswordLength: 6,
     maxPasswordLength: 50,

@@ -62,10 +62,12 @@ export default function AddServerDialog() {
     <Dialog
       open={open}
       onOpenChange={(state) => {
-        setOpen(state);
-        if (!state) {
-          reset();
-          form.reset();
+        if (!isPending) {
+          setOpen(state);
+          if (!state) {
+            reset();
+            form.reset();
+          }
         }
       }}
     >

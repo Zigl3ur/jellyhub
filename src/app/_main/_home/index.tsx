@@ -61,12 +61,11 @@ interface SectionProps {
 
 function Section({ queryOpt }: SectionProps) {
   const { data } = useSuspenseQuery(queryOpt);
-  const shuffled = data.sort(() => Math.random() - 0.5);
 
   return data.length > 0 ? (
     <Carousel>
-      {shuffled.map((s) => (
-        <ItemCard key={s.Id} item={s} />
+      {data.map((i) => (
+        <ItemCard className="w-45" key={i.Id} item={i} />
       ))}
     </Carousel>
   ) : (

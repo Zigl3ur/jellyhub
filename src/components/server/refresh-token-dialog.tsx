@@ -77,11 +77,15 @@ export default function RefreshTokenDialog({
   return (
     <Dialog
       {...props}
-      onOpenChange={(state, event) => {
-        onOpenChange?.(state, event);
+      onOpenChange={(state, eventDetails) => {
+        if (isPending) {
+          eventDetails.cancel();
+          return;
+        }
+        onOpenChange?.(state, eventDetails);
         if (!state) {
-          reset();
           form.reset();
+          reset();
         }
       }}
     >

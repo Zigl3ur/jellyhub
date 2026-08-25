@@ -17,10 +17,11 @@ import ItemPresentation from "./item-presentation";
 import type { ServersItems } from "@/functions/jellyfin.functions";
 
 interface ItemCardProps {
+  className?: string;
   item: ServersItems[number];
 }
 
-export default function ItemCard({ item }: ItemCardProps) {
+export default function ItemCard({ className, item }: ItemCardProps) {
   const isMusicAlbum = item.Type === "MusicAlbum";
 
   const detailLabel = isMusicAlbum
@@ -31,7 +32,12 @@ export default function ItemCard({ item }: ItemCardProps) {
 
   return (
     <Dialog>
-      <DialogTrigger className="min-w-45 space-y-2.5 hover:bg-accent p-1.5 transition-colors duration-200 rounded hover:cursor-pointer h-fit">
+      <DialogTrigger
+        className={cn(
+          "min-w-45 space-y-2.5 hover:bg-accent p-1.5 transition-colors duration-200 rounded hover:cursor-pointer h-fit",
+          className,
+        )}
+      >
         <Image
           src={item.PrimaryImage}
           className={cn(

@@ -19,16 +19,20 @@ JellyHub is a web app that allow you to fetch media from all of your jellyfin se
 To be able to run JellyHub, first you must have **[Docker](https://www.docker.com/)** installed on your system.
 <br>
 
-Copy the following command with your personallized environment variables to run the app.
+Create a volume to store the data of the app or skip this step if you want to use a bind mount to a folder.
 
-For the `AUTH_SECRET` and `SECRET_KEY` generate a key for each with `openssl rand -base64 32`
+```sh
+docker volume create jellyhub_data
+```
+
+Then you can run the app with the following command, make sure to replace the `AUTH_SECRET` and `SECRET_KEY` values with valid ones (You can generate a key for each with `openssl rand -base64 32`).
 
 ```sh
 docker run -d --name jellyhub \
         -v jellyhub_data:/app/data \
-        -e ALLOW_SIGNUP=true \
+        -e ALLOW_SIGNUP=false \
         -e AUTH_SECRET= \
-        -e AUTH_URL=http://localhost:3000 \
+        -e APP_URL=http://localhost:3000 \
         -e SECRET_KEY= \
         --restart unless-stopped \
         -p 3000:3000 \
