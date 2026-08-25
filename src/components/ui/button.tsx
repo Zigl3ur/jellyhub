@@ -1,59 +1,64 @@
-import * as React from "react"
-import { Slot } from "@radix-ui/react-slot"
-import { cva, type VariantProps } from "class-variance-authority"
+import { Button as BaseButton } from "@base-ui/react/button";
+import { cn } from "@sglara/cn";
 
-import { cn } from "@/lib/utils"
-
-const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
-  {
-    variants: {
-      variant: {
-        default:
-          "bg-primary text-primary-foreground shadow-xs hover:bg-primary/90",
-        destructive:
-          "bg-destructive text-white shadow-xs hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60",
-        outline:
-          "border bg-background shadow-xs hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50",
-        secondary:
-          "bg-secondary text-secondary-foreground shadow-xs hover:bg-secondary/80",
-        ghost:
-          "hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50",
-        link: "text-primary underline-offset-4 hover:underline",
-      },
-      size: {
-        default: "h-9 px-4 py-2 has-[>svg]:px-3",
-        sm: "h-8 rounded-md gap-1.5 px-3 has-[>svg]:px-2.5",
-        lg: "h-10 rounded-md px-6 has-[>svg]:px-4",
-        icon: "size-9",
-      },
-    },
-    defaultVariants: {
-      variant: "default",
-      size: "default",
-    },
-  }
-)
-
-function Button({
-  className,
-  variant,
-  size,
-  asChild = false,
-  ...props
-}: React.ComponentProps<"button"> &
-  VariantProps<typeof buttonVariants> & {
-    asChild?: boolean
-  }) {
-  const Comp = asChild ? Slot : "button"
-
-  return (
-    <Comp
-      data-slot="button"
-      className={cn(buttonVariants({ variant, size, className }))}
-      {...props}
-    />
-  )
+export interface ButtonProps extends BaseButton.Props {
+  size?: "icon-sm" | "icon" | "sm" | "md" | "lg";
+  variant?:
+    | "default"
+    | "accent"
+    | "destructive"
+    | "destructive-ghost"
+    | "outline"
+    | "secondary"
+    | "ghost";
 }
 
-export { Button, buttonVariants }
+export const buttonClassName =
+  "group/button inline-flex items-center gap-1.5 outline-none focus-visible:ring-2 disabled:pointer-events-none justify-center hover:cursor-pointer active:translate-y-px active:opacity-70 transition-all duration-200 disabled:cursor-not-allowed disabled:opacity-50 rounded leading-none whitespace-nowrap font-normal select-none focus-visible:outline-2 focus-visible:-outline-offset-1 disabled:hover:cursor-not-allowed";
+
+export const buttonSizes: Record<NonNullable<ButtonProps["size"]>, string> = {
+  "icon-sm": "size-4",
+  icon: "size-6 p-1",
+  sm: "h-6 px-2",
+  md: "h-8 px-2",
+  lg: "h-10 px-2",
+};
+
+export const buttonVariants: Record<
+  NonNullable<ButtonProps["variant"]>,
+  string
+> = {
+  default: "bg-foreground text-background hover:bg-foreground/90",
+  accent: "bg-accent text-foreground hover:bg-accent/90",
+  destructive: "bg-destructive hover:bg-destructive/90 focus-visible:ring-ring",
+  "destructive-ghost":
+    "hover:bg-destructive/20 text-destructive focus-visible:ring-ring",
+  outline:
+    "border border-input bg-input/60 hover:bg-input/80 focus:ring-ring/40",
+  secondary:
+    "bg-secondary text-secondary-foreground hover:bg-secondary/80 focus-visible:outline-secondary",
+  ghost: "hover:bg-accent/50 focus-visible:ring-ring/40",
+};
+
+export default function Button({
+  children,
+  className,
+  size = "md",
+  variant = "default",
+  ...props
+}: ButtonProps) {
+  return (
+    <BaseButton
+      {...props}
+      data-slot="button"
+      className={cn(
+        buttonClassName,
+        buttonSizes[size],
+        buttonVariants[variant],
+        className,
+      )}
+    >
+      {children}
+    </BaseButton>
+  );
+}

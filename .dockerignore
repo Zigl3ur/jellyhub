@@ -5,11 +5,10 @@
 docker-compose*
 .dockerignore
 node_modules
-.next
+.tanstack
+.output
 .env*
 .prettierrc
 .vscode
 *.md
 LICENSE
-dev.sh
-/prisma/data/

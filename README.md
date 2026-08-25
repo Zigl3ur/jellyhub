@@ -7,6 +7,9 @@
 </div>
 <br>
 
+> [!IMPORTANT]
+> This is Work In Progress.
+
 <h2>About the project</h2>
 JellyHub is a web app that allow you to fetch media from all of your jellyfin servers and regroup it in one place, so there is one place to search for specific media and tells you on wich server the desired media is located.
 
@@ -16,40 +19,24 @@ JellyHub is a web app that allow you to fetch media from all of your jellyfin se
 To be able to run JellyHub, first you must have **[Docker](https://www.docker.com/)** installed on your system.
 <br>
 
-Copy the following command with your personallized environment variables to run the app.
+Create a volume to store the data of the app or skip this step if you want to use a bind mount to a folder.
+
+```sh
+docker volume create jellyhub_data
+```
+
+Then you can run the app with the following command, make sure to replace the `AUTH_SECRET` and `SECRET_KEY` values with valid ones (You can generate a key for each with `openssl rand -base64 32`).
 
 ```sh
 docker run -d --name jellyhub \
-    -v jellyhub_data:/app/data \ # either use a volume or a bind mount to make db persistent
-    -e ALLOW_SIGNUP=true \
-    -e BETTER_AUTH_SECRET=randomsecretstring \
-    -e SECRET_KEY=64charhexstring \
-    -e PORT=8888 \
-    --restart unless-stopped \
-    -p 8888:8888 \
-    zigleur/jellyhub:latest
+        -v jellyhub_data:/app/data \
+        -e ALLOW_SIGNUP=false \
+        -e AUTH_SECRET= \
+        -e APP_URL=http://localhost:3000 \
+        -e SECRET_KEY= \
+        --restart unless-stopped \
+        -p 3000:3000 \
+        jellyhub
 ```
 
-Now you can access the app at http://localhost:8888 _(adapt the host and port depending on how you configured it)_
-
-The default user is `admin` with password `adminadmin`
-
-<h2>Screenshots</h2>
-
-![Screenshot_0](./.github/README/home_page.png)
-
-![Screenshot_1](./.github/README/movies_page.png)
-
-![Screenshot_2](./.github/README/series_page.png)
-
-![Screenshot_3](./.github/README/albums_page.png)
-
-![Screenshot_4](./.github/README/dialog_item.png)
-
-![Screenshot_5](./.github/README/settings_page.png)
-
-![Screenshot_6](./.github/README/login_page.png)
-
-<h2>Personal Note</h2>
-
-Thanks to my friends [@firminunderscore](https://github.com/firminunderscore) [@0x4c756e61](https://github.com/0x4c756e61) and [@Zarox28](https://github.com/Zarox28) for allowing me to test the app on their jellyfin servers.
+Now you can access the app at http://localhost:3000 _(adapt the host and port depending on how you configured it)_
