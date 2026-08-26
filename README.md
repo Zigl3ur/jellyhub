@@ -16,40 +16,63 @@ JellyHub is a web app that allow you to fetch media from all of your jellyfin se
 To be able to run JellyHub, first you must have **[Docker](https://www.docker.com/)** installed on your system.
 <br>
 
-Copy the following command with your personallized environment variables to run the app.
+Create a volume to store the data of the app or skip this step if you want to use a bind mount to a folder.
+
+```sh
+docker volume create jellyhub_data
+```
+
+Then you can run the app with the following command, make sure to replace the `AUTH_SECRET` and `SECRET_KEY` values with valid ones (You can generate a key for each with `openssl rand -base64 32`).
 
 ```sh
 docker run -d --name jellyhub \
-    -v jellyhub_data:/app/data \ # either use a volume or a bind mount to make db persistent
-    -e ALLOW_SIGNUP=true \
-    -e BETTER_AUTH_SECRET=randomsecretstring \
-    -e SECRET_KEY=64charhexstring \
-    -e PORT=8888 \
-    --restart unless-stopped \
-    -p 8888:8888 \
-    zigleur/jellyhub:latest
+        -v jellyhub_data:/app/data \
+        -e ALLOW_SIGNUP=false \
+        -e AUTH_SECRET= \
+        -e APP_URL=http://localhost:3000 \
+        -e SECRET_KEY= \
+        --restart unless-stopped \
+        -p 3000:3000 \
+        zigleur/jellyhub:latest
 ```
 
-Now you can access the app at http://localhost:8888 _(adapt the host and port depending on how you configured it)_
+Now you can access the app at http://localhost:3000 _(adapt the host and port depending on how you configured it)_
 
-The default user is `admin` with password `adminadmin`
+<details>
 
-<h2>Screenshots</h2>
+<summary><h2>Screenshots</h2></summary>
 
+Home Page
 ![Screenshot_0](./.github/README/home_page.png)
 
+Movies Pages
 ![Screenshot_1](./.github/README/movies_page.png)
 
-![Screenshot_2](./.github/README/series_page.png)
+TV Shows Pages
+![Screenshot_2](./.github/README/tv-shows_page.png)
 
+Albums Pages
 ![Screenshot_3](./.github/README/albums_page.png)
 
-![Screenshot_4](./.github/README/dialog_item.png)
+Movie Details Dialog
+![Screenshot_4](./.github/README/movie_details.png)
 
-![Screenshot_5](./.github/README/settings_page.png)
+TV Show Details Dialog
+![Screenshot_5](./.github/README/tv-show_details.png)
 
-![Screenshot_6](./.github/README/login_page.png)
+Album Details Dialog
+![Screenshot_6](./.github/README/album_details.png)
 
-<h2>Personal Note</h2>
+Servers List
+![Screenshot_7](./.github/README/servers_list.png)
 
-Thanks to my friends [@firminunderscore](https://github.com/firminunderscore) [@0x4c756e61](https://github.com/0x4c756e61) and [@Zarox28](https://github.com/Zarox28) for allowing me to test the app on their jellyfin servers.
+Users List
+![Screenshot_8](./.github/README/users_list.png)
+
+SSO List
+![Screenshot_9](./.github/README/sso_list.png)
+
+Login Page
+![Screenshot_7](./.github/README/login_page.png)
+
+</details>

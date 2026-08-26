@@ -1,211 +1,144 @@
-"use server";
+import "@tanstack/react-start/server-only";
 
+import { Jellyfin } from "@jellyfin/sdk";
 import {
-  itemJellyfin,
-  callersResponse,
-  tokenData,
-  rawItemJellyfin,
-  itemTypes,
-  State,
-} from "@/types/jellyfin-api.types";
-import { TicksToDuration } from "./utils";
+  getImageApi,
+  getItemsApi,
+  getSessionApi,
+  getSystemApi,
+  getUserApi,
+} from "@jellyfin/sdk/lib/utils/api";
+import {
+  BaseItemKind,
+  ItemFields,
+} from "@jellyfin/sdk/lib/generated-client/models";
+import axios, { AxiosError } from "axios";
+import type {
+  BaseItemDto,
+  ImageType,
+} from "@jellyfin/sdk/lib/generated-client/models";
+import type { Api } from "@jellyfin/sdk";
+import type { ItemsOpts } from "@/types";
 
-/**
- * Function to get the auth token from a jellyfin server
- * @param server_url the server to query
- * @param username the account username to login
- * @param password the account password to login
- * @returns an error or the object with associated data
- */
-export async function getToken(
-  server_url: string,
+const jellyhubClient = new Jellyfin({
+  clientInfo: {
+    name: "jellyhub-client",
+    version: Bun.env.npm_package_version as string,
+  },
+  deviceInfo: {
+    name: "jellyhub",
+    id: "935496e7-847a-4376-a71c-7bdf2615d21d",
+  },
+});
+
+export function getJellyfinApiClient(url: string, token?: string) {
+  const instance = axios.create({ timeout: 6_000 });
+  return jellyhubClient.createApi(url, token, instance);
+}
+
+export async function getJellyfinPublicInfo(api: Api) {
+  const info = await getSystemApi(api).getPublicSystemInfo();
+
+  return info.data;
+}
+
+export async function authJellyfinUser(
+  api: Api,
   username: string,
-  password: string
-): Promise<callersResponse<tokenData>> {
+  password: string,
+) {
   try {
-    const response = await fetch(`${server_url}/Users/AuthenticateByName`, {
-      method: "POST",
-      body: JSON.stringify({
+    const auth = await getUserApi(api).authenticateUserByName({
+      authenticateUserByName: {
         Username: username,
         Pw: password,
-      }),
-      headers: {
-        "Content-type": "application/json",
-        "X-Emby-Authorization":
-          'MediaBrowser Client="jellyhub", Device="client", DeviceId="d3101fc0-291b-41a5-89b1-59136286c2d0", Version="1.0.0"',
       },
     });
 
-    if (response.status === 200) {
-      const data = await response.json();
-      return {
-        success: true,
-        data: {
-          server_url: server_url,
-          server_id: data.ServerId,
-          server_username: data.User.Name,
-          token: data.AccessToken,
-        },
-      };
-    } else if (response.status === 401) {
-      return {
-        success: false,
-        error: "Authentication failed, check your credentials",
-      };
-    } else {
-      return {
-        success: false,
-        error: "An Error Occured, check the URL / credentials",
-      };
+    return auth.data;
+  } catch (error) {
+    if (error instanceof AxiosError && error.response?.status === 401) {
+      throw new Error("Invalid credentials");
     }
-  } catch {
-    return {
-      success: false,
-      error: "An Error Occured, check the URL",
-    };
+
+    throw new Error("Failed to authenticate user");
   }
 }
 
-/**
- * Function to check if the given token is still valid
- * @param server_url the server to query
- * @param token token to check
- * @returns "Up" if token is still valid or "Down" if response is not 200
- */
-export async function checkConn(
-  server_url: string,
-  token: string
-): Promise<callersResponse<State>> {
+export async function logoutJellyfinUser(api: Api) {
   try {
-    const response = await fetch(`${server_url}/Users/Me`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        "X-Emby-Authorization": `MediaBrowser Token=${token}`,
-      },
-    });
-    return response.status === 200
-      ? { success: true, data: "Up" }
-      : { success: false, data: "Down" };
+    await getSessionApi(api).reportSessionEnded();
   } catch {
-    return {
-      success: false,
-      data: "Down",
-    };
+    throw new Error("Failed to logout user");
   }
 }
 
-/**
- * Function to get specific items types (Movie, Series, MusicAlbum) from a server
- * @param server_url the server to query
- * @param token the auth token
- * @param itemsType the type of items to retrive (Movie, Series, MusicAlbum)
- * @returns an error or an array of the items
- */
-export async function getLibraryItems(
-  server_url: string,
-  token: string,
-  itemsType: itemTypes
-): Promise<callersResponse<Array<itemJellyfin>>> {
+export async function checkJellyfinConn(api: Api) {
   try {
-    const response = await fetch(
-      `${server_url}/Items?IncludeItemTypes=${itemsType}&Recursive=true`,
-      {
-        method: "GET",
-        headers: {
-          "Content-type": "application/json",
-          "X-Emby-Authorization": `MediaBrowser Token=${token}`,
-        },
-      }
-    );
+    const status = await getUserApi(api).getCurrentUser({ timeout: 2_000 });
 
-    if (response.status === 200) {
-      const data = await response.json();
-
-      const listItems: Array<itemJellyfin> = data.Items.map(
-        (item: rawItemJellyfin) => {
-          return {
-            item_location: [
-              {
-                server_url: server_url,
-                server_id: item.ServerId,
-                item_id: item.Id,
-              },
-            ],
-            item_name: item.Name,
-            item_type: item.Type,
-            item_duration: TicksToDuration(item.RunTimeTicks),
-            item_premier_date: item.ProductionYear,
-            item_artist: item.AlbumArtist ?? "None",
-            item_image:
-              item.ImageTags.Primary === undefined
-                ? "/default.svg"
-                : `${server_url}/Items/${item.Id}/Images/Primary?tag=${item.ImageTags.Primary}`,
-          };
-        }
-      );
-
-      return { success: true, data: listItems };
-    } else if (response.status === 401) {
-      return {
-        success: false,
-        error: "Token is invalid",
-      };
-    }
-    return {
-      success: false,
-      error: "An unknown error occured",
-    };
+    return status.status === 200;
   } catch {
-    return {
-      success: false,
-      error: "Failed to reach server",
-    };
+    return false;
   }
 }
 
-/**
- * Function to get all items of a server (Movie, Series and MusicAlbum)
- * @param server_url the server to query
- * @param token the auth token
- * @returns an error or an object with an array for each types
- */
-export async function getAllItems(
-  server_url: string,
-  token: string
-): Promise<
-  callersResponse<{
-    movies: Array<itemJellyfin>;
-    series: Array<itemJellyfin>;
-    musicAlbum: Array<itemJellyfin>;
-  }>
-> {
-  try {
-    const items = await Promise.all([
-      getLibraryItems(server_url, token, "Movie"),
-      getLibraryItems(server_url, token, "Series"),
-      getLibraryItems(server_url, token, "MusicAlbum"),
-    ]);
+export async function getLibraryItems(api: Api, opts: ItemsOpts) {
+  const { types, parentId, artists, genres, person, studios, years, limit } =
+    opts;
 
-    if (items[0].success && items[1].success && items[2].success) {
-      return {
-        success: true,
-        data: {
-          // data will always be defined since success is true
-          movies: items[0].data as Array<itemJellyfin>,
-          series: items[1].data as Array<itemJellyfin>,
-          musicAlbum: items[2].data as Array<itemJellyfin>,
-        },
-      };
+  const typesToInclude: Array<BaseItemKind> = types.map((type) => {
+    switch (type) {
+      case "Movie":
+        return BaseItemKind.Movie;
+      case "Series":
+        return BaseItemKind.Series;
+      case "Season":
+        return BaseItemKind.Season;
+      case "MusicAlbum":
+        return BaseItemKind.MusicAlbum;
+      case "Audio":
+        return BaseItemKind.Audio;
+      case "Episode":
+        return BaseItemKind.Episode;
     }
-    return {
-      success: false,
-      error: `Failed to retrieves items from ${server_url}`,
-    };
-  } catch {
-    return {
-      success: false,
-      error: "Failed to reach server",
-    };
-  }
+  });
+
+  return await getItemsApi(api).getItems({
+    recursive: true,
+    includeItemTypes: typesToInclude,
+    parentId,
+    fields: [
+      ItemFields.Overview,
+      ItemFields.Overview,
+      ItemFields.People,
+      ItemFields.SeriesStudio,
+      ItemFields.Studios,
+      ItemFields.ProviderIds,
+    ],
+    artists,
+    genres,
+    person,
+    studios,
+    years,
+    limit,
+  });
+}
+
+export function getItemImages(api: Api, item: BaseItemDto, type: ImageType) {
+  const imageApi = getImageApi(api);
+
+  const artistId =
+    item.AlbumArtists && item.AlbumArtists.length > 0
+      ? item.AlbumArtists[0].Id
+      : undefined;
+
+  const id =
+    item.Type === BaseItemKind.MusicAlbum && type === "Backdrop"
+      ? artistId
+      : item.Id;
+
+  const image = imageApi.getItemImageUrl({ Id: id }, type);
+
+  return image ? image : "/default.svg";
 }
