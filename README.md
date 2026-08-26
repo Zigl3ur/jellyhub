@@ -7,9 +7,6 @@
 </div>
 <br>
 
-> [!IMPORTANT]
-> This is Work In Progress.
-
 <h2>About the project</h2>
 JellyHub is a web app that allow you to fetch media from all of your jellyfin servers and regroup it in one place, so there is one place to search for specific media and tells you on wich server the desired media is located.
 
