@@ -33,7 +33,7 @@ docker run -d --name jellyhub \
         -e SECRET_KEY= \
         --restart unless-stopped \
         -p 3000:3000 \
-        jellyhub
+        zigleur/jellyhub:latest
 ```
 
 Now you can access the app at http://localhost:3000 _(adapt the host and port depending on how you configured it)_
