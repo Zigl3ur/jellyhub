@@ -273,7 +273,7 @@ export const getServersItems = createServerFn({ method: "GET" })
       }
     });
 
-    return Array.from(itemsMap.values());
+    return Array.from(itemsMap.values()).sort(() => Math.random() - 0.5);
   });
 
 export type ServersItems = NonNullable<

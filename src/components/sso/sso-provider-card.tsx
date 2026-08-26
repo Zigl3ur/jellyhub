@@ -61,9 +61,14 @@ export function SsoProviderCard({ provider }: SsoProviderCardProps) {
         </Menu>
       </CardHeader>
       <CardContent className="gap-2.5">
-        <div className="flex items-center justify-between gap-2">
+        <div className="flex items-center justify-between gap-1">
           Issuer
-          <ExternalLink variant="link" href={provider.issuer} target="_blank">
+          <ExternalLink
+            variant="default"
+            className="text-sm"
+            href={provider.issuer}
+            target="_blank"
+          >
             {issuerHost}
           </ExternalLink>
         </div>

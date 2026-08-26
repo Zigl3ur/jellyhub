@@ -1,14 +1,9 @@
 import AddUserDialog from "@/components/users/add-user-dialog";
 import { UserCard, UserCardSkeleton } from "@/components/users/users-card";
-import { adminUsersList } from "@/functions/auth.functions";
-import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
+import { usersListQueryOptions } from "@/queries/users";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { Suspense } from "react";
-
-const usersListQuery = queryOptions({
-  queryFn: adminUsersList,
-  queryKey: ["usersList"],
-});
 
 export const Route = createFileRoute("/_main/_home/settings/users/")({
   beforeLoad: ({ context }) => {
@@ -17,7 +12,7 @@ export const Route = createFileRoute("/_main/_home/settings/users/")({
     }
   },
   loader: ({ context }) => {
-    context.queryClient.prefetchQuery(usersListQuery);
+    context.queryClient.prefetchQuery(usersListQueryOptions);
   },
   component: RouteComponent,
   head: () => ({ meta: [{ title: "Users - JellyHub" }] }),
@@ -45,7 +40,7 @@ function RouteComponent() {
 
 function UsersContent() {
   const { session } = Route.useRouteContext();
-  const { data, isFetching } = useSuspenseQuery(usersListQuery);
+  const { data, isFetching } = useSuspenseQuery(usersListQueryOptions);
 
   return (
     <div className="grid grid-cols-[repeat(auto-fill,minmax(180px,1fr))] gap-2">

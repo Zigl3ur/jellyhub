@@ -1,5 +1,6 @@
 import { Outlet, createFileRoute, redirect } from "@tanstack/react-router";
 import { getSession } from "@/functions/auth.functions";
+import { jellyDataQueryOptions } from "@/queries/jellydata";
 import Header from "@/components/header";
 
 export const Route = createFileRoute("/_main/_home")({
@@ -9,6 +10,9 @@ export const Route = createFileRoute("/_main/_home")({
     if (!session) throw redirect({ to: "/login" });
 
     return { session };
+  },
+  loader: ({ context: { queryClient } }) => {
+    queryClient.prefetchQuery(jellyDataQueryOptions);
   },
   component: RouteComponent,
 });

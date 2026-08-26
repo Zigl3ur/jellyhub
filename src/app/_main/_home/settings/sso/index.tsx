@@ -3,16 +3,11 @@ import {
   SsoProviderCard,
   SsoProviderCardSkeleton,
 } from "@/components/sso/sso-provider-card";
-import { ssoProvidersList } from "@/functions/sso.functions";
-import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
+import { ssoProvidersQueryOptions } from "@/queries/sso";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { KeyRound } from "lucide-react";
 import { Suspense } from "react";
-
-const ssoProvidersQuery = queryOptions({
-  queryFn: ssoProvidersList,
-  queryKey: ["ssoProviders"],
-});
 
 export const Route = createFileRoute("/_main/_home/settings/sso/")({
   beforeLoad: ({ context }) => {
@@ -21,7 +16,7 @@ export const Route = createFileRoute("/_main/_home/settings/sso/")({
     }
   },
   loader: ({ context }) => {
-    context.queryClient.prefetchQuery(ssoProvidersQuery);
+    context.queryClient.prefetchQuery(ssoProvidersQueryOptions);
   },
   component: RouteComponent,
   head: () => ({ meta: [{ title: "SSO - JellyHub" }] }),
@@ -48,7 +43,7 @@ function RouteComponent() {
 }
 
 function SsoContent() {
-  const { data, isFetching } = useSuspenseQuery(ssoProvidersQuery);
+  const { data, isFetching } = useSuspenseQuery(ssoProvidersQueryOptions);
 
   return (
     <div className="grid grid-cols-[repeat(auto-fill,minmax(300px,1fr))] gap-2">

@@ -4,7 +4,7 @@ import { queryOptions } from "@tanstack/react-query";
 
 export const itemsQueryOptions = (opts: ItemsOpts) =>
   queryOptions({
-    queryKey: ["items", opts.types],
+    queryKey: ["items", opts],
     queryFn: () => getServersItems({ data: { opts } }),
-    select: (data) => [...data].sort(() => Math.random() - 0.5),
+    staleTime: 5 * 60 * 1000,
   });

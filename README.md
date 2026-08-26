@@ -40,3 +40,42 @@ docker run -d --name jellyhub \
 ```
 
 Now you can access the app at http://localhost:3000 _(adapt the host and port depending on how you configured it)_
+
+<details>
+
+<summary><h2>Screenshots</h2></summary>
+
+Home Page
+![Screenshot_0](./.github/README/home_page.png)
+
+Movies Pages
+![Screenshot_1](./.github/README/movies_page.png)
+
+TV Shows Pages
+![Screenshot_2](./.github/README/tv-shows_page.png)
+
+Albums Pages
+![Screenshot_3](./.github/README/albums_page.png)
+
+Movie Details Dialog
+![Screenshot_4](./.github/README/movie_details.png)
+
+TV Show Details Dialog
+![Screenshot_5](./.github/README/tv-show_details.png)
+
+Album Details Dialog
+![Screenshot_6](./.github/README/album_details.png)
+
+Servers List
+![Screenshot_7](./.github/README/servers_list.png)
+
+Users List
+![Screenshot_8](./.github/README/users_list.png)
+
+SSO List
+![Screenshot_9](./.github/README/sso_list.png)
+
+Login Page
+![Screenshot_7](./.github/README/login_page.png)
+
+</details>

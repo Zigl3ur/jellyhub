@@ -2,20 +2,15 @@ import AddServerDialog from "@/components/server/add-server-dialog";
 import ServerCard, {
   ServerCardSkeleton,
 } from "@/components/server/server-card";
-import { getJellyData } from "@/functions/server.functions";
-import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
+import { jellyDataUpdatedQueryOptions } from "@/queries/jellydata";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { HardDrive } from "lucide-react";
 import { Suspense } from "react";
 
-const jellyDataQuery = queryOptions({
-  queryFn: () => getJellyData({ data: { updateStatus: true } }),
-  queryKey: ["jellydata", "updated"],
-});
-
 export const Route = createFileRoute("/_main/_home/settings/servers/")({
-  loader: ({ context }) => {
-    context.queryClient.prefetchQuery(jellyDataQuery);
+  loader: ({ context: { queryClient } }) => {
+    queryClient.prefetchQuery(jellyDataUpdatedQueryOptions);
   },
   component: RouteComponent,
   head: () => ({ meta: [{ title: "Servers - JellyHub" }] }),
@@ -42,7 +37,7 @@ function RouteComponent() {
 }
 
 function ServersContent() {
-  const { data, isFetching } = useSuspenseQuery(jellyDataQuery);
+  const { data, isFetching } = useSuspenseQuery(jellyDataUpdatedQueryOptions);
 
   return (
     <div className="grid grid-cols-[repeat(auto-fill,minmax(250px,1fr))] gap-2">

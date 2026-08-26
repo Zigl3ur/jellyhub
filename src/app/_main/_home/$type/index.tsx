@@ -5,12 +5,13 @@ import { Input } from "@/components/ui/input";
 import { Link } from "@/components/ui/link";
 import Skeleton from "@/components/ui/skeleton";
 import { type ServersItems } from "@/functions/jellyfin.functions";
-import { getJellyData } from "@/functions/server.functions";
 import { itemsQueryOptions } from "@/queries/servers";
+import { jellyDataQueryOptions } from "@/queries/jellydata";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute, notFound } from "@tanstack/react-router";
 import { SearchX, ServerOff } from "lucide-react";
 import { Suspense, useState } from "react";
+import type { getJellyData } from "@/functions/server.functions";
 
 const routesWithType = [
   { param: "movies", type: "Movie", name: "Movies" },
@@ -30,8 +31,11 @@ export const Route = createFileRoute("/_main/_home/$type/")({
     if (!routeData) throw notFound();
 
     queryClient.prefetchQuery(itemsQueryOptions({ types: [routeData.type] }));
+    queryClient.prefetchQuery(jellyDataQueryOptions);
 
-    const { servers } = await getJellyData({ data: { updateStatus: false } });
+    const { servers } = await queryClient.ensureQueryData(
+      jellyDataQueryOptions,
+    );
 
     return {
       routeData,
@@ -47,15 +51,21 @@ export const Route = createFileRoute("/_main/_home/$type/")({
 });
 
 function RouteComponent() {
+  const { routeData, servers } = Route.useLoaderData();
+
   return (
     <Suspense fallback={<LoadingComponent />}>
-      <Content />
+      <Content routeData={routeData} servers={servers} />
     </Suspense>
   );
 }
 
-function Content() {
-  const { servers, routeData } = Route.useLoaderData();
+interface ContentProps {
+  routeData: (typeof routesWithType)[number];
+  servers: Awaited<ReturnType<typeof getJellyData>>["servers"];
+}
+
+function Content({ routeData, servers }: ContentProps) {
   const { data, isFetching } = useSuspenseQuery(
     itemsQueryOptions({ types: [routeData.type] }),
   );
@@ -126,12 +136,13 @@ function LoadingComponent() {
 }
 
 function ItemsSkeleton() {
-  const { routeData } = Route.useLoaderData();
+  const { type } = Route.useParams();
+  const routeData = routesWithType.find((r) => r.param === type);
 
   return Array.from({ length: 52 }).map((_, i) => (
     <ItemCardLoading
       key={i}
-      type={routeData.type === "MusicAlbum" ? "small" : "default"}
+      type={routeData?.type === "MusicAlbum" ? "small" : "default"}
     />
   ));
 }

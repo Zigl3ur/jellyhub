@@ -1,13 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
 import ItemCard, { ItemCardLoading } from "@/components/item/item-card";
-import { useSuspenseQuery } from "@tanstack/react-query";
 import { itemsQueryOptions } from "@/queries/servers";
+import { jellyDataQueryOptions } from "@/queries/jellydata";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { Suspense, type ComponentProps } from "react";
 import { Carousel } from "@/components/ui/caroussel";
 import { SearchX, ServerOff } from "lucide-react";
-import type { ItemTypes } from "@/types";
+import type { ItemsOpts, ItemTypes } from "@/types";
 import { cn } from "@sglara/cn";
-import { getJellyData } from "@/functions/server.functions";
 import { Link } from "@/components/ui/link";
 import Button from "@/components/ui/button";
 
@@ -17,7 +17,9 @@ export const Route = createFileRoute("/_main/_home/")({
     queryClient.prefetchQuery(itemsQueryOptions({ types: ["Series"] }));
     queryClient.prefetchQuery(itemsQueryOptions({ types: ["MusicAlbum"] }));
 
-    const { servers } = await getJellyData({ data: { updateStatus: false } });
+    const { servers } = await queryClient.ensureQueryData(
+      jellyDataQueryOptions,
+    );
 
     return { servers };
   },
@@ -69,7 +71,7 @@ function Section({ queryOpt }: SectionProps) {
       ))}
     </Carousel>
   ) : (
-    <NoItems type={queryOpt.queryKey[1][0] as ItemTypes} />
+    <NoItems type={(queryOpt.queryKey[1] as ItemsOpts).types[0]} />
   );
 }
 

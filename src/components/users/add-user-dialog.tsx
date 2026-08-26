@@ -45,7 +45,7 @@ export default function AddUserDialog() {
     },
     onSubmit: async ({ value }) => {
       await authClient.admin.createUser({
-        email: `${value.username}@jellyhub.com`,
+        email: `${value.username.replaceAll(" ", "")}@jellyhub.com`,
         password: value.password,
         name: value.username,
         role: "user",
